@@ -1,0 +1,103 @@
+---
+import { noticeTypeLabel } from '../data/notice-types'
+
+// The record renders as a register, not a feed: one row per item, the ISO-8601
+// UTC timestamp in its own mono column so dates line up and scan (§7.2), the
+// type as a tag, and the prior-notice date surfaced in the row rather than
+// buried in metadata (§7.4).
+export interface RegisterItem {
+  id: string
+  type: string
+  title: string
+  pubDate: Date
+  noticeDate?: Date
+  /** Set when a later item corrects this one. */
+  supersededByHref?: string
+}
+
+interface Props {
+  items: RegisterItem[]
+  /** Message shown when the register is empty — never leave it blank. */
+  emptyNote?: string
+}
+
+const { items, emptyNote } = Astro.props
+---
+
+{
+	items.length > 0 ? (
+		<div class="table-scroll">
+			<table class="w-full min-w-[40rem] border-collapse text-left">
+				<thead>
+					<tr>
+						<th class="label w-[11rem] border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
+							Published (UTC)
+						</th>
+						<th class="label w-[13.5rem] border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
+							Type
+						</th>
+						<th class="label border-b border-[var(--color-rule)] pb-2.5 font-medium">Item</th>
+					</tr>
+				</thead>
+				<tbody>
+					{items.map((item) => (
+						<tr>
+							<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-top">
+								<time
+									datetime={item.pubDate.toISOString()}
+									class="data text-[0.78125rem] whitespace-nowrap text-[var(--color-muted)]"
+								>
+									{item.pubDate.toISOString().replace('.000', '')}
+								</time>
+							</td>
+							<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-top">
+								<span
+									class:list={[
+										'label inline-block rounded-[2px] border px-1.5 py-[3px] text-[0.65625rem] leading-[1.35]',
+										item.supersededByHref
+											? 'border-dashed border-[var(--color-rule-strong)]'
+											: item.type === 'veto-filing'
+												? 'border-[var(--color-accent)] text-[var(--color-accent)]'
+												: item.noticeDate
+													? 'border-[var(--color-pending)] text-[var(--color-pending)]'
+													: 'border-[var(--color-rule-strong)]'
+									]}
+								>
+									{item.supersededByHref ? 'Superseded' : noticeTypeLabel(item.type)}
+								</span>
+							</td>
+							<td class="border-b border-[var(--color-rule)] py-4 align-top">
+								<a
+									href={`/notices/${item.id}/`}
+									class:list={[
+										'text-[0.96875rem] font-semibold hover:text-[var(--color-accent)]',
+										item.supersededByHref ? 'text-[var(--color-muted)]' : 'text-[var(--color-ink)]'
+									]}
+								>
+									{item.title}
+								</a>
+								{item.noticeDate && (
+									<span class="mt-1 block text-[0.8125rem] text-[var(--color-muted)]">
+										Notice date{' '}
+										<span class="data">{item.noticeDate.toISOString().slice(0, 10)}</span> — starts a
+										countdown before this can take effect.
+									</span>
+								)}
+								{item.supersededByHref && (
+									<a
+										href={item.supersededByHref}
+										class="mt-1 block text-[0.8125rem] text-[var(--color-accent)] hover:underline"
+									>
+										Corrected by a later item &rsaquo;
+									</a>
+								)}
+							</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	) : (
+		<p class="copy text-[0.9375rem]">{emptyNote}</p>
+	)
+}

@@ -1,60 +1,139 @@
 ---
 import Band from '../components/Band.astro'
+import PageHeader from '../components/PageHeader.astro'
 import roles from '../data/roles.json'
 import BaseLayout from '../layouts/BaseLayout.astro'
+
+// §6.5: this page must render honestly while seats are unfilled — show the
+// seat, show that it is vacant, and link to how it gets filled. An empty page
+// is a failure state; "0 of 7 seats filled" is correct.
+interface Seat {
+  name?: string
+  role?: string
+  termStart?: string
+  termEnd?: string
+  contact?: string
+}
+
+const council = roles.council
+const seats: Seat[] = council.seats ?? []
+
+// Render every seat the Council can hold, filled or not, so the shape of the
+// body is visible before anyone is elected.
+const seatRows = Array.from({ length: council.seatMax }, (_, i) => ({
+  index: i + 1,
+  seat: seats[i],
+  required: i < council.seatMin
+}))
 ---
 
-<BaseLayout
-	title="People"
-	description="Who is accountable for Radix DAO, and how to reach them."
->
-	<Band>
-		<h1 class="text-3xl font-bold md:text-4xl">Who's accountable</h1>
-		<p class="mt-4 max-w-xl text-[var(--color-text-muted)]">{roles.asOf}</p>
+<BaseLayout title="People" description="Who is accountable for Radix DAO, and how to reach them.">
+	<Band compact>
+		<PageHeader question="Who is accountable, and how do I reach them?" heading="Who's accountable">
+			<p class="mt-5 max-w-[54ch] text-[1.0625rem] text-[var(--color-muted)]">{roles.asOf}</p>
+		</PageHeader>
 	</Band>
 
-	<Band raised>
-		<div class="flex items-baseline justify-between">
-			<h2 class="text-xl font-bold">{roles.council.name}</h2>
-			<p class="text-sm text-[var(--color-text-muted)]">
-				{roles.council.filled} of {roles.council.seatMin}–{roles.council.seatMax} seats filled
+	<Band tone="paper" ruled compact>
+		<div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+			<h2 class="text-[1.375rem]">{council.name}</h2>
+			<p class="data text-[0.8125rem] text-[var(--color-muted)]">
+				{council.filled} of {council.seatMin}&ndash;{council.seatMax} seats filled · {
+					council.termMonths
+				}-month terms
 			</p>
 		</div>
-		<p class="mt-2 text-sm text-[var(--color-text-muted)]">
-			{roles.council.termMonths}-month terms, elected by token holders.
-		</p>
-		<div class="mt-6 rounded-lg border border-dashed border-[var(--color-border)] p-6 text-sm text-[var(--color-text-muted)]">
-			No seats have been elected yet — the Council election follows constitutional ratification
-			and formation. See <a href="/govern/" class="text-[var(--color-accent)] hover:underline">how elections work</a>.
+
+		<div class="table-scroll mt-6">
+			<table class="w-full min-w-[36rem] border-collapse text-left">
+				<thead>
+					<tr>
+						<th class="label w-[4rem] border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
+							Seat
+						</th>
+						<th class="label border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">Holder</th>
+						<th class="label w-[14rem] border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
+							Term
+						</th>
+						<th class="label w-[10rem] border-b border-[var(--color-rule)] pb-2.5 font-medium">
+							Contact
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
+						seatRows.map((row) => (
+							<tr class:list={[row.seat ? '' : 'opacity-70']}>
+								<td class="data border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.78125rem] text-[var(--color-muted)]">
+									{String(row.index).padStart(2, '0')}
+								</td>
+								<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-middle">
+									{row.seat ? (
+										<span class="text-[0.90625rem] font-semibold">{row.seat.name}</span>
+									) : (
+										<span class="data text-[0.78125rem] text-[var(--color-muted)]">
+											<span
+												class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
+												aria-hidden="true"
+											/>
+											Not yet elected
+											{!row.required && ' · optional seat'}
+										</span>
+									)}
+								</td>
+								<td class="data border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.78125rem] text-[var(--color-muted)]">
+									{row.seat?.termStart ? `${row.seat.termStart} → ${row.seat.termEnd}` : '—'}
+								</td>
+								<td class="border-b border-[var(--color-rule)] py-4 align-middle text-[0.8125rem]">
+									{row.seat?.contact ? (
+										<a href={`mailto:${row.seat.contact}`} class="onward">
+											{row.seat.contact}
+										</a>
+									) : (
+										<span class="text-[var(--color-muted)]">&mdash;</span>
+									)}
+								</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
 		</div>
+
+		<a href="/participate/" class="onward mt-6 inline-block text-[0.875rem]">
+			How seats get filled <span aria-hidden="true">&rsaquo;</span>
+		</a>
 	</Band>
 
 	<Band>
-		<h2 class="text-xl font-bold">Delegated Functions</h2>
-		<p class="mt-2 max-w-xl text-sm text-[var(--color-text-muted)]">
-			Allocated by the Council from among its own seated members, not separately elected — shown
-			here attached to whoever holds the Council seat, once seats exist.
+		<h2 class="text-[1.375rem]">Delegated Functions</h2>
+		<p class="mt-3 max-w-[60ch] text-[0.9375rem] text-[var(--color-muted)]">
+			Allocated by the Council from among its own seated members, not separately elected. Each one
+			ends when that member's seat ends, so they are shown attached to a person rather than as
+			standalone offices.
 		</p>
-		<ul class="mt-6 grid gap-3 md:grid-cols-2">
+		<ul class="mt-6 border-t border-[var(--color-rule)]">
 			{
 				roles.delegatedFunctions.map((fn: { name: string; note: string }) => (
-					<li class="rounded-lg border border-[var(--color-border)] p-4 text-sm">
-						<p class="font-semibold">{fn.name}</p>
-						<p class="mt-1 text-[var(--color-text-muted)]">{fn.note || 'Not yet allocated.'}</p>
+					<li class="grid items-baseline gap-x-8 gap-y-1 border-b border-[var(--color-rule)] py-4 md:grid-cols-[16rem_1fr]">
+						<span class="text-[0.9375rem] font-semibold">{fn.name}</span>
+						<span class="text-[0.875rem] text-[var(--color-muted)]">
+							{fn.note || 'Not yet allocated — no Council seats are filled.'}
+						</span>
 					</li>
 				))
 			}
 		</ul>
 	</Band>
 
-	<Band raised>
-		<h2 class="text-xl font-bold">Working Group Stewards</h2>
-		<ul class="mt-6 grid gap-3 md:grid-cols-2">
+	<Band tone="paper" ruled compact>
+		<h2 class="text-[1.375rem]">Working Group Stewards</h2>
+		<ul class="mt-6 border-t border-[var(--color-rule)]">
 			{
 				roles.workingGroups.map((wg: { name: string; status: string }) => (
-					<li class="rounded-lg border border-[var(--color-border)] p-4 text-sm">
-						<p class="font-semibold">{wg.name}</p>
-						<p class="mt-1 text-[var(--color-text-muted)]">{wg.status}</p>
+					<li class="grid items-baseline gap-x-8 gap-y-1 border-b border-[var(--color-rule)] py-4 md:grid-cols-[22rem_1fr]">
+						<span class="text-[0.9375rem] font-semibold">{wg.name}</span>
+						<span class="text-[0.875rem] text-[var(--color-muted)]">{wg.status}</span>
 					</li>
 				))
 			}

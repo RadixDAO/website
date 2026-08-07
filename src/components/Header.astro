@@ -1,30 +1,56 @@
 ---
 import ThemeToggle from './ThemeToggle.astro'
+import Wordmark from './Wordmark.astro'
 
+// Three items — Participate · Govern · Verify — deliberately paralleling
+// radixdlt.com's Use · Build · Learn. Notices & Records sits apart as the
+// outlined pill: it is what the site legally exists for, and it is not a peer
+// of the other three.
 const navItems = [
   { label: 'Participate', href: '/participate/' },
   { label: 'Govern', href: '/govern/' },
   { label: 'Verify', href: '/verify/' }
 ]
+
+const path = Astro.url.pathname
 ---
 
-<header class="border-b border-[var(--color-border)]">
-	<div class="mx-auto flex max-w-(--container-content) items-center justify-between px-6 py-5">
-		<a href="/" class="font-[family-name:var(--font-heading)] text-lg font-bold tracking-tight">
-			Radix <span style="color: var(--color-accent)">DAO</span>
+<header class="border-b border-[var(--color-rule)]">
+	<div
+		class="mx-auto flex max-w-(--container-shell) flex-wrap items-center justify-between gap-4 px-6 py-5 md:px-8"
+	>
+		<a href="/" aria-label="Radix DAO — home">
+			<Wordmark />
 		</a>
-		<div class="flex items-center gap-6">
+
+		<div class="flex items-center gap-6 md:gap-8">
 			<nav aria-label="Primary">
-				<ul class="flex gap-8 text-sm">
+				<ul class="flex items-center gap-6 text-[0.90625rem] font-semibold md:gap-8">
 					{
 						navItems.map((item) => (
 							<li>
-								<a href={item.href} class="hover:text-[var(--color-accent)]">
+								<a
+									href={item.href}
+									aria-current={path.startsWith(item.href) ? 'page' : undefined}
+									class:list={[
+										'hover:text-[var(--color-accent)]',
+										path.startsWith(item.href) ? 'text-[var(--color-accent)]' : ''
+									]}
+								>
 									{item.label}
 								</a>
 							</li>
 						))
 					}
+					<li>
+						<a
+							href="/notices/"
+							aria-current={path.startsWith('/notices') ? 'page' : undefined}
+							class="inline-block rounded-full border border-[var(--color-accent)] px-4 py-1.5 text-[0.84375rem] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-on-accent)]"
+						>
+							Notices &amp; Records
+						</a>
+					</li>
 				</ul>
 			</nav>
 			<ThemeToggle />

@@ -1,83 +1,83 @@
 ---
 import { getCollection } from 'astro:content'
 import Band from '../../components/Band.astro'
-import NoticeCard from '../../components/NoticeCard.astro'
+import NoticeRegister from '../../components/NoticeRegister.astro'
+import PageHeader from '../../components/PageHeader.astro'
 import { NOTICE_TYPES } from '../../data/notice-types'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
 // Complete, unpaginated archive — nothing ages out (§7.2). Type filtering is
-// primarily served by the static /notices/type/[type]/ pages so it works with
-// JavaScript off (§7.6); this index just lists everything in one place.
+// served by the static /notices/type/[type]/ pages so it works with JavaScript
+// off (§7.6); this index lists everything in one place.
 const notices = (await getCollection('notices')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 )
 
-const supersededIds = new Set(
-  notices.map((n) => n.data.supersedes).filter(Boolean)
+const correctionFor = new Map(
+  notices
+    .filter((n) => n.data.supersedes)
+    .map((n) => [n.data.supersedes as string, n.id])
 )
+
+const items = notices.map((n) => {
+  const correctionId = correctionFor.get(n.id)
+  return {
+    id: n.id,
+    type: n.data.type,
+    title: n.data.title,
+    pubDate: n.data.pubDate,
+    noticeDate: n.data.noticeDate,
+    supersededByHref: correctionId ? `/notices/${correctionId}/` : undefined
+  }
+})
+
+const countsByType = new Map<string, number>()
+for (const n of notices) {
+  countsByType.set(n.data.type, (countsByType.get(n.data.type) ?? 0) + 1)
+}
 ---
 
 <BaseLayout
 	title="Notices & Records"
 	description="The DAO's official record — every notice published, permanently, with a timestamp."
 >
-	<Band>
-		<h1 class="text-3xl font-bold md:text-4xl">Notices & Records</h1>
-		<p class="mt-4 max-w-xl text-[var(--color-text-muted)]">
-			This is the Official Venue's official record. Every item here is permanent — corrections
-			are published as new, linked items, never edited in place.
-		</p>
-		<div class="mt-4 flex flex-wrap gap-4 text-sm">
-			<a href="/notices/rss.xml" class="font-medium text-[var(--color-accent)] hover:underline"
-				>RSS feed</a
+	<Band compact>
+		<PageHeader question="What has officially happened?" heading="Notices & Records">
+			<p class="mt-5 max-w-[56ch] text-[1.0625rem] text-[var(--color-muted)]">
+				The complete record. Nothing is edited after publication and nothing ages out — a
+				correction is published as a new item that links back to the one it supersedes.
+			</p>
+		</PageHeader>
+
+		<nav aria-label="Filter by type" class="mt-8 flex flex-wrap gap-2">
+			<span
+				class="label rounded-[2px] border border-[var(--color-accent)] px-2.5 py-1 text-[0.65625rem] text-[var(--color-accent)]"
 			>
-			<a href="/notices.json" class="font-medium text-[var(--color-accent)] hover:underline"
-				>JSON feed</a
-			>
-		</div>
-		<nav aria-label="Filter by type" class="mt-6 flex flex-wrap gap-2 text-xs">
+				All · {notices.length}
+			</span>
 			{
 				NOTICE_TYPES.map((t) => (
 					<a
 						href={`/notices/type/${t.value}/`}
-						class="rounded-full border border-[var(--color-border)] px-3 py-1 hover:border-[var(--color-accent)]"
+						class="label rounded-[2px] border border-[var(--color-rule-strong)] px-2.5 py-1 text-[0.65625rem] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
 					>
-						{t.label}
+						{t.label} · {countsByType.get(t.value) ?? 0}
 					</a>
 				))
 			}
 		</nav>
 	</Band>
 
-	<Band raised>
-		{
-			notices.length > 0 ? (
-				<div>
-					{notices.map((notice) => (
-						<NoticeCard
-							type={notice.data.type}
-							title={notice.data.title}
-							href={`/notices/${notice.id}/`}
-							pubDate={notice.data.pubDate}
-							supersededByHref={
-								supersededIds.has(notice.id)
-									? notices.find((n) => n.data.supersedes === notice.id)?.id &&
-										`/notices/${notices.find((n) => n.data.supersedes === notice.id)?.id}/`
-									: undefined
-							}
-						/>
-					))}
-				</div>
-			) : (
-				<p class="text-sm text-[var(--color-text-muted)]">
-					Nothing has been published to the record yet. Nothing is operative until the
-					framework's ratification vote (GP-PRE-1) passes — see{' '}
-					<a href="/govern/" class="text-[var(--color-accent)] hover:underline">
-						Govern
-					</a>{' '}
-					for where things stand.
-				</p>
-			)
-		}
+	<Band tone="paper" ruled>
+		<NoticeRegister
+			items={items}
+			emptyNote="Nothing has been published to the record yet. Nothing is operative until the framework's ratification vote passes."
+		/>
+
+		<p class="mt-8 max-w-[64ch] text-[0.875rem] text-[var(--color-muted)]">
+			Readable without JavaScript, without a login and without a cookie banner. The full record is
+			available as <a href="/notices/rss.xml" class="onward">RSS</a> and
+			<a href="/notices.json" class="onward">JSON</a> so it can be archived independently.
+		</p>
 	</Band>
 </BaseLayout>

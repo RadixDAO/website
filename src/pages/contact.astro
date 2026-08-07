@@ -1,41 +1,73 @@
 ---
 import Band from '../components/Band.astro'
+import PageHeader from '../components/PageHeader.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
+
+const mailboxes = ['veto@radix.community', 'rac@radix.community']
 ---
 
 <BaseLayout title="Contact" description="How to reach a person, file a veto, or raise a concern.">
 	<Band>
-		<h1 class="text-3xl font-bold md:text-4xl">Reach a person</h1>
+		<PageHeader question="How do I reach a person?" heading="Reach a person">
+			<p class="mt-5 max-w-[52ch] text-[1.0625rem] text-[var(--color-muted)]">
+				Two monitored mailboxes, either of which reaches the Accountability Council.
+			</p>
+		</PageHeader>
 
-		<div class="mt-10 grid gap-6 md:grid-cols-2">
-			<div class="rounded-lg border border-[var(--color-border)] p-6">
-				<h2 class="font-bold">File a veto</h2>
-				<p class="mt-2 text-sm text-[var(--color-text-muted)]">
-					Email a filing to either monitored address below within the challenge window. It's
-					published exactly as received.
+		<ul class="mt-8 border-t border-[var(--color-rule)]">
+			{
+				mailboxes.map((address) => (
+					<li class="border-b border-[var(--color-rule)] py-4">
+						<a href={`mailto:${address}`} class="data text-[0.9375rem] text-[var(--color-accent)] hover:underline">
+							{address}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+
+		<div class="mt-10 grid gap-x-12 gap-y-8 md:grid-cols-2">
+			<div>
+				<h2 class="text-[1.125rem]">File a veto</h2>
+				<p class="mt-2.5 text-[0.9375rem] text-[var(--color-muted)]">
+					Email a filing to either address within the 48-hour challenge window. It is published
+					to the record exactly as received, with its receipt timestamp, within six hours.
 				</p>
-				<p class="mt-3 font-mono text-sm text-[var(--color-accent)]">veto@radix.community</p>
-				<p class="font-mono text-sm text-[var(--color-accent)]">rac@radix.community</p>
+				<a href="/notices/type/veto-filing/" class="onward mt-3 inline-block text-[0.875rem]">
+					See filings on the record <span aria-hidden="true">&rsaquo;</span>
+				</a>
 			</div>
 
-			<div class="rounded-lg border border-[var(--color-border)] p-6">
-				<h2 class="font-bold">Raise a concern</h2>
-				<p class="mt-2 text-sm text-[var(--color-text-muted)]">
+			<div>
+				<h2 class="text-[1.125rem]">Raise a concern</h2>
+				<p class="mt-2.5 text-[0.9375rem] text-[var(--color-muted)]">
 					To request a Community Accountability Hearing or raise a dispute, use the same
-					monitored addresses. Read the process before you file.
+					addresses. Read the process before you file.
 				</p>
 				<a
 					href="https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/dispute-resolution-and-arbitration-policy.md"
-					class="mt-3 inline-block text-sm font-medium text-[var(--color-accent)] hover:underline"
-					>How disputes are resolved <span aria-hidden="true">&rsaquo;</span></a
+					class="onward mt-3 inline-block text-[0.875rem]"
 				>
+					How disputes are resolved <span aria-hidden="true">&rsaquo;</span>
+				</a>
 			</div>
 		</div>
+	</Band>
 
-		<div class="mt-6 rounded-lg border border-dashed border-[var(--color-border)] p-6 text-sm text-[var(--color-text-muted)]">
-			A discussion platform hasn't been designated yet, so there's nowhere to send you for
-			open-ended conversation about a proposal in progress. That's a known gap — check back once
-			the DAO names one.
+	<Band tone="paper" ruled compact>
+		<div class="flex gap-4">
+			<span
+				class="mt-1.5 block h-auto w-[3px] shrink-0 bg-[var(--color-pending)]"
+				aria-hidden="true"></span>
+			<div>
+				<h2 class="label text-[var(--color-pending)]">Known gap</h2>
+				<p class="mt-2 max-w-[62ch] text-[0.9375rem] text-[var(--color-muted)]">
+					No discussion platform has been designated yet, so there is nowhere to send you for
+					open-ended conversation about a proposal in progress. The same is true of public chat
+					channels. Both are decisions for the DAO, not for this site — check back once they are
+					named.
+				</p>
+			</div>
 		</div>
 	</Band>
 </BaseLayout>

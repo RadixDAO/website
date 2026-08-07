@@ -5,33 +5,49 @@ const links = [
   { label: 'Notices & Records', href: '/notices/' },
   { label: 'Contact', href: '/contact/' }
 ]
+
+// §7.6: the record must be independently archivable without scraping.
+const feeds = [
+  { label: 'RSS', href: '/notices/rss.xml' },
+  { label: 'JSON', href: '/notices.json' }
+]
 ---
 
-<footer class="border-t border-[var(--color-border)]">
-	<div class="mx-auto max-w-(--container-content) px-6 py-10">
-		<div class="flex flex-wrap items-center justify-between gap-6">
+<footer class="border-t border-[var(--color-rule)]">
+	<div class="mx-auto max-w-(--container-shell) px-6 py-10 md:px-8">
+		<div class="flex flex-wrap items-center justify-between gap-x-8 gap-y-5">
 			<nav aria-label="Footer">
-				<ul class="flex flex-wrap gap-6 text-sm text-[var(--color-text-muted)]">
+				<ul class="flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.875rem] text-[var(--color-muted)]">
 					{
 						links.map((link) => (
 							<li>
-								<a href={link.href} class="hover:text-[var(--color-text)]">
+								<a href={link.href} class="hover:text-[var(--color-ink)]">
 									{link.label}
 								</a>
 							</li>
 						))
 					}
-					<li><a href="/notices/rss.xml" class="hover:text-[var(--color-text)]">RSS</a></li>
+					{
+						feeds.map((feed) => (
+							<li>
+								<a href={feed.href} class="label hover:text-[var(--color-ink)]">
+									{feed.label}
+								</a>
+							</li>
+						))
+					}
 				</ul>
 			</nav>
 			<a
 				href="https://www.radixdlt.com"
-				class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+				class="text-[0.875rem] text-[var(--color-muted)] hover:text-[var(--color-ink)]"
 			>
 				radixdlt.com &rarr;
 			</a>
 		</div>
-		<p class="mt-8 max-w-2xl text-xs text-[var(--color-text-muted)]">
+
+		<!-- §8.2.3: persistent, on every page, stating the separate legal identity. -->
+		<p class="mt-8 max-w-[68ch] text-[0.78125rem] leading-relaxed text-[var(--color-muted)]">
 			Radix DAO LLC is a non-profit Decentralized Autonomous Organization LLC registered under
 			Marshall Islands law, and a separate legal entity from Radix Publishing Ltd, which operates
 			radixdlt.com.

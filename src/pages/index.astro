@@ -1,127 +1,147 @@
 ---
-import { getCollection, getEntry, render } from 'astro:content'
+import { getCollection } from 'astro:content'
 import Band from '../components/Band.astro'
-import Card from '../components/Card.astro'
-import NoticeCard from '../components/NoticeCard.astro'
-import StatusBand from '../components/StatusBand.astro'
+import NoticeRegister from '../components/NoticeRegister.astro'
+import Row from '../components/Row.astro'
+import roles from '../data/roles.json'
 import BaseLayout from '../layouts/BaseLayout.astro'
 
-const status = await getEntry('status', 'status')
-const { Content: StatusBody } = status
-  ? await render(status)
-  : { Content: null }
-
+// Rule 5.1 — six bands, no more. The status strip is band 2; it renders in
+// BaseLayout so it appears on every page, not only this one.
 const notices = (await getCollection('notices'))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3)
+  .map((n) => ({
+    id: n.id,
+    type: n.data.type,
+    title: n.data.title,
+    pubDate: n.data.pubDate,
+    noticeDate: n.data.noticeDate
+  }))
 ---
 
 <BaseLayout
 	title="Home"
 	description="Radix DAO is a non-profit DAO, owned and directed by the people who hold XRD."
+	statusVariant="full"
 >
 	<!-- Band 1: Hero -->
-	<Band>
-		<p class="text-sm font-semibold tracking-wide text-[var(--color-accent)] uppercase">Radix DAO</p>
-		<h1 class="mt-3 max-w-3xl text-4xl font-bold md:text-5xl">The community governs Radix.</h1>
-		<p class="mt-4 max-w-xl text-[var(--color-text-muted)]">
+	<Band class="py-20 md:py-24">
+		<div class="flex items-baseline gap-3">
+			<span class="label text-[var(--color-accent)]">Answers</span>
+			<span class="label">What is this?</span>
+		</div>
+		<h1 class="mt-4 max-w-[15ch] text-[2.5rem] md:text-[3.25rem]">
+			The community governs Radix.
+		</h1>
+		<p class="mt-5 max-w-[50ch] text-[1.125rem] text-[var(--color-muted)]">
 			A non-profit DAO registered in the Marshall Islands, owned and directed by the people who
 			hold XRD. Anyone can propose. Anyone can vote.
 		</p>
-		<div class="mt-6 flex flex-wrap gap-6">
-			<a href="/participate/" class="font-medium text-[var(--color-accent)] hover:underline"
-				>Take part <span aria-hidden="true">&rsaquo;</span></a
+		<div class="mt-8 flex flex-wrap gap-3.5">
+			<a
+				href="/participate/"
+				class="rounded-[4px] bg-[var(--color-accent)] px-5 py-2.5 text-[0.90625rem] font-semibold text-[var(--color-on-accent)] hover:opacity-90"
 			>
-			<a href="/govern/" class="font-medium hover:underline"
-				>Read the rules <span aria-hidden="true">&rsaquo;</span></a
+				Take part
+			</a>
+			<a
+				href="/govern/"
+				class="rounded-[4px] border border-[var(--color-rule-strong)] px-5 py-2.5 text-[0.90625rem] font-semibold hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
 			>
+				Read the rules
+			</a>
 		</div>
 	</Band>
 
-	<!-- Band 2: Status -->
-	<Band raised divider>
-		{
-			status && StatusBody && (
-				<StatusBand
-					phase={status.data.phase}
-					headline={status.data.headline}
-					linkHref={status.data.linkHref}
-					linkText={status.data.linkText}
-				>
-					<StatusBody />
-				</StatusBand>
-			)
-		}
-	</Band>
-
-	<!-- Band 3: Three pillars -->
-	<Band>
-		<h2 class="text-2xl font-bold">Three ways to take part</h2>
-		<div class="mt-8 grid gap-6 md:grid-cols-3">
-			<Card title="Propose" href="/participate/" linkText="How proposals work">
-				Anyone holding XRD can put a proposal to the DAO — no minimum holding, no approval step.
-				It moves through discussion, a temperature check, then a binding vote.
-			</Card>
-			<Card title="Vote" href="/participate/" linkText="How voting works">
-				Voting power is your XRD plus your liquid staking units, measured at a snapshot taken
-				when each vote opens.
-			</Card>
-			<Card title="Stand for election" href="/participate/" linkText="How elections work">
-				Council seats and Working Group Steward roles are elected, time-bound, and renewable by
-				vote.
-			</Card>
+	<!-- Band 3: Three ways to take part -->
+	<Band ruled>
+		<h2 class="text-[1.6875rem]">Three ways to take part</h2>
+		<div class="mt-7 border-t border-[var(--color-rule)]">
+			<Row
+				key="Propose"
+				lead="Anyone holding XRD can put a proposal to the DAO."
+				href="/participate/"
+				linkText="How proposals work"
+			>
+				No minimum holding and no approval step. It moves through discussion, a temperature check,
+				then a binding vote.
+			</Row>
+			<Row
+				key="Vote"
+				lead="Your voting power is your XRD plus your liquid staking units."
+				href="/participate/"
+				linkText="How voting works"
+			>
+				It is measured at a snapshot taken when each vote opens. Votes are cast at
+				vote.radixdao.org.
+			</Row>
+			<Row
+				key="Stand"
+				lead="Council seats and Working Group Steward roles are elected."
+				href="/participate/"
+				linkText="How elections work"
+			>
+				Terms are time-bound and renewable by vote. Elections run on the same platform as every
+				other vote.
+			</Row>
 		</div>
 	</Band>
 
 	<!-- Band 4: Verify -->
-	<Band raised divider>
-		<h2 class="text-2xl font-bold">Don't take our word for it.</h2>
-		<p class="mt-3 max-w-xl text-[var(--color-text-muted)]">
-			Every governance contract and treasury account the DAO uses is published with a link to
-			check it yourself on the Radix Dashboard.
+	<Band tone="deep">
+		<span class="label text-[var(--color-accent)]">Verify</span>
+		<h2 class="mt-3.5 max-w-[20ch] text-[1.875rem]">Don't take our word for it.</h2>
+		<p class="mt-4 max-w-[52ch] text-[var(--color-muted)]">
+			Every governance contract, badge and treasury account the DAO uses is published here with a
+			link to check it yourself on the Radix Dashboard.
 		</p>
-		<a href="/verify/" class="mt-4 inline-block font-medium text-[var(--color-accent)] hover:underline"
-			>Verify the addresses <span aria-hidden="true">&rsaquo;</span></a
-		>
+		<a href="/verify/" class="onward mt-6 inline-block">
+			Verify the addresses <span aria-hidden="true">&rsaquo;</span>
+		</a>
 	</Band>
 
 	<!-- Band 5: Latest notices -->
 	<Band>
-		<div class="flex items-baseline justify-between">
-			<h2 class="text-2xl font-bold">Latest notices</h2>
-			<a href="/notices/" class="text-sm font-medium text-[var(--color-accent)] hover:underline"
-				>Full record <span aria-hidden="true">&rsaquo;</span></a
-			>
+		<div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+			<h2 class="text-[1.6875rem]">Latest notices</h2>
+			<a href="/notices/" class="onward text-sm">
+				The full record <span aria-hidden="true">&rsaquo;</span>
+			</a>
 		</div>
-		<div class="mt-6">
-			{
-				notices.length > 0 ? (
-					notices.map((notice) => (
-						<NoticeCard
-							type={notice.data.type}
-							title={notice.data.title}
-							href={`/notices/${notice.id}/`}
-							pubDate={notice.data.pubDate}
-						/>
-					))
-				) : (
-					<p class="text-sm text-[var(--color-text-muted)]">
-						No notices have been published yet — nothing is operative until GP-PRE-1 passes. Read
-						the full record once it starts.
-					</p>
-				)
-			}
+		<div class="mt-7">
+			<NoticeRegister
+				items={notices}
+				emptyNote="Nothing has been published to the record yet. Nothing is operative until the framework's ratification vote passes."
+			/>
 		</div>
 	</Band>
 
-	<!-- Band 6: Contact / community -->
-	<Band raised>
-		<h2 class="text-2xl font-bold">Reach the people running this</h2>
-		<p class="mt-3 max-w-xl text-[var(--color-text-muted)]">
-			See who currently holds each elected and delegated role, and how to reach them.
+	<!-- Band 6: Contact -->
+	<Band tone="paper" ruled>
+		<h2 class="text-[1.6875rem]">Reach the people running this</h2>
+		<p class="mt-3.5 max-w-[52ch] text-[var(--color-muted)]">
+			See who currently holds each elected and delegated role, their term dates, and how to reach
+			them.
 		</p>
-		<a href="/contact/" class="mt-4 inline-block font-medium text-[var(--color-accent)] hover:underline"
-			>Contact &rarr; <span aria-hidden="true">&rsaquo;</span></a
-		>
+		<p class="data mt-4 text-[0.8125rem] text-[var(--color-muted)]">
+			Accountability Council · {roles.council.filled} of {roles.council.seatMax} seats filled{
+				roles.council.filled === 0 ? ' · not yet elected' : ''
+			}
+		</p>
+		<div class="mt-6 flex flex-wrap gap-3.5">
+			<a
+				href="/contact/"
+				class="rounded-[4px] bg-[var(--color-accent)] px-5 py-2.5 text-[0.90625rem] font-semibold text-[var(--color-on-accent)] hover:opacity-90"
+			>
+				Contact
+			</a>
+			<a
+				href="/people/"
+				class="rounded-[4px] border border-[var(--color-rule-strong)] px-5 py-2.5 text-[0.90625rem] font-semibold hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+			>
+				Who's accountable
+			</a>
+		</div>
 	</Band>
 </BaseLayout>

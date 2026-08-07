@@ -1,0 +1,36 @@
+---
+// Every page in the brief is defined by the one question it answers. Making
+// that visible is the page-level structural device: it comes from the content
+// rather than being applied to it, and it puts the page's purpose above the
+// first outbound link (rule 5.7).
+interface Props {
+  /** The question this page answers, e.g. "How do I take part?" */
+  question: string
+  heading: string
+  /** Back link, for pages nested under an index. */
+  backHref?: string
+  backText?: string
+}
+
+const { question, heading, backHref, backText } = Astro.props
+---
+
+{
+	backHref && (
+		<a
+			href={backHref}
+			class="mb-6 inline-block text-sm text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+		>
+			&larr; {backText}
+		</a>
+	)
+}
+
+<div class="flex items-baseline gap-3">
+	<span class="label text-[var(--color-accent)]">Answers</span>
+	<span class="label">{question}</span>
+</div>
+
+<h1 class="mt-4 max-w-[16ch] text-[2.25rem] md:text-[2.875rem]">{heading}</h1>
+
+<slot />

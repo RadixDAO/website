@@ -1,40 +1,54 @@
 ---
 import Band from '../../components/Band.astro'
+import PageHeader from '../../components/PageHeader.astro'
 import govern from '../../data/govern.json'
 import BaseLayout from '../../layouts/BaseLayout.astro'
+
+// Rule 5.4: no normative text is reproduced here. Every line is a plain-language
+// pointer to the operative document in the governance repository.
+interface Doc {
+  title: string
+  summary: string
+  href: string
+}
 ---
 
 <BaseLayout
 	title="Govern"
 	description="Every governance document, in one plain-language line each, linking to the source repository."
 >
-	<Band>
-		<h1 class="text-3xl font-bold md:text-4xl">The actual rules</h1>
-		<p class="mt-4 max-w-xl text-[var(--color-text-muted)]">
-			This site never reproduces a rule — every line below is a plain-language pointer to the
-			operative document in the DAO's governance repository, the single source of truth.
-		</p>
+	<Band compact>
+		<PageHeader question="What are the actual rules?" heading="The actual rules">
+			<p class="mt-5 max-w-[56ch] text-[1.0625rem] text-[var(--color-muted)]">
+				This site never reproduces a rule. Every line below is a plain-language pointer to the
+				operative document in the DAO's governance repository, the single source of truth.
+			</p>
+		</PageHeader>
+	</Band>
 
-		<div class="mt-8 rounded-lg border border-[var(--color-border)] p-6">
-			<p class="text-sm font-semibold">If you only want to read a few</p>
-			<ol class="mt-3 space-y-1 text-sm">
-				{
-					govern.shortlist.map((doc: { title: string; summary: string; href: string }) => (
-						<li>
-							<a href={doc.href} class="font-medium text-[var(--color-accent)] hover:underline">
-								{doc.title}
-							</a>{' '}
-							<span class="text-[var(--color-text-muted)]">— {doc.summary}</span>
-						</li>
-					))
-				}
-			</ol>
-		</div>
+	<Band tone="deep" compact>
+		<span class="label text-[var(--color-accent)]">Start here</span>
+		<h2 class="mt-3.5 text-[1.5rem]">If you only want to read a few</h2>
+		<ol class="mt-6 border-t border-[var(--color-rule)]">
+			{
+				govern.shortlist.map((doc: Doc, i: number) => (
+					<li class="grid items-baseline gap-x-8 gap-y-1 border-b border-[var(--color-rule)] py-4 md:grid-cols-[3rem_20rem_1fr]">
+						<span class="data text-[0.78125rem] text-[var(--color-accent)]">
+							{String(i + 1).padStart(2, '0')}
+						</span>
+						<a href={doc.href} class="text-[0.9375rem] font-semibold hover:text-[var(--color-accent)]">
+							{doc.title}
+						</a>
+						<span class="text-[0.875rem] text-[var(--color-muted)]">{doc.summary}</span>
+					</li>
+				))
+			}
+		</ol>
 
-		<div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+		<div class="mt-7 flex flex-wrap gap-x-7 gap-y-2">
 			{
 				govern.companionGuides.map((guide: { title: string; href: string }) => (
-					<a href={guide.href} class="font-medium text-[var(--color-accent)] hover:underline">
+					<a href={guide.href} class="onward text-[0.875rem]">
 						{guide.title} <span aria-hidden="true">&rsaquo;</span>
 					</a>
 				))
@@ -42,35 +56,33 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 		</div>
 	</Band>
 
-	<Band raised>
-		{
-			govern.groups.map(
-				(group: {
-					name: string
-					documents: { title: string; summary: string; href: string }[]
-				}) => (
-					<div class="mb-10 last:mb-0">
-						<h2 class="text-sm font-semibold tracking-wide text-[var(--color-text-muted)] uppercase">
-							{group.name}
-						</h2>
-						<ul class="mt-3 space-y-3">
+	<Band>
+		<h2 class="text-[1.6875rem]">Every document</h2>
+		<div class="mt-8 grid gap-y-10">
+			{
+				govern.groups.map((group: { name: string; documents: Doc[] }) => (
+					<div>
+						<h3 class="label">{group.name}</h3>
+						<ul class="mt-3 border-t border-[var(--color-rule)]">
 							{group.documents.map((doc) => (
-								<li class="border-b border-[var(--color-border)] pb-3">
-									<a href={doc.href} class="font-medium hover:text-[var(--color-accent)]">
+								<li class="grid items-baseline gap-x-8 gap-y-1 border-b border-[var(--color-rule)] py-3.5 md:grid-cols-[22rem_1fr]">
+									<a
+										href={doc.href}
+										class="text-[0.9375rem] font-semibold hover:text-[var(--color-accent)]"
+									>
 										{doc.title}
 									</a>
-									<p class="mt-1 text-sm text-[var(--color-text-muted)]">{doc.summary}</p>
+									<span class="text-[0.875rem] text-[var(--color-muted)]">{doc.summary}</span>
 								</li>
 							))}
 						</ul>
 					</div>
-				)
-			)
-		}
-		<a
-			href={govern.repoHref}
-			class="inline-block font-medium text-[var(--color-accent)] hover:underline"
-			>Browse the full repository <span aria-hidden="true">&rsaquo;</span></a
-		>
+				))
+			}
+		</div>
+
+		<a href={govern.repoHref} class="onward mt-9 inline-block">
+			Browse the full repository <span aria-hidden="true">&rsaquo;</span>
+		</a>
 	</Band>
 </BaseLayout>
