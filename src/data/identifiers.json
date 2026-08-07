@@ -1,0 +1,54 @@
+{
+	"lsuNote": "Liquid staking units have no single address by design — each validator mints its own. They're converted to their XRD-equivalent at the snapshot taken when each vote opens.",
+	"lsuMethodHref": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/parameters/dao-parameters-registry.md",
+	"governance": [
+		{
+			"function": "Governance smart-contract component",
+			"identifier": "component_rdx1cp90ys553uwxuckev249x5wezucqru0u4qr7qdxdc9tlpmnh93242k",
+			"verifyHref": "https://dashboard.radixdlt.com/component/component_rdx1cp90ys553uwxuckev249x5wezucqru0u4qr7qdxdc9tlpmnh93242k"
+		},
+		{
+			"function": "Master Badge",
+			"identifier": "resource_rdx1nt4gugcmzpajreu75g2ul2whcpa48cdyn0h8n8x8zl5c0gstxn8gvd",
+			"verifyHref": "https://dashboard.radixdlt.com/resource/resource_rdx1nt4gugcmzpajreu75g2ul2whcpa48cdyn0h8n8x8zl5c0gstxn8gvd"
+		},
+		{
+			"function": "Owner Badge (governance admin)",
+			"identifier": "resource_rdx1ng4c5k872hvhr379n0z0x6ht2n0guugns4jeh6mck9y28cu432xvc4",
+			"verifyHref": "https://dashboard.radixdlt.com/resource/resource_rdx1ng4c5k872hvhr379n0z0x6ht2n0guugns4jeh6mck9y28cu432xvc4"
+		},
+		{
+			"function": "Governance package",
+			"identifier": "package_rdx1p49s2442esdzs7wet7wucpagnftctml8aecc6a74q67r8r023u4dzn",
+			"verifyHref": "https://dashboard.radixdlt.com/package/package_rdx1p49s2442esdzs7wet7wucpagnftctml8aecc6a74q67r8r023u4dzn"
+		},
+		{
+			"function": "Voting-power resource — XRD",
+			"identifier": "resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd",
+			"verifyHref": "https://dashboard.radixdlt.com/resource/resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd"
+		}
+	],
+	"treasury": [
+		{
+			"function": "Primary multi-signature treasury account",
+			"status": "pending"
+		},
+		{
+			"function": "Operational treasury pool",
+			"status": "pending",
+			"note": "If established by Governance Proposal."
+		},
+		{
+			"function": "Reserve treasury pool",
+			"status": "pending",
+			"note": "If established by Governance Proposal."
+		},
+		{
+			"function": "Grants pool",
+			"status": "pending",
+			"note": "If established by Governance Proposal."
+		},
+		{ "function": "Emergency Safe Address", "status": "pending" }
+	],
+	"sourceHref": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/on-chain-identifiers-and-verification-policy.md"
+}

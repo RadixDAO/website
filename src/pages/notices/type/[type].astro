@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content'
+import Band from '../../../components/Band.astro'
+import NoticeCard from '../../../components/NoticeCard.astro'
+import { NOTICE_TYPES, noticeTypeLabel } from '../../../data/notice-types'
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+
+export async function getStaticPaths() {
+  const notices = await getCollection('notices')
+  return NOTICE_TYPES.map((t) => ({
+    params: { type: t.value },
+    props: {
+      notices: notices
+        .filter((n) => n.data.type === t.value)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    }
+  }))
+}
+
+const { type } = Astro.params
+const { notices } = Astro.props
+const label = noticeTypeLabel(type as string)
+---
+
+<BaseLayout title={`${label} — Notices`} description={`All ${label.toLowerCase()} items in the DAO's official record.`}>
+	<Band>
+		<a href="/notices/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+			>&larr; All notices</a
+		>
+		<h1 class="mt-3 text-3xl font-bold md:text-4xl">{label}</h1>
+	</Band>
+	<Band raised>
+		{
+			notices.length > 0 ? (
+				<div>
+					{notices.map((notice: (typeof notices)[number]) => (
+						<NoticeCard
+							type={notice.data.type}
+							title={notice.data.title}
+							href={`/notices/${notice.id}/`}
+							pubDate={notice.data.pubDate}
+						/>
+					))}
+				</div>
+			) : (
+				<p class="text-sm text-[var(--color-text-muted)]">No items of this type have been published yet.</p>
+			)
+		}
+	</Band>
+</BaseLayout>

@@ -1,0 +1,41 @@
+---
+import Band from '../components/Band.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="Contact" description="How to reach a person, file a veto, or raise a concern.">
+	<Band>
+		<h1 class="text-3xl font-bold md:text-4xl">Reach a person</h1>
+
+		<div class="mt-10 grid gap-6 md:grid-cols-2">
+			<div class="rounded-lg border border-[var(--color-border)] p-6">
+				<h2 class="font-bold">File a veto</h2>
+				<p class="mt-2 text-sm text-[var(--color-text-muted)]">
+					Email a filing to either monitored address below within the challenge window. It's
+					published exactly as received.
+				</p>
+				<p class="mt-3 font-mono text-sm text-[var(--color-accent)]">veto@radix.community</p>
+				<p class="font-mono text-sm text-[var(--color-accent)]">rac@radix.community</p>
+			</div>
+
+			<div class="rounded-lg border border-[var(--color-border)] p-6">
+				<h2 class="font-bold">Raise a concern</h2>
+				<p class="mt-2 text-sm text-[var(--color-text-muted)]">
+					To request a Community Accountability Hearing or raise a dispute, use the same
+					monitored addresses. Read the process before you file.
+				</p>
+				<a
+					href="https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/dispute-resolution-and-arbitration-policy.md"
+					class="mt-3 inline-block text-sm font-medium text-[var(--color-accent)] hover:underline"
+					>How disputes are resolved <span aria-hidden="true">&rsaquo;</span></a
+				>
+			</div>
+		</div>
+
+		<div class="mt-6 rounded-lg border border-dashed border-[var(--color-border)] p-6 text-sm text-[var(--color-text-muted)]">
+			A discussion platform hasn't been designated yet, so there's nowhere to send you for
+			open-ended conversation about a proposal in progress. That's a known gap — check back once
+			the DAO names one.
+		</div>
+	</Band>
+</BaseLayout>

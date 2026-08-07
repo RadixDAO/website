@@ -1,0 +1,89 @@
+---
+import { getCollection, getEntry, render } from 'astro:content'
+import Band from '../../components/Band.astro'
+import { noticeTypeLabel } from '../../data/notice-types'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+export async function getStaticPaths() {
+  const notices = await getCollection('notices')
+  return notices.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry }
+  }))
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+
+const allNotices = await getCollection('notices')
+const supersededBy = allNotices.find((n) => n.data.supersedes === entry.id)
+const supersedes = entry.data.supersedes
+  ? await getEntry('notices', entry.data.supersedes)
+  : undefined
+---
+
+<BaseLayout title={entry.data.title} description={`${noticeTypeLabel(entry.data.type)} published ${entry.data.pubDate.toISOString().slice(0, 10)}.`}>
+	<Band>
+		<a href="/notices/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+			>&larr; All notices</a
+		>
+		<div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-muted)]">
+			<span class="rounded-full border border-[var(--color-border)] px-2 py-0.5 uppercase tracking-wide">
+				{noticeTypeLabel(entry.data.type)}
+			</span>
+			<time datetime={entry.data.pubDate.toISOString()}>
+				Published {entry.data.pubDate.toISOString()}
+			</time>
+		</div>
+		<h1 class="mt-3 text-3xl font-bold md:text-4xl">{entry.data.title}</h1>
+
+		{
+			entry.data.noticeDate && (
+				<p class="mt-4 rounded-lg border border-[var(--color-accent)]/40 bg-[var(--color-bg-raised)] p-4 text-sm font-medium">
+					Notice date: <time datetime={entry.data.noticeDate.toISOString()}>{entry.data.noticeDate.toISOString().slice(0, 10)}</time> — this date starts a countdown before the change described here can take effect.
+				</p>
+			)
+		}
+
+		{
+			supersedes && (
+				<p class="mt-4 rounded-lg border border-[var(--color-border)] p-4 text-sm">
+					This corrects{' '}
+					<a href={`/notices/${supersedes.id}/`} class="text-[var(--color-accent)] hover:underline">
+						{supersedes.data.title}
+					</a>
+					.
+				</p>
+			)
+		}
+
+		{
+			supersededBy && (
+				<p class="mt-4 rounded-lg border border-[var(--color-accent)] bg-[var(--color-bg-raised)] p-4 text-sm font-medium">
+					Superseded by{' '}
+					<a href={`/notices/${supersededBy.id}/`} class="text-[var(--color-accent)] hover:underline">
+						{supersededBy.data.title}
+					</a>
+					. This item is kept exactly as originally published.
+				</p>
+			)
+		}
+	</Band>
+
+	<Band raised>
+		{
+			entry.data.verbatim ? (
+				<div>
+					<p class="mb-4 text-xs text-[var(--color-text-muted)]">
+						Published verbatim, exactly as received — unedited, unformatted, untruncated.
+					</p>
+					<div class="verbatim">{entry.body}</div>
+				</div>
+			) : (
+				<div class="max-w-2xl space-y-4 text-[var(--color-text-muted)] [&_a]:text-[var(--color-accent)] [&_a]:underline [&_strong]:text-[var(--color-text)]">
+					<Content />
+				</div>
+			)
+		}
+	</Band>
+</BaseLayout>

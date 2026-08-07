@@ -1,0 +1,31 @@
+{
+	"asOf": "The DAO has not yet formed. No seat below has been filled.",
+	"council": {
+		"name": "Radix Accountability Council",
+		"seatMin": 5,
+		"seatMax": 7,
+		"termMonths": 6,
+		"filled": 0,
+		"seats": []
+	},
+	"delegatedFunctions": [
+		{
+			"name": "Treasury Signers",
+			"note": "Up to 5, one per seated Council member holding the function."
+		},
+		{ "name": "Governance Operator", "note": "" },
+		{ "name": "Legal Signatory", "note": "" },
+		{ "name": "Compliance Liaison", "note": "" },
+		{ "name": "Web2 Custodian", "note": "" }
+	],
+	"workingGroups": [
+		{
+			"name": "Strategic Coordination Working Group",
+			"status": "Charter pending adoption by governance vote"
+		},
+		{
+			"name": "Governance & Legal Working Group",
+			"status": "Charter pending adoption by governance vote"
+		}
+	]
+}

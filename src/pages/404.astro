@@ -1,0 +1,16 @@
+---
+import Band from '../components/Band.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="Page not found" description="This page doesn't exist.">
+	<Band>
+		<h1 class="text-3xl font-bold md:text-4xl">Page not found</h1>
+		<p class="mt-4 max-w-xl text-[var(--color-text-muted)]">
+			There's nothing at this address. The official record lives at
+			<a href="/notices/" class="text-[var(--color-accent)] hover:underline"> Notices & Records</a
+			>, or start again from <a href="/" class="text-[var(--color-accent)] hover:underline">home</a
+			>.
+		</p>
+	</Band>
+</BaseLayout>

@@ -1,0 +1,133 @@
+name: Verify and deploy
+
+on:
+  pull_request:
+  merge_group:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm check
+      - run: pnpm build
+      - run: pnpm content:freshness
+
+  deploy-production:
+    name: Deploy production Worker
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec wrangler deploy
+
+  deploy-preview:
+    name: Deploy PR preview Worker
+    needs: verify
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_PREVIEW_ALIAS: pr-${{ github.event.pull_request.number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Create preview deployment
+        id: deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.payload.pull_request.head.sha,
+              environment: `preview/pr-${context.payload.pull_request.number}`,
+              description: `Deploying Cloudflare Worker preview for PR #${context.payload.pull_request.number}`,
+              auto_merge: false,
+              required_contexts: [],
+              transient_environment: true,
+              production_environment: false,
+            })
+            core.setOutput("id", deployment.data.id)
+      - name: Upload preview version
+        id: upload
+        run: |
+          output=$(pnpm exec wrangler versions upload --preview-alias "$CLOUDFLARE_PREVIEW_ALIAS" 2>&1) || {
+            printf '%s\n' "$output"
+            exit 1
+          }
+          printf '%s\n' "$output"
+          preview_url=$(printf '%s\n' "$output" | grep -oE "https://${CLOUDFLARE_PREVIEW_ALIAS}-[^[:space:]]*\.workers\.dev" | head -n1)
+          : "${preview_url:?Wrangler did not return the named preview URL}"
+          echo "preview-url=$preview_url" >> "$GITHUB_OUTPUT"
+      - name: Publish preview URL
+        uses: actions/github-script@v7
+        env:
+          DEPLOYMENT_ID: ${{ steps.deployment.outputs.id }}
+          PREVIEW_URL: ${{ steps.upload.outputs.preview-url }}
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: Number(process.env.DEPLOYMENT_ID),
+              state: "success",
+              environment_url: process.env.PREVIEW_URL,
+              description: "Cloudflare Worker preview is ready",
+              auto_inactive: true,
+            })
+      - name: Mark preview deployment as failed
+        if: failure() && steps.deployment.outputs.id
+        uses: actions/github-script@v7
+        env:
+          DEPLOYMENT_ID: ${{ steps.deployment.outputs.id }}
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: Number(process.env.DEPLOYMENT_ID),
+              state: "failure",
+              description: "Cloudflare Worker preview deployment failed",
+            })

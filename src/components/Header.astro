@@ -1,0 +1,28 @@
+---
+const navItems = [
+  { label: 'Participate', href: '/participate/' },
+  { label: 'Govern', href: '/govern/' },
+  { label: 'Verify', href: '/verify/' }
+]
+---
+
+<header class="border-b border-[var(--color-border)]">
+	<div class="mx-auto flex max-w-(--container-content) items-center justify-between px-6 py-5">
+		<a href="/" class="font-[family-name:var(--font-heading)] text-lg font-bold tracking-tight">
+			Radix <span style="color: var(--color-accent)">DAO</span>
+		</a>
+		<nav aria-label="Primary">
+			<ul class="flex gap-8 text-sm">
+				{
+					navItems.map((item) => (
+						<li>
+							<a href={item.href} class="hover:text-[var(--color-accent)]">
+								{item.label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+	</div>
+</header>

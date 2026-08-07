@@ -1,0 +1,127 @@
+---
+import { getCollection, getEntry, render } from 'astro:content'
+import Band from '../components/Band.astro'
+import Card from '../components/Card.astro'
+import NoticeCard from '../components/NoticeCard.astro'
+import StatusBand from '../components/StatusBand.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+const status = await getEntry('status', 'status')
+const { Content: StatusBody } = status
+  ? await render(status)
+  : { Content: null }
+
+const notices = (await getCollection('notices'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3)
+---
+
+<BaseLayout
+	title="Home"
+	description="Radix DAO is a non-profit DAO, owned and directed by the people who hold XRD."
+>
+	<!-- Band 1: Hero -->
+	<Band>
+		<p class="text-sm font-semibold tracking-wide text-[var(--color-accent)] uppercase">Radix DAO</p>
+		<h1 class="mt-3 max-w-3xl text-4xl font-bold md:text-5xl">The community governs Radix.</h1>
+		<p class="mt-4 max-w-xl text-[var(--color-text-muted)]">
+			A non-profit DAO registered in the Marshall Islands, owned and directed by the people who
+			hold XRD. Anyone can propose. Anyone can vote.
+		</p>
+		<div class="mt-6 flex flex-wrap gap-6">
+			<a href="/participate/" class="font-medium text-[var(--color-accent)] hover:underline"
+				>Take part <span aria-hidden="true">&rsaquo;</span></a
+			>
+			<a href="/govern/" class="font-medium hover:underline"
+				>Read the rules <span aria-hidden="true">&rsaquo;</span></a
+			>
+		</div>
+	</Band>
+
+	<!-- Band 2: Status -->
+	<Band raised divider>
+		{
+			status && StatusBody && (
+				<StatusBand
+					phase={status.data.phase}
+					headline={status.data.headline}
+					linkHref={status.data.linkHref}
+					linkText={status.data.linkText}
+				>
+					<StatusBody />
+				</StatusBand>
+			)
+		}
+	</Band>
+
+	<!-- Band 3: Three pillars -->
+	<Band>
+		<h2 class="text-2xl font-bold">Three ways to take part</h2>
+		<div class="mt-8 grid gap-6 md:grid-cols-3">
+			<Card title="Propose" href="/participate/" linkText="How proposals work">
+				Anyone holding XRD can put a proposal to the DAO — no minimum holding, no approval step.
+				It moves through discussion, a temperature check, then a binding vote.
+			</Card>
+			<Card title="Vote" href="/participate/" linkText="How voting works">
+				Voting power is your XRD plus your liquid staking units, measured at a snapshot taken
+				when each vote opens.
+			</Card>
+			<Card title="Stand for election" href="/participate/" linkText="How elections work">
+				Council seats and Working Group Steward roles are elected, time-bound, and renewable by
+				vote.
+			</Card>
+		</div>
+	</Band>
+
+	<!-- Band 4: Verify -->
+	<Band raised divider>
+		<h2 class="text-2xl font-bold">Don't take our word for it.</h2>
+		<p class="mt-3 max-w-xl text-[var(--color-text-muted)]">
+			Every governance contract and treasury account the DAO uses is published with a link to
+			check it yourself on the Radix Dashboard.
+		</p>
+		<a href="/verify/" class="mt-4 inline-block font-medium text-[var(--color-accent)] hover:underline"
+			>Verify the addresses <span aria-hidden="true">&rsaquo;</span></a
+		>
+	</Band>
+
+	<!-- Band 5: Latest notices -->
+	<Band>
+		<div class="flex items-baseline justify-between">
+			<h2 class="text-2xl font-bold">Latest notices</h2>
+			<a href="/notices/" class="text-sm font-medium text-[var(--color-accent)] hover:underline"
+				>Full record <span aria-hidden="true">&rsaquo;</span></a
+			>
+		</div>
+		<div class="mt-6">
+			{
+				notices.length > 0 ? (
+					notices.map((notice) => (
+						<NoticeCard
+							type={notice.data.type}
+							title={notice.data.title}
+							href={`/notices/${notice.id}/`}
+							pubDate={notice.data.pubDate}
+						/>
+					))
+				) : (
+					<p class="text-sm text-[var(--color-text-muted)]">
+						No notices have been published yet — nothing is operative until GP-PRE-1 passes. Read
+						the full record once it starts.
+					</p>
+				)
+			}
+		</div>
+	</Band>
+
+	<!-- Band 6: Contact / community -->
+	<Band raised>
+		<h2 class="text-2xl font-bold">Reach the people running this</h2>
+		<p class="mt-3 max-w-xl text-[var(--color-text-muted)]">
+			See who currently holds each elected and delegated role, and how to reach them.
+		</p>
+		<a href="/contact/" class="mt-4 inline-block font-medium text-[var(--color-accent)] hover:underline"
+			>Contact &rarr; <span aria-hidden="true">&rsaquo;</span></a
+		>
+	</Band>
+</BaseLayout>

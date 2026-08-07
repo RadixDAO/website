@@ -1,0 +1,191 @@
+{
+	"repoHref": "https://github.com/Shadaffy/radix-dao-governance",
+	"shortlist": [
+		{
+			"title": "Proposal & Voting Framework",
+			"summary": "How decisions are made.",
+			"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/proposal-and-voting-framework.md"
+		},
+		{
+			"title": "DAO Parameters Registry",
+			"summary": "All the actual numbers.",
+			"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/parameters/dao-parameters-registry.md"
+		},
+		{
+			"title": "Roles Registry",
+			"summary": "Who's who and which document governs them.",
+			"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/roles-registry.md"
+		}
+	],
+	"companionGuides": [
+		{
+			"title": "Charter Reading Guide",
+			"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/constitutional/charter-reading-guide.md"
+		},
+		{
+			"title": "Policy Library Reading Guide",
+			"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/policy-library-reading-guide.md"
+		},
+		{
+			"title": "Election Methods Guide",
+			"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/election-methods-guide.md"
+		}
+	],
+	"groups": [
+		{
+			"name": "The constitution",
+			"documents": [
+				{
+					"title": "Charter",
+					"summary": "Sets the DAO's principles and structure of authority — what the DAO stands for and who holds power.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/constitutional/charter.md"
+				}
+			]
+		},
+		{
+			"name": "The numbers",
+			"documents": [
+				{
+					"title": "DAO Parameters Registry",
+					"summary": "The single place that holds every adjustable number — voting thresholds, quorums, time limits, budget caps — so they can be updated by vote without touching the core documents.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/parameters/dao-parameters-registry.md"
+				}
+			]
+		},
+		{
+			"name": "How decisions get made and carried out",
+			"documents": [
+				{
+					"title": "Proposal & Voting Framework",
+					"summary": "How a proposal is created, discussed, voted on, and approved — the DAO's core decision-making pipeline.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/proposal-and-voting-framework.md"
+				},
+				{
+					"title": "Execution & Treasury Actions Policy",
+					"summary": "How an approved decision is actually carried out, and who is authorised to execute it.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/execution-and-treasury-actions-policy.md"
+				},
+				{
+					"title": "Treasury Signers Operational Rules",
+					"summary": "The rules for the people who move treasury funds — execution agents with strictly limited authority, not decision-makers.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/treasury-signers-rules.md"
+				},
+				{
+					"title": "On-Chain Identifiers & Verification Policy",
+					"summary": "The public register of the DAO's governance and treasury on-chain addresses — what each one is, how it's used, and a link to verify it on the Radix explorer.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/on-chain-identifiers-and-verification-policy.md"
+				}
+			]
+		},
+		{
+			"name": "The people and roles",
+			"documents": [
+				{
+					"title": "RAC Mandate",
+					"summary": "Defines the Accountability Council — the guardian that makes sure governance processes are followed correctly, without itself becoming a ruler.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/rac-mandate.md"
+				},
+				{
+					"title": "Delegate Mandate",
+					"summary": "Defines the Delegates who perform the DAO's operational jobs (treasury signing, compliance, legal signing, etc.) — again, agents who execute, never govern.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/delegate-mandate.md"
+				},
+				{
+					"title": "Elections & Role Governance Policy",
+					"summary": "How every key role is elected, evaluated, and replaced, keeping all authority time-bound and accountable to voters.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/elections-and-role-governance-policy.md"
+				},
+				{
+					"title": "Working Group Framework",
+					"summary": "How the DAO's execution teams (Working Groups) are created, funded, bounded, and held to their mandates.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/working-group-framework.md"
+				},
+				{
+					"title": "Roles Registry",
+					"summary": "A navigation aid (not a rulebook) that maps every role to the documents that define and govern it.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/roles-registry.md"
+				}
+			]
+		},
+		{
+			"name": "Conduct, integrity, and fairness",
+			"documents": [
+				{
+					"title": "Code of Conduct",
+					"summary": "The minimum standards of behaviour expected of everyone who participates in the DAO.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/code-of-conduct.md"
+				},
+				{
+					"title": "Conflict of Interest Policy",
+					"summary": "When people in positions of authority must disclose personal interests and step back from a decision.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/conflict-of-interest-policy.md"
+				},
+				{
+					"title": "Dispute Resolution & Arbitration Policy",
+					"summary": "How disagreements are resolved fairly — settled at the lowest level where possible, escalating to a vote, and ultimately to legal arbitration.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/dispute-resolution-and-arbitration-policy.md"
+				}
+			]
+		},
+		{
+			"name": "Staying alive in a crisis",
+			"documents": [
+				{
+					"title": "Emergency & Safeguards Policy",
+					"summary": "What counts as an emergency, who may act, and the limits that keep emergency powers exceptional, minimal, temporary, and accountable.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/emergency-and-safeguards-policy.md"
+				},
+				{
+					"title": "Governance Continuity Framework",
+					"summary": "How the DAO keeps governing — or recovers — if a body fails, execution is blocked, or normal processes stop working.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/governance-continuity-framework.md"
+				}
+			]
+		},
+		{
+			"name": "Contributors and their work",
+			"documents": [
+				{
+					"title": "Contributor Compensation Policy",
+					"summary": "How people who do paid work for the DAO are compensated, and how that pay is set, approved, and disclosed.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/contributor-compensation-policy.md"
+				},
+				{
+					"title": "Contributor Onboarding and Offboarding",
+					"summary": "How contributors join and leave cleanly, protecting continuity of work and access control.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/contributor-onboarding-and-offboarding.md"
+				}
+			]
+		},
+		{
+			"name": "Protecting the DAO's code and IP",
+			"documents": [
+				{
+					"title": "Source Code Stewardship Policy",
+					"summary": "How the DAO preserves, maintains, and keeps community control over the software it holds.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/source-code-stewardship-policy.md"
+				},
+				{
+					"title": "Open Source & IP Policy",
+					"summary": "Ensures everything the DAO funds or produces stays an open, reusable public good and can't be privatised.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/open-source-and-ip-policy.md"
+				}
+			]
+		},
+		{
+			"name": "How the rulebook maintains itself",
+			"documents": [
+				{
+					"title": "Governance Maintenance & Upgrade Framework",
+					"summary": "The rules for changing the rules — how governance documents are maintained, amended, and versioned over time.",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/governance-maintenance-and-upgrade-framework.md"
+				},
+				{
+					"title": "Compliance Operations Policy",
+					"summary": "The day-to-day procedures for meeting the Company's legal obligations (identity checks, credential security, handling regulatory demands).",
+					"href": "https://github.com/Shadaffy/radix-dao-governance/blob/master/pending/governance/compliance-operations-policy.md"
+				}
+			]
+		}
+	]
+}

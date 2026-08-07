@@ -1,0 +1,29 @@
+---
+interface Props {
+  /** Alternate background so adjacent bands read as distinct sections. */
+  raised?: boolean
+  /** Render the angled divider under this band (§8.1: angled geometric dividers). */
+  divider?: boolean
+  class?: string
+}
+
+const { raised = false, divider = false, class: className = '' } = Astro.props
+---
+
+<section class:list={[raised ? 'bg-[var(--color-bg-raised)]' : '', 'relative']}>
+	<div class:list={['mx-auto max-w-(--container-content) px-6 py-16 md:py-24', className]}>
+		<slot />
+	</div>
+	{
+		divider && (
+			<svg
+				aria-hidden="true"
+				class="block h-6 w-full text-[var(--color-border)]"
+				preserveAspectRatio="none"
+				viewBox="0 0 100 4"
+			>
+				<polyline points="0,0 55,4 100,0" fill="none" stroke="currentColor" stroke-width="0.5" />
+			</svg>
+		)
+	}
+</section>

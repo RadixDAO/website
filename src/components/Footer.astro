@@ -1,0 +1,40 @@
+---
+const links = [
+  { label: 'About', href: '/about/' },
+  { label: 'People', href: '/people/' },
+  { label: 'Notices & Records', href: '/notices/' },
+  { label: 'Contact', href: '/contact/' }
+]
+---
+
+<footer class="border-t border-[var(--color-border)]">
+	<div class="mx-auto max-w-(--container-content) px-6 py-10">
+		<div class="flex flex-wrap items-center justify-between gap-6">
+			<nav aria-label="Footer">
+				<ul class="flex flex-wrap gap-6 text-sm text-[var(--color-text-muted)]">
+					{
+						links.map((link) => (
+							<li>
+								<a href={link.href} class="hover:text-[var(--color-text)]">
+									{link.label}
+								</a>
+							</li>
+						))
+					}
+					<li><a href="/notices/rss.xml" class="hover:text-[var(--color-text)]">RSS</a></li>
+				</ul>
+			</nav>
+			<a
+				href="https://www.radixdlt.com"
+				class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+			>
+				radixdlt.com &rarr;
+			</a>
+		</div>
+		<p class="mt-8 max-w-2xl text-xs text-[var(--color-text-muted)]">
+			Radix DAO LLC is a non-profit Decentralized Autonomous Organization LLC registered under
+			Marshall Islands law, and a separate legal entity from Radix Publishing Ltd, which operates
+			radixdlt.com.
+		</p>
+	</div>
+</footer>

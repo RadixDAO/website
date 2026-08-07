@@ -1,0 +1,37 @@
+---
+import Band from '../components/Band.astro'
+import Card from '../components/Card.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+// §6.3: do not add a "delegate your vote" card. Delegation is recognised by
+// the Charter but the governance platform doesn't support it yet — it becomes
+// a fifth card here once it does, with no other change required.
+---
+
+<BaseLayout title="Participate" description="How to propose, vote, stand for election, or challenge a decision.">
+	<Band>
+		<h1 class="text-3xl font-bold md:text-4xl">How to take part</h1>
+		<p class="mt-4 max-w-xl text-[var(--color-text-muted)]">
+			Anyone holding XRD can take part. No registration, no minimum holding, no approval from any
+			DAO body.
+		</p>
+		<div class="mt-10 grid gap-6 md:grid-cols-2">
+			<Card title="Make a proposal" href="https://vote.radixdao.org" linkText="Start a proposal">
+				Open to any token holder — no minimum holding, no prior registration, and no approval
+				step. It moves through draft discussion, a temperature check, then a binding vote.
+			</Card>
+			<Card title="Vote" href="https://vote.radixdao.org" linkText="Go to the voting platform">
+				Voting power is your XRD plus your liquid staking units, measured at a snapshot taken
+				when each vote opens.
+			</Card>
+			<Card title="Stand for election" href="/govern/" linkText="Read the elections policy">
+				Council seats and Working Group Steward roles are elected, time-bound, and renewable by
+				vote.
+			</Card>
+			<Card title="Challenge a decision" href="/contact/" linkText="How to file a veto">
+				There is a 48-hour window after a result is published in which any token holder can file
+				a veto.
+			</Card>
+		</div>
+	</Band>
+</BaseLayout>

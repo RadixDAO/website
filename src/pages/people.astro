@@ -1,0 +1,63 @@
+---
+import Band from '../components/Band.astro'
+import roles from '../data/roles.json'
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout
+	title="People"
+	description="Who is accountable for Radix DAO, and how to reach them."
+>
+	<Band>
+		<h1 class="text-3xl font-bold md:text-4xl">Who's accountable</h1>
+		<p class="mt-4 max-w-xl text-[var(--color-text-muted)]">{roles.asOf}</p>
+	</Band>
+
+	<Band raised>
+		<div class="flex items-baseline justify-between">
+			<h2 class="text-xl font-bold">{roles.council.name}</h2>
+			<p class="text-sm text-[var(--color-text-muted)]">
+				{roles.council.filled} of {roles.council.seatMin}–{roles.council.seatMax} seats filled
+			</p>
+		</div>
+		<p class="mt-2 text-sm text-[var(--color-text-muted)]">
+			{roles.council.termMonths}-month terms, elected by token holders.
+		</p>
+		<div class="mt-6 rounded-lg border border-dashed border-[var(--color-border)] p-6 text-sm text-[var(--color-text-muted)]">
+			No seats have been elected yet — the Council election follows constitutional ratification
+			and formation. See <a href="/govern/" class="text-[var(--color-accent)] hover:underline">how elections work</a>.
+		</div>
+	</Band>
+
+	<Band>
+		<h2 class="text-xl font-bold">Delegated Functions</h2>
+		<p class="mt-2 max-w-xl text-sm text-[var(--color-text-muted)]">
+			Allocated by the Council from among its own seated members, not separately elected — shown
+			here attached to whoever holds the Council seat, once seats exist.
+		</p>
+		<ul class="mt-6 grid gap-3 md:grid-cols-2">
+			{
+				roles.delegatedFunctions.map((fn: { name: string; note: string }) => (
+					<li class="rounded-lg border border-[var(--color-border)] p-4 text-sm">
+						<p class="font-semibold">{fn.name}</p>
+						<p class="mt-1 text-[var(--color-text-muted)]">{fn.note || 'Not yet allocated.'}</p>
+					</li>
+				))
+			}
+		</ul>
+	</Band>
+
+	<Band raised>
+		<h2 class="text-xl font-bold">Working Group Stewards</h2>
+		<ul class="mt-6 grid gap-3 md:grid-cols-2">
+			{
+				roles.workingGroups.map((wg: { name: string; status: string }) => (
+					<li class="rounded-lg border border-[var(--color-border)] p-4 text-sm">
+						<p class="font-semibold">{wg.name}</p>
+						<p class="mt-1 text-[var(--color-text-muted)]">{wg.status}</p>
+					</li>
+				))
+			}
+		</ul>
+	</Band>
+</BaseLayout>

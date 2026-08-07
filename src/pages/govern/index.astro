@@ -1,0 +1,76 @@
+---
+import Band from '../../components/Band.astro'
+import govern from '../../data/govern.json'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+---
+
+<BaseLayout
+	title="Govern"
+	description="Every governance document, in one plain-language line each, linking to the source repository."
+>
+	<Band>
+		<h1 class="text-3xl font-bold md:text-4xl">The actual rules</h1>
+		<p class="mt-4 max-w-xl text-[var(--color-text-muted)]">
+			This site never reproduces a rule — every line below is a plain-language pointer to the
+			operative document in the DAO's governance repository, the single source of truth.
+		</p>
+
+		<div class="mt-8 rounded-lg border border-[var(--color-border)] p-6">
+			<p class="text-sm font-semibold">If you only want to read a few</p>
+			<ol class="mt-3 space-y-1 text-sm">
+				{
+					govern.shortlist.map((doc: { title: string; summary: string; href: string }) => (
+						<li>
+							<a href={doc.href} class="font-medium text-[var(--color-accent)] hover:underline">
+								{doc.title}
+							</a>{' '}
+							<span class="text-[var(--color-text-muted)]">— {doc.summary}</span>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+
+		<div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+			{
+				govern.companionGuides.map((guide: { title: string; href: string }) => (
+					<a href={guide.href} class="font-medium text-[var(--color-accent)] hover:underline">
+						{guide.title} <span aria-hidden="true">&rsaquo;</span>
+					</a>
+				))
+			}
+		</div>
+	</Band>
+
+	<Band raised>
+		{
+			govern.groups.map(
+				(group: {
+					name: string
+					documents: { title: string; summary: string; href: string }[]
+				}) => (
+					<div class="mb-10 last:mb-0">
+						<h2 class="text-sm font-semibold tracking-wide text-[var(--color-text-muted)] uppercase">
+							{group.name}
+						</h2>
+						<ul class="mt-3 space-y-3">
+							{group.documents.map((doc) => (
+								<li class="border-b border-[var(--color-border)] pb-3">
+									<a href={doc.href} class="font-medium hover:text-[var(--color-accent)]">
+										{doc.title}
+									</a>
+									<p class="mt-1 text-sm text-[var(--color-text-muted)]">{doc.summary}</p>
+								</li>
+							))}
+						</ul>
+					</div>
+				)
+			)
+		}
+		<a
+			href={govern.repoHref}
+			class="inline-block font-medium text-[var(--color-accent)] hover:underline"
+			>Browse the full repository <span aria-hidden="true">&rsaquo;</span></a
+		>
+	</Band>
+</BaseLayout>
