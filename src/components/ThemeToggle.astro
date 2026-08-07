@@ -1,0 +1,71 @@
+---
+// The initial theme is decided by the blocking inline script in
+// BaseLayout's <head> (reads localStorage, falls back to system
+// preference) so there's no flash of the wrong theme, and it always sets
+// data-theme explicitly. This button just lets the visitor override that
+// and remembers the choice — the icon shown is the mode you'd switch *to*.
+---
+
+<button
+	id="theme-toggle"
+	type="button"
+	aria-label="Toggle theme"
+	class="grid size-9 place-items-center rounded-full border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-accent)] hover:text-[var(--color-text)]"
+>
+	<svg
+		aria-hidden="true"
+		class="theme-toggle-icon-sun size-4"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<circle cx="12" cy="12" r="4"></circle>
+		<path
+			d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+		></path>
+	</svg>
+	<svg
+		aria-hidden="true"
+		class="theme-toggle-icon-moon size-4"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path>
+	</svg>
+</button>
+
+<style>
+	/* Show the icon for the mode a click would switch *to*: sun while dark
+	   (tap for light), moon while light (tap for dark). */
+	:root[data-theme="dark"] .theme-toggle-icon-moon,
+	:root[data-theme="light"] .theme-toggle-icon-sun {
+		display: none;
+	}
+</style>
+
+<script>
+	const STORAGE_KEY = "radix-dao-theme"
+	const button = document.getElementById("theme-toggle")
+
+	function syncLabel() {
+		const current = document.documentElement.dataset.theme === "light" ? "light" : "dark"
+		button?.setAttribute("aria-label", current === "light" ? "Switch to dark mode" : "Switch to light mode")
+	}
+
+	button?.addEventListener("click", () => {
+		const current = document.documentElement.dataset.theme === "light" ? "light" : "dark"
+		const next = current === "light" ? "dark" : "light"
+		document.documentElement.dataset.theme = next
+		localStorage.setItem(STORAGE_KEY, next)
+		syncLabel()
+	})
+
+	syncLabel()
+</script>

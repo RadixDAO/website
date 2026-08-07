@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from './ThemeToggle.astro'
+
 const navItems = [
   { label: 'Participate', href: '/participate/' },
   { label: 'Govern', href: '/govern/' },
@@ -11,18 +13,21 @@ const navItems = [
 		<a href="/" class="font-[family-name:var(--font-heading)] text-lg font-bold tracking-tight">
 			Radix <span style="color: var(--color-accent)">DAO</span>
 		</a>
-		<nav aria-label="Primary">
-			<ul class="flex gap-8 text-sm">
-				{
-					navItems.map((item) => (
-						<li>
-							<a href={item.href} class="hover:text-[var(--color-accent)]">
-								{item.label}
-							</a>
-						</li>
-					))
-				}
-			</ul>
-		</nav>
+		<div class="flex items-center gap-6">
+			<nav aria-label="Primary">
+				<ul class="flex gap-8 text-sm">
+					{
+						navItems.map((item) => (
+							<li>
+								<a href={item.href} class="hover:text-[var(--color-accent)]">
+									{item.label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+			<ThemeToggle />
+		</div>
 	</div>
 </header>

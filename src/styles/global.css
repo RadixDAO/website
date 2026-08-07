@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-	/* Dark charcoal base + high-contrast text, per the brief's "carry over from radixdlt.com" (§8.1) */
+	/* Dark charcoal base + high-contrast text, per the brief's "carry over from radixdlt.com" (§8.1).
+	   This is the default: no stored preference, system prefers dark, or JS disabled. */
 	--color-bg: #0a0a0b;
 	--color-bg-raised: #131316;
 	--color-border: #262629;
@@ -21,12 +22,53 @@
 	--container-content: 72rem;
 }
 
+/* Light mode via system preference. An explicit [data-theme] choice below
+   always wins regardless of source order, since only one data-theme value
+   ever matches at once. Accent is darkened from the dark-mode value to hold
+   AA contrast (4.5:1+) against a white background. */
+@media (prefers-color-scheme: light) {
+	:root {
+		--color-bg: #ffffff;
+		--color-bg-raised: #f4f4f3;
+		--color-border: #dcdcda;
+		--color-text: #16161a;
+		--color-text-muted: #55555c;
+		--color-accent: #b45309;
+		--color-accent-text: #ffffff;
+	}
+}
+
+/* Explicit user choice, set by the theme-toggle script in BaseLayout.astro. */
+:root[data-theme="dark"] {
+	--color-bg: #0a0a0b;
+	--color-bg-raised: #131316;
+	--color-border: #262629;
+	--color-text: #f5f5f6;
+	--color-text-muted: #a3a3a8;
+	--color-accent: #e0a640;
+	--color-accent-text: #1a1206;
+}
+
+:root[data-theme="light"] {
+	--color-bg: #ffffff;
+	--color-bg-raised: #f4f4f3;
+	--color-border: #dcdcda;
+	--color-text: #16161a;
+	--color-text-muted: #55555c;
+	--color-accent: #b45309;
+	--color-accent-text: #ffffff;
+}
+
 @layer base {
 	html {
 		background: var(--color-bg);
 		color: var(--color-text);
 		font-family: var(--font-body);
 		-webkit-font-smoothing: antialiased;
+		color-scheme: light dark;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
 	}
 
 	body {

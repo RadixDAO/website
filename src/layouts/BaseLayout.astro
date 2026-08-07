@@ -15,6 +15,24 @@ const { title, description } = Astro.props
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
+		<script is:inline>
+			// Blocking, runs before first paint, so there's no flash of the wrong
+			// theme: pick a stored preference if there is one, otherwise follow
+			// system preference. Always sets data-theme explicitly (see
+			// ThemeToggle.astro and the [data-theme] rules in global.css).
+			;(function () {
+				try {
+					var stored = localStorage.getItem('radix-dao-theme')
+					var theme =
+						stored === 'light' || stored === 'dark'
+							? stored
+							: window.matchMedia('(prefers-color-scheme: light)').matches
+								? 'light'
+								: 'dark'
+					document.documentElement.dataset.theme = theme
+				} catch (e) {}
+			})()
+		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<title>{title} · Radix DAO</title>

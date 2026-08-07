@@ -13,9 +13,7 @@
 	},
 	// Custom domain requires a radixdao.org zone in whichever Cloudflare
 	// account ends up DAO-controlled.
-	// "routes": [
-	//   { "pattern": "www.radixdao.org", "custom_domain": true }
-	// ],
+	"routes": [{ "pattern": "radixdao.org", "custom_domain": true }],
 	"workers_dev": true,
 	"preview_urls": true,
 	"observability": {
