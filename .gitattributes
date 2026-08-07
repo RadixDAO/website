@@ -1,0 +1,12 @@
+# Git for Windows ships with core.autocrlf=true, which hands Windows
+# contributors a CRLF working tree. Biome's formatter then reports every
+# tracked file as misformatted and `pnpm verify` fails before it reaches a
+# single real check. Normalising here fixes it for everyone, permanently.
+* text=auto eol=lf
+
+# Executed through bash by the pnpm `prepare` step and by git itself. CRLF
+# breaks the shebang line and the hook dies with a "bad interpreter" error.
+*.sh text eol=lf
+.githooks/* text eol=lf
+
+favicon.ico binary
