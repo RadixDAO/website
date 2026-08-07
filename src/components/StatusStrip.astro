@@ -1,0 +1,48 @@
+---
+import { getEntry, render } from 'astro:content'
+
+// §10 and the acceptance criteria: the status is the single element most likely
+// to become wrong, and an out-of-date homepage here is actively misleading. So
+// it doesn't sit in the middle of one page — it runs across the top of every
+// page, above the fold, in the accent.
+//
+// Still edited in exactly one place: src/content/site/status.md. A non-developer
+// changes it through GitHub's web UI in well under a minute (see PUBLISHING.md).
+interface Props {
+  /** Full renders the body copy; condensed is the one-line sitewide variant. */
+  variant?: 'full' | 'condensed'
+}
+
+const { variant = 'condensed' } = Astro.props
+
+const status = await getEntry('status', 'status')
+const { Content: StatusBody } = status
+  ? await render(status)
+  : { Content: null }
+---
+
+{
+	status && (
+		<div class="border-b border-[var(--color-rule)] bg-[var(--color-accent-soft)]">
+			<div class="mx-auto flex max-w-(--container-shell) flex-wrap items-center gap-x-5 gap-y-2 px-6 py-2.5 md:px-8">
+				<span class="data rounded-[3px] bg-[var(--color-accent)] px-2 py-[3px] text-[0.6875rem] font-medium tracking-[0.09em] text-[var(--color-on-accent)] uppercase">
+					{status.data.phase}
+				</span>
+
+				<p class="text-[0.84375rem] text-[var(--color-ink)]">{status.data.headline}</p>
+
+				<a href={status.data.linkHref} class="onward ml-auto text-[0.84375rem] whitespace-nowrap">
+					{status.data.linkText} <span aria-hidden="true">&rsaquo;</span>
+				</a>
+			</div>
+
+			{variant === 'full' && StatusBody && (
+				<div class="mx-auto max-w-(--container-shell) px-6 pb-5 md:px-8">
+					<div class="copy max-w-[62ch] text-[0.90625rem]">
+						<StatusBody />
+					</div>
+				</div>
+			)}
+		</div>
+	)
+}

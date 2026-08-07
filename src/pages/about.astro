@@ -1,6 +1,28 @@
 ---
 import Band from '../components/Band.astro'
+import PageHeader from '../components/PageHeader.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
+
+// The framework's central idea, rendered as a chain rather than a card grid:
+// authority flows one way, and the shape should say so.
+const chain = [
+  {
+    name: 'Token holders',
+    role: 'Propose and vote on everything.'
+  },
+  {
+    name: 'Accountability Council',
+    role: 'Elected. Guards the process, does not rule it.'
+  },
+  {
+    name: 'Delegated Functions',
+    role: 'Council members carrying out specific jobs — treasury, legal, compliance, Web2.'
+  },
+  {
+    name: 'Working Groups',
+    role: 'Elected Stewards executing within an approved budget.'
+  }
+]
 ---
 
 <BaseLayout
@@ -8,56 +30,55 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 	description="What kind of organisation Radix DAO LLC is, and how authority is structured."
 >
 	<Band>
-		<h1 class="text-3xl font-bold md:text-4xl">What Radix DAO is</h1>
-		<div class="prose-body mt-6 max-w-2xl space-y-4 text-[var(--color-text-muted)]">
-			<p>
-				Radix DAO LLC is a non-profit Decentralized Autonomous Organization registered under
-				Marshall Islands law. It exists to hold and direct the resources the community
-				contributes to Radix's public goods, under rules the community itself sets and can
-				change by vote.
-			</p>
-			<p>
-				At formation it is <strong class="text-[var(--color-text)]">member-managed</strong> and
-				community governance is <strong class="text-[var(--color-text)]">advisory</strong>. It
-				becomes fully community-governed at the Activation Date, once the framework is ratified
-				and a Council is elected.
-			</p>
-			<p>
-				The organisation runs on one repeated idea: <strong class="text-[var(--color-text)]"
-					>execution bodies execute, they do not govern.</strong
-				> Token holders decide what happens. Elected roles carry it out, on a leash they can be voted
-				off of.
-			</p>
-		</div>
-		<a
-			href="/govern/"
-			class="mt-6 inline-block font-medium text-[var(--color-accent)] hover:underline"
-			>Read the governance framework <span aria-hidden="true">&rsaquo;</span></a
-		>
+		<PageHeader question="What kind of organisation is this?" heading="What Radix DAO is">
+			<div class="copy mt-6 text-[1.0625rem]">
+				<p>
+					Radix DAO LLC is a non-profit Decentralized Autonomous Organization registered under
+					Marshall Islands law. It exists to hold and direct the resources the community
+					contributes to Radix's public goods, under rules the community itself sets and can
+					change by vote.
+				</p>
+				<p>
+					At formation it is <strong>member-managed</strong> and community governance is
+					<strong>advisory</strong>. It becomes fully community-governed at the Activation Date,
+					once the framework is ratified and a Council is elected.
+				</p>
+			</div>
+		</PageHeader>
+
+		<a href="/govern/" class="onward mt-7 inline-block">
+			Read the governance framework <span aria-hidden="true">&rsaquo;</span>
+		</a>
 	</Band>
 
-	<Band raised>
-		<h2 class="text-xl font-bold">How authority flows</h2>
-		<ol class="mt-6 grid gap-4 md:grid-cols-4">
-			<li class="rounded-lg border border-[var(--color-border)] p-4 text-sm">
-				<p class="font-semibold">Token holders</p>
-				<p class="mt-1 text-[var(--color-text-muted)]">Propose and vote on everything.</p>
-			</li>
-			<li class="rounded-lg border border-[var(--color-border)] p-4 text-sm">
-				<p class="font-semibold">Accountability Council</p>
-				<p class="mt-1 text-[var(--color-text-muted)]">Elected. Guards the process, doesn't rule it.</p>
-			</li>
-			<li class="rounded-lg border border-[var(--color-border)] p-4 text-sm">
-				<p class="font-semibold">Delegated Functions</p>
-				<p class="mt-1 text-[var(--color-text-muted)]">Council members carrying out specific jobs — treasury, legal, compliance, Web2.</p>
-			</li>
-			<li class="rounded-lg border border-[var(--color-border)] p-4 text-sm">
-				<p class="font-semibold">Working Groups</p>
-				<p class="mt-1 text-[var(--color-text-muted)]">Elected Stewards executing within an approved budget.</p>
-			</li>
+	<Band tone="deep">
+		<span class="label text-[var(--color-accent)]">The central idea</span>
+		<h2 class="mt-3.5 max-w-[22ch] text-[1.875rem]">
+			Execution bodies execute. They do not govern.
+		</h2>
+		<p class="mt-4 max-w-[52ch] text-[var(--color-muted)]">
+			Token holders decide what happens. Elected roles carry it out, on a leash they can be voted
+			off of.
+		</p>
+	</Band>
+
+	<Band>
+		<h2 class="text-[1.6875rem]">How authority flows</h2>
+		<ol class="mt-7 border-t border-[var(--color-rule)]">
+			{
+				chain.map((link, i) => (
+					<li class="grid items-baseline gap-x-8 gap-y-1 border-b border-[var(--color-rule)] py-5 md:grid-cols-[3rem_14rem_1fr]">
+						<span class="data text-[0.78125rem] text-[var(--color-accent)]">
+							{String(i + 1).padStart(2, '0')}
+						</span>
+						<span class="font-semibold">{link.name}</span>
+						<span class="text-[0.9375rem] text-[var(--color-muted)]">{link.role}</span>
+					</li>
+				))
+			}
 		</ol>
-		<a href="/people/" class="mt-6 inline-block font-medium text-[var(--color-accent)] hover:underline"
-			>See who holds these roles today <span aria-hidden="true">&rsaquo;</span></a
-		>
+		<a href="/people/" class="onward mt-7 inline-block">
+			See who holds these roles today <span aria-hidden="true">&rsaquo;</span>
+		</a>
 	</Band>
 </BaseLayout>

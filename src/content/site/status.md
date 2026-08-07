@@ -1,8 +1,8 @@
 ---
-phase: "Where things stand"
-headline: "The governance framework has been drafted and is going to the community for ratification."
+phase: "Phase 1 · Pre-formation"
+headline: "Ratification vote pending. Community decisions are advisory until activation."
 linkHref: "/govern/"
-linkText: "Read the framework"
+linkText: "The sequence"
 ---
 
 Nothing in the framework is operative yet. The first vote, constitutional ratification, has not

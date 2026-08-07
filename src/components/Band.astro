@@ -1,29 +1,60 @@
 ---
+// Sections change by ground and rhythm, never by ornament. The angled divider
+// this component used to render is gone: radixdlt.com has no such device, and
+// it read as a rendering fault rather than a design.
 interface Props {
-  /** Alternate background so adjacent bands read as distinct sections. */
-  raised?: boolean
-  /** Render the angled divider under this band (§8.1: angled geometric dividers). */
-  divider?: boolean
+  /**
+   * ground — the default white/near-black page ground.
+   * paper  — a half-step lift, for tables and secondary matter.
+   * deep   — full-bleed navy in white text, the way radixdlt.com uses its deep
+   *          blue. At most twice per page, or it stops meaning anything.
+   */
+  tone?: 'ground' | 'paper' | 'deep'
+  /** Hairline rule at the top of the band. */
+  ruled?: boolean
+  /** Tighter vertical rhythm, for stacked bands on inner pages. */
+  compact?: boolean
   class?: string
 }
 
-const { raised = false, divider = false, class: className = '' } = Astro.props
+const {
+  tone = 'ground',
+  ruled = false,
+  compact = false,
+  class: className = ''
+} = Astro.props
+
+const toneClass = {
+  ground: '',
+  paper: 'bg-[var(--color-paper)]',
+  deep: 'bg-[var(--color-band)] text-white'
+}[tone]
 ---
 
-<section class:list={[raised ? 'bg-[var(--color-bg-raised)]' : '', 'relative']}>
-	<div class:list={['mx-auto max-w-(--container-content) px-6 py-16 md:py-24', className]}>
+<section
+	class:list={[toneClass, ruled ? 'border-t border-[var(--color-rule)]' : '']}
+	data-tone={tone}
+>
+	<div
+		class:list={[
+			'mx-auto max-w-(--container-shell) px-6 md:px-8',
+			compact ? 'py-12 md:py-14' : 'py-16 md:py-20',
+			className
+		]}
+	>
 		<slot />
 	</div>
-	{
-		divider && (
-			<svg
-				aria-hidden="true"
-				class="block h-6 w-full text-[var(--color-border)]"
-				preserveAspectRatio="none"
-				viewBox="0 0 100 4"
-			>
-				<polyline points="0,0 55,4 100,0" fill="none" stroke="currentColor" stroke-width="0.5" />
-			</svg>
-		)
-	}
 </section>
+
+<style>
+	/* Inside a deep band the token-driven colours would fight the navy ground,
+	   so remap them once here rather than overriding at every call site. */
+	section[data-tone='deep'] {
+		--color-ink: #ffffff;
+		--color-muted: #c3cedd;
+		--color-accent: #f272c6;
+		--color-rule: #1b3a63;
+		--color-rule-strong: #2d5285;
+		--color-paper: #001a3d;
+	}
+</style>

@@ -1,88 +1,140 @@
+/* Self-hosted, latin subset only. A font CDN is ruled out by the privacy
+   requirement (§9: no third-party trackers, cookieless) — these resolve from
+   node_modules and are bundled at build time. */
+@import "@fontsource/ibm-plex-sans/latin-400.css";
+@import "@fontsource/ibm-plex-sans/latin-600.css";
+@import "@fontsource/ibm-plex-sans/latin-700.css";
+@import "@fontsource/ibm-plex-mono/latin-400.css";
+@import "@fontsource/ibm-plex-mono/latin-500.css";
 @import "tailwindcss";
 
+/*
+  DESIGN SYSTEM — "the register"
+  ------------------------------
+  radixdlt.com sells a technology; this site attests to a present state. So the
+  organising idea is a public register: dated rows, hairline rules, and every
+  independently verifiable fact (timestamps, addresses, phases, seat counts) set
+  in monospace.
+
+  Family resemblance to radixdlt.com is carried by its actual current design —
+  white ground, navy ink (#003057), IBM Plex Sans — not by §8.1 of the brief,
+  which describes a version of that site retired years ago.
+
+  Separation (§8.2) is carried by three things: the accent, the wordmark, and
+  the mono layer. IBM Plex Mono is the same superfamily as the parent's face,
+  which is exactly the point — obviously related, never mistakable.
+*/
+
 @theme {
-	/* Dark charcoal base + high-contrast text, per the brief's "carry over from radixdlt.com" (§8.1).
-	   This is the default: no stored preference, system prefers dark, or JS disabled. */
-	--color-bg: #0a0a0b;
-	--color-bg-raised: #131316;
-	--color-border: #262629;
-	--color-text: #f5f5f6;
-	--color-text-muted: #a3a3a8;
+	/* Ground */
+	--color-ground: #ffffff;
+	--color-paper: #f5f6fa;
+	--color-rule: #dde3ec;
+	--color-rule-strong: #b9c4d4;
 
-	/* Placeholder accent — deliberately distinct from Radix cyan (§8.2.1). Swap this one
-	   value once a final color is chosen; nothing else needs to change. */
-	--color-accent: #e0a640;
-	--color-accent-text: #1a1206;
+	/* Ink — Radix's own navy (#003057), one notch deeper. 14.4:1 on white. */
+	--color-ink: #012b4e;
+	--color-muted: #51637a;
 
-	--font-heading:
-		"Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-		sans-serif;
-	--font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+	/* Ratify Magenta. Derived from #CE0D98, the magenta stop of Radix's own
+	   three-stop brand gradient (magenta → blue → green). radixdlt.com builds
+	   its identity on the blue and the green; the magenta is unclaimed, which
+	   makes it provably in-family and provably not Radix's own colour.
+	   Darkened from #CE0D98 to clear AA as text (6.98:1) and as a fill. */
+	--color-accent: #a80c7c;
+	--color-accent-soft: #fbeaf4;
+	--color-on-accent: #ffffff;
 
-	--container-content: 72rem;
+	/* Full-bleed deep sections, the way radixdlt.com uses its deep blue. */
+	--color-band: #00204a;
+	--color-band-ink: #ffffff;
+	--color-band-muted: #c3cedd;
+
+	/* Semantic, kept separate from the accent so state never reads as brand. */
+	--color-live: #00734f;
+	--color-pending: #8a5a00;
+
+	--font-sans:
+		"IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+	--font-mono:
+		"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+	/* Matches radixdlt.com's 1280px shell. */
+	--container-shell: 75rem;
 }
 
-/* Light mode via system preference. An explicit [data-theme] choice below
-   always wins regardless of source order, since only one data-theme value
-   ever matches at once. Accent is darkened from the dark-mode value to hold
-   AA contrast (4.5:1+) against a white background. */
-@media (prefers-color-scheme: light) {
+/* Dark theme. Given the same attention as light rather than an inversion:
+   the accent is lifted to #F272C6 (6.1:1 on the band, 7.1:1 on the ground)
+   and the ground is a navy-biased near-black, not a neutral charcoal. */
+@media (prefers-color-scheme: dark) {
 	:root {
-		--color-bg: #ffffff;
-		--color-bg-raised: #f4f4f3;
-		--color-border: #dcdcda;
-		--color-text: #16161a;
-		--color-text-muted: #55555c;
-		--color-accent: #b45309;
-		--color-accent-text: #ffffff;
+		--color-ground: #0a1226;
+		--color-paper: #0e1a33;
+		--color-rule: #1e2e4d;
+		--color-rule-strong: #33476e;
+		--color-ink: #e6edf7;
+		--color-muted: #a9bad1;
+		--color-accent: #f272c6;
+		--color-accent-soft: #2a0c22;
+		--color-on-accent: #0a1226;
+		--color-live: #3ddc9a;
+		--color-pending: #e8b54a;
 	}
 }
 
-/* Explicit user choice, set by the theme-toggle script in BaseLayout.astro. */
+/* Explicit user choice, set before first paint by BaseLayout's inline script. */
 :root[data-theme="dark"] {
-	--color-bg: #0a0a0b;
-	--color-bg-raised: #131316;
-	--color-border: #262629;
-	--color-text: #f5f5f6;
-	--color-text-muted: #a3a3a8;
-	--color-accent: #e0a640;
-	--color-accent-text: #1a1206;
+	--color-ground: #0a1226;
+	--color-paper: #0e1a33;
+	--color-rule: #1e2e4d;
+	--color-rule-strong: #33476e;
+	--color-ink: #e6edf7;
+	--color-muted: #a9bad1;
+	--color-accent: #f272c6;
+	--color-accent-soft: #2a0c22;
+	--color-on-accent: #0a1226;
+	--color-live: #3ddc9a;
+	--color-pending: #e8b54a;
 }
 
 :root[data-theme="light"] {
-	--color-bg: #ffffff;
-	--color-bg-raised: #f4f4f3;
-	--color-border: #dcdcda;
-	--color-text: #16161a;
-	--color-text-muted: #55555c;
-	--color-accent: #b45309;
-	--color-accent-text: #ffffff;
+	--color-ground: #ffffff;
+	--color-paper: #f5f6fa;
+	--color-rule: #dde3ec;
+	--color-rule-strong: #b9c4d4;
+	--color-ink: #012b4e;
+	--color-muted: #51637a;
+	--color-accent: #a80c7c;
+	--color-accent-soft: #fbeaf4;
+	--color-on-accent: #ffffff;
+	--color-live: #00734f;
+	--color-pending: #8a5a00;
 }
 
 @layer base {
 	html {
-		background: var(--color-bg);
-		color: var(--color-text);
-		font-family: var(--font-body);
+		background: var(--color-ground);
+		color: var(--color-ink);
+		font-family: var(--font-sans);
 		-webkit-font-smoothing: antialiased;
 		color-scheme: light dark;
-		transition:
-			background-color 0.15s ease,
-			color 0.15s ease;
 	}
 
 	body {
 		min-height: 100vh;
+		font-size: 1.0625rem;
+		line-height: 1.62;
 	}
 
 	h1,
 	h2,
 	h3,
 	h4 {
-		font-family: var(--font-heading);
+		font-family: var(--font-sans);
 		font-weight: 700;
-		letter-spacing: -0.01em;
-		line-height: 1.1;
+		line-height: 1.12;
+		letter-spacing: -0.02em;
+		text-wrap: balance;
 	}
 
 	a {
@@ -91,16 +143,85 @@
 
 	:focus-visible {
 		outline: 2px solid var(--color-accent);
-		outline-offset: 2px;
+		outline-offset: 3px;
+		border-radius: 2px;
 	}
 
-	/* Verbatim-published notice content (e.g. veto filings) must render exactly as
-	   received — no prose typography reflow, wrapping normalized, nothing stripped. */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			transition-duration: 0.01ms !important;
+		}
+	}
+}
+
+@layer components {
+	/* The mono layer. Anything a reader could independently check — a
+	   timestamp, an address, a phase, a seat count — is set in this. */
+	.data {
+		font-family: var(--font-mono);
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Small uppercase mono label. Used for eyebrows, table headers and tags. */
+	.label {
+		font-family: var(--font-mono);
+		font-size: 0.71875rem;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--color-muted);
+	}
+
+	/* Onward link. One chevron, and only on links that leave the page. */
+	.onward {
+		font-weight: 600;
+		color: var(--color-accent);
+	}
+
+	.onward:hover {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	/* Long-form body copy inside a Band — notice bodies and About. */
+	.copy {
+		max-width: 68ch;
+		color: var(--color-muted);
+	}
+
+	.copy > * + * {
+		margin-top: 1rem;
+	}
+
+	.copy strong {
+		color: var(--color-ink);
+		font-weight: 600;
+	}
+
+	.copy a {
+		color: var(--color-accent);
+		font-weight: 500;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	/* Verbatim-published notice content (veto filings, §7.3) must render exactly
+	   as received — nothing reflowed, wrapped, reformatted or stripped. */
 	.verbatim {
 		white-space: pre-wrap;
-		font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
-		font-size: 0.875em;
-		line-height: 1.6;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		line-height: 1.65;
+		color: var(--color-ink);
+	}
+
+	/* Wide content — register and identifier tables — scrolls inside itself so
+	   the page body never scrolls sideways. */
+	.table-scroll {
+		overflow-x: auto;
 	}
 }
 
@@ -111,9 +232,9 @@
 		top: -3rem;
 		z-index: 50;
 		background: var(--color-accent);
-		color: var(--color-accent-text);
+		color: var(--color-on-accent);
 		padding: 0.5rem 1rem;
-		border-radius: 0.25rem;
+		border-radius: 3px;
 		transition: top 0.15s ease;
 	}
 

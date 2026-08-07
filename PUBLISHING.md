@@ -70,12 +70,25 @@ correction. The correction shows a "this corrects…" banner linking back.
 
 ---
 
-## Updating the status band on the home page
+## Updating the status strip
 
-The home page's "Where things stand" band is one small file:
-`src/content/site/status.md`. Edit it directly on GitHub (pencil icon), change the `phase`,
-`headline`, `linkHref`, or `linkText` lines, or the paragraph below the `---`, and commit. It's
-live as soon as the commit reaches `main` and the deploy finishes (a couple of minutes).
+The pink strip across the top of every page is one small file: `src/content/site/status.md`. Edit
+it directly on GitHub (pencil icon), change any of the lines below, and commit. It is live as soon
+as the commit reaches `main` and the deploy finishes (a couple of minutes).
+
+| Line | What it is | Example |
+|---|---|---|
+| `phase` | The short tag in the pink box. Keep it short — it must fit on one line on a phone. | `Phase 1 · Pre-formation` |
+| `headline` | The one sentence everyone sees, on every page. | `Ratification vote pending. Community decisions are advisory until activation.` |
+| `linkHref` | Where the link at the right goes. | `/govern/` |
+| `linkText` | The words of that link. | `The sequence` |
+
+The paragraph below the second `---` shows only on the home page, under the strip. Use it for the
+longer explanation; keep the `headline` above for the part that must be true everywhere.
+
+**This is the thing most likely to go out of date.** If the DAO's status changes and this strip
+still says otherwise, every page on the site is wrong — so it is worth changing first, before
+anything else.
 
 ---
 

@@ -1,14 +1,18 @@
 ---
 import Footer from '../components/Footer.astro'
 import Header from '../components/Header.astro'
+import StatusStrip from '../components/StatusStrip.astro'
 import '../styles/global.css'
 
 interface Props {
   title: string
   description: string
+  /** Home renders the status strip with its body copy; every other page gets
+      the one-line variant. */
+  statusVariant?: 'full' | 'condensed'
 }
 
-const { title, description } = Astro.props
+const { title, description, statusVariant = 'condensed' } = Astro.props
 ---
 
 <!doctype html>
@@ -17,24 +21,31 @@ const { title, description } = Astro.props
 		<meta charset="utf-8" />
 		<script is:inline>
 			// Blocking, runs before first paint, so there's no flash of the wrong
-			// theme: pick a stored preference if there is one, otherwise follow
-			// system preference. Always sets data-theme explicitly (see
-			// ThemeToggle.astro and the [data-theme] rules in global.css).
+			// theme: a stored preference wins, otherwise follow the system. Light
+			// is the fallback — it is the design's primary ground, and the record
+			// is long-form matter that reads better on it.
 			;(function () {
 				try {
 					var stored = localStorage.getItem('radix-dao-theme')
 					var theme =
 						stored === 'light' || stored === 'dark'
 							? stored
-							: window.matchMedia('(prefers-color-scheme: light)').matches
-								? 'light'
-								: 'dark'
+							: window.matchMedia('(prefers-color-scheme: dark)').matches
+								? 'dark'
+								: 'light'
 					document.documentElement.dataset.theme = theme
 				} catch (e) {}
 			})()
 		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="alternate icon" href="/favicon.ico" sizes="48x48" />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="Radix DAO — Notices & Records"
+			href="/notices/rss.xml"
+		/>
 		<title>{title} · Radix DAO</title>
 		<meta name="description" content={description} />
 		<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
@@ -44,6 +55,7 @@ const { title, description } = Astro.props
 	</head>
 	<body>
 		<a href="#main" class="skip-link">Skip to content</a>
+		<StatusStrip variant={statusVariant} />
 		<Header />
 		<main id="main">
 			<slot />

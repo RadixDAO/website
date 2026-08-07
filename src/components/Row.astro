@@ -1,0 +1,32 @@
+---
+// Replaces the old Card. Where the previous build reached for a bordered box in
+// a three-up grid, this reaches for a register row: a mono key, the substance,
+// and the onward link in its own column.
+//
+// Rule 5.3 still holds — at most three sentences, ending in a link. The row
+// gives roughly that much space before it stops looking right, which is the
+// point.
+interface Props {
+  /** Short mono key in the left column. One or two words. */
+  key: string
+  /** Lead sentence, set in ink. */
+  lead: string
+  href: string
+  linkText: string
+}
+
+const { key, lead, href, linkText } = Astro.props
+---
+
+<div
+	class="grid items-start gap-x-8 gap-y-2 border-b border-[var(--color-rule)] py-6 md:grid-cols-[8rem_1fr_11rem]"
+>
+	<div class="label pt-1 text-[var(--color-accent)]">{key}</div>
+	<div class="text-[0.96875rem] leading-relaxed text-[var(--color-muted)]">
+		<strong class="mb-1 block text-[1.03125rem] font-semibold text-[var(--color-ink)]">{lead}</strong>
+		<slot />
+	</div>
+	<a href={href} class="onward pt-1 text-sm md:text-right">
+		{linkText} <span aria-hidden="true">&rsaquo;</span>
+	</a>
+</div>
