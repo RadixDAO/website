@@ -7,7 +7,7 @@ export const NOTICE_TYPES = [
   { value: 'vacancy-notice', label: 'Vacancy notice' },
   { value: 'reduced-quorum-notice', label: 'Reduced-quorum activation notice' },
   { value: 'identifier-register-change', label: 'Identifier register change' },
-  { value: 'veto-filing', label: 'Veto filing' },
+  { value: 'compliance-challenge', label: 'Compliance challenge' },
   {
     value: 'regulatory-demand-notice',
     label: 'Regulatory or legal demand notice'

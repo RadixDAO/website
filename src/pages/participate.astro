@@ -11,7 +11,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 
 <BaseLayout
 	title="Participate"
-	description="How to propose, vote, stand for election, or challenge a decision."
+	description="How to propose, vote, stand for election, or challenge a decision for breaking a rule."
 >
 	<Band>
 		<PageHeader question="How do I take part?" heading="How to take part">
@@ -50,12 +50,14 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 			</Row>
 			<Row
 				key="Challenge"
-				lead="A result can be challenged after it is published."
+				lead="A published result can be challenged for breaking a rule. There is no veto."
 				href="/contact/"
-				linkText="How to file a veto"
+				linkText="How to file a challenge"
 			>
-				There is a 48-hour window in which any token holder can file a veto. Filings are published
-				to the record exactly as received.
+				For 48 hours after a result is published, any holder of at least 0.1% of voting power can
+				file a compliance challenge: the claim that the decision breaks a specific rule, not that
+				it is unwise. The Accountability Council decides whether a rule was broken — if none was,
+				the decision stands. Filings are published to the record exactly as received.
 			</Row>
 		</div>
 	</Band>

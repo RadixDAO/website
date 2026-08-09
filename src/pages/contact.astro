@@ -6,7 +6,10 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 const mailboxes = ['veto@radix.community', 'rac@radix.community']
 ---
 
-<BaseLayout title="Contact" description="How to reach a person, file a veto, or raise a concern.">
+<BaseLayout
+	title="Contact"
+	description="How to reach a person, file a compliance challenge, or raise a concern."
+>
 	<Band>
 		<PageHeader question="How do I reach a person?" heading="Reach a person">
 			<p class="mt-5 max-w-[52ch] text-[1.0625rem] text-[var(--color-muted)]">
@@ -28,12 +31,18 @@ const mailboxes = ['veto@radix.community', 'rac@radix.community']
 
 		<div class="mt-10 grid gap-x-12 gap-y-8 md:grid-cols-2">
 			<div>
-				<h2 class="text-[1.125rem]">File a veto</h2>
+				<h2 class="text-[1.125rem]">File a compliance challenge</h2>
 				<p class="mt-2.5 text-[0.9375rem] text-[var(--color-muted)]">
-					Email a filing to either address within the 48-hour challenge window. It is published
-					to the record exactly as received, with its receipt timestamp, within six hours.
+					If you hold at least 0.1% of voting power and a decision breaks a specific rule, email a
+					filing to either address within 48 hours of the result. The <span class="data">veto@</span>
+					mailbox keeps its old name deliberately, so a filer who remembers the former name still
+					reaches a monitored channel. Filings are published to the record exactly as received,
+					with the receipt timestamp, within six hours.
 				</p>
-				<a href="/notices/type/veto-filing/" class="onward mt-3 inline-block text-[0.875rem]">
+				<a
+					href="/notices/type/compliance-challenge/"
+					class="onward mt-3 inline-block text-[0.875rem]"
+				>
 					See filings on the record <span aria-hidden="true">&rsaquo;</span>
 				</a>
 			</div>

@@ -34,7 +34,7 @@ after it's published** — if something needs correcting, publish a *new* file t
 
 4. Set `type` to whichever of these fits (must match exactly, lowercase, with hyphens):
    `activation-statement`, `council-resolution`, `advisory-acknowledgement`, `vacancy-notice`,
-   `reduced-quorum-notice`, `identifier-register-change`, `veto-filing`,
+   `reduced-quorum-notice`, `identifier-register-change`, `compliance-challenge`,
    `regulatory-demand-notice`, `status-report`, `prior-disclosure-notice`, `delegate-statement`,
    `registry-update`.
 5. Set `pubDate` to the current UTC time in the exact format shown (`YYYY-MM-DDTHH:MM:SSZ`).
@@ -44,12 +44,19 @@ after it's published** — if something needs correcting, publish a *new* file t
 7. Commit directly to `main` (or open a pull request first, if you'd rather have a second person
    check it before it goes live — either works).
 
-### Publishing a veto filing (verbatim, within 6 hours)
+### Publishing a compliance challenge (verbatim, within 6 hours)
 
-Veto filings must be published **exactly as received** — no reformatting, no trimming, no fixing
-typos. Use the same steps above, but:
+A compliance challenge is a filing that a decision breaks a specific rule (Proposal & Voting
+Framework §8.4). Filings arrive at the two Filing Channel addresses — `veto@radix.community` as
+primary, `rac@radix.community` in copy — so that receipt never depends on one role holder. The
+`veto@` name is retained deliberately; it is not a leftover to be tidied up.
 
-- Set `type: veto-filing`.
+Challenge filings must be published **exactly as received** — no reformatting, no trimming, no
+fixing typos. You may not filter, withhold, delay, or edit a filing.
+
+Use the same steps above, but:
+
+- Set `type: compliance-challenge`.
 - Add `verbatim: true` to the frontmatter.
 - Paste the filing's content into the body **completely unchanged** — copy-paste from the email
   exactly as it arrived.
