@@ -125,9 +125,14 @@ const notices = (await getCollection('notices'))
 			them.
 		</p>
 		<p class="data mt-4 text-[0.8125rem] text-[var(--color-muted)]">
-			Accountability Council · {roles.council.filled} of {roles.council.seatMax} seats filled{
-				roles.council.filled === 0 ? ' · not yet elected' : ''
-			}
+			Transition Council · {roles.transitionCouncil.filled} of {
+				roles.transitionCouncil.seatCount
+			} seats filled · elected for the transition, reachable on Telegram
+		</p>
+		<p class="data mt-1.5 text-[0.8125rem] text-[var(--color-muted)]">
+			Permanent Council · {roles.council.filled} of {roles.council.seatMin}&ndash;{
+				roles.council.seatMax
+			} seats filled{roles.council.filled === 0 ? ' · not yet elected' : ''}
 		</p>
 		<div class="mt-6 flex flex-wrap gap-3.5">
 			<a

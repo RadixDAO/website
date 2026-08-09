@@ -1,7 +1,30 @@
 {
-	"asOf": "The DAO has not yet formed. No seat below has been filled.",
+	"asOf": "The DAO has not yet formed. A Transition Council has been elected to establish it and carry it through the transition; the standing Council that succeeds them has not been elected, and no permanent seat below has been filled.",
+	"transitionCouncil": {
+		"name": "Transition Radix Accountability Council",
+		"note": "Elected with a defined mandate: establish the DAO and carry it through the transition. Its seats end when the Permanent Council is seated. Reach any member directly on Telegram.",
+		"standingNote": "Three of the five are also Members of Radix DAO LLC itself, which is member-managed at formation. That is a legal standing in the company, separate from holding a Council seat, and it is marked below.",
+		"seatCount": 5,
+		"filled": 5,
+		"termNote": "Until the Permanent Council is seated",
+		"seats": [
+			{
+				"name": "projectShift",
+				"standing": "LLC Member",
+				"telegram": "@projectShift"
+			},
+			{
+				"name": "√Mr. Peanutbutter",
+				"standing": "LLC Member",
+				"telegram": "@ALFRED_DULAiRE"
+			},
+			{ "name": "Tadkis", "standing": "LLC Member", "telegram": "@tadkis" },
+			{ "name": "avaunt", "telegram": "@Avaunt" },
+			{ "name": "Jazzer", "telegram": "@Jazzer9F" }
+		]
+	},
 	"council": {
-		"name": "Radix Accountability Council",
+		"name": "Permanent Radix Accountability Council",
 		"seatMin": 5,
 		"seatMax": 7,
 		"termMonths": 6,

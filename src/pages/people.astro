@@ -1,30 +1,22 @@
 ---
 import Band from '../components/Band.astro'
 import PageHeader from '../components/PageHeader.astro'
+import SeatTable from '../components/SeatTable.astro'
+import type { Seat } from '../components/SeatTable.astro'
 import roles from '../data/roles.json'
 import BaseLayout from '../layouts/BaseLayout.astro'
 
-// §6.5: this page must render honestly while seats are unfilled — show the
-// seat, show that it is vacant, and link to how it gets filled. An empty page
-// is a failure state; "0 of 7 seats filled" is correct.
-interface Seat {
-  name?: string
-  role?: string
-  termStart?: string
-  termEnd?: string
-  contact?: string
-}
-
+// §6.5: this page must render honestly, which now means showing two bodies at
+// once. Both are elected; they differ in mandate. The Transition Council was
+// elected to stand the DAO up and is seated; the Permanent Council is the
+// standing body under the ratified framework and is empty. They stay in
+// separate tables so the two mandates are not read as one, and the empty seats
+// stay visible rather than being hidden until they are filled.
+const transition = roles.transitionCouncil
 const council = roles.council
-const seats: Seat[] = council.seats ?? []
 
-// Render every seat the Council can hold, filled or not, so the shape of the
-// body is visible before anyone is elected.
-const seatRows = Array.from({ length: council.seatMax }, (_, i) => ({
-  index: i + 1,
-  seat: seats[i],
-  required: i < council.seatMin
-}))
+const transitionSeats: Seat[] = transition.seats ?? []
+const councilSeats: Seat[] = council.seats ?? []
 ---
 
 <BaseLayout title="People" description="Who is accountable for Radix DAO, and how to reach them.">
@@ -36,6 +28,26 @@ const seatRows = Array.from({ length: council.seatMax }, (_, i) => ({
 
 	<Band tone="paper" ruled compact>
 		<div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+			<h2 class="text-[1.375rem]">{transition.name}</h2>
+			<p class="data text-[0.8125rem] text-[var(--color-muted)]">
+				{transition.filled} of {transition.seatCount} seats filled · elected, transitional mandate
+			</p>
+		</div>
+		<p class="mt-3 max-w-[62ch] text-[0.9375rem] text-[var(--color-muted)]">{transition.note}</p>
+		<p class="mt-2.5 max-w-[62ch] text-[0.9375rem] text-[var(--color-muted)]">
+			{transition.standingNote}
+		</p>
+
+		<SeatTable
+			seats={transitionSeats}
+			rowCount={transition.seatCount}
+			termFallback={transition.termNote}
+			vacantLabel="Vacant"
+		/>
+	</Band>
+
+	<Band compact>
+		<div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
 			<h2 class="text-[1.375rem]">{council.name}</h2>
 			<p class="data text-[0.8125rem] text-[var(--color-muted)]">
 				{council.filled} of {council.seatMin}&ndash;{council.seatMax} seats filled · {
@@ -43,74 +55,25 @@ const seatRows = Array.from({ length: council.seatMax }, (_, i) => ({
 				}-month terms
 			</p>
 		</div>
+		<p class="mt-3 max-w-[62ch] text-[0.9375rem] text-[var(--color-muted)]">
+			The standing body under the ratified framework, elected to six-month terms once the transition
+			is complete. Every seat below is open; the Transition Council's seats end on the day these are
+			filled.
+		</p>
 
-		<div class="table-scroll mt-6">
-			<table class="w-full min-w-[36rem] border-collapse text-left">
-				<thead>
-					<tr>
-						<th class="label w-[4rem] border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
-							Seat
-						</th>
-						<th class="label border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">Holder</th>
-						<th class="label w-[14rem] border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
-							Term
-						</th>
-						<th class="label w-[10rem] border-b border-[var(--color-rule)] pb-2.5 font-medium">
-							Contact
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					{
-						seatRows.map((row) => (
-							<tr class:list={[row.seat ? '' : 'opacity-70']}>
-								<td class="data border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.78125rem] text-[var(--color-muted)]">
-									{String(row.index).padStart(2, '0')}
-								</td>
-								<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-middle">
-									{row.seat ? (
-										<span class="text-[0.90625rem] font-semibold">{row.seat.name}</span>
-									) : (
-										<span class="data text-[0.78125rem] text-[var(--color-muted)]">
-											<span
-												class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
-												aria-hidden="true"
-											/>
-											Not yet elected
-											{!row.required && ' · optional seat'}
-										</span>
-									)}
-								</td>
-								<td class="data border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.78125rem] text-[var(--color-muted)]">
-									{row.seat?.termStart ? `${row.seat.termStart} → ${row.seat.termEnd}` : '—'}
-								</td>
-								<td class="border-b border-[var(--color-rule)] py-4 align-middle text-[0.8125rem]">
-									{row.seat?.contact ? (
-										<a href={`mailto:${row.seat.contact}`} class="onward">
-											{row.seat.contact}
-										</a>
-									) : (
-										<span class="text-[var(--color-muted)]">&mdash;</span>
-									)}
-								</td>
-							</tr>
-						))
-					}
-				</tbody>
-			</table>
-		</div>
+		<SeatTable seats={councilSeats} rowCount={council.seatMax} requiredCount={council.seatMin} />
 
 		<a href="/participate/" class="onward mt-6 inline-block text-[0.875rem]">
 			How seats get filled <span aria-hidden="true">&rsaquo;</span>
 		</a>
 	</Band>
 
-	<Band>
+	<Band tone="paper" ruled compact>
 		<h2 class="text-[1.375rem]">Delegated Functions</h2>
 		<p class="mt-3 max-w-[60ch] text-[0.9375rem] text-[var(--color-muted)]">
-			Allocated by the Council from among its own seated members, not separately elected. Each one
-			ends when that member's seat ends, so they are shown attached to a person rather than as
-			standalone offices.
+			Allocated by the Permanent Council from among its own seated members, not separately elected.
+			Each one ends when that member's seat ends, so they are shown attached to a person rather than
+			as standalone offices. The Transition Council holds none of them.
 		</p>
 		<ul class="mt-6 border-t border-[var(--color-rule)]">
 			{
@@ -118,7 +81,7 @@ const seatRows = Array.from({ length: council.seatMax }, (_, i) => ({
 					<li class="grid items-baseline gap-x-8 gap-y-1 border-b border-[var(--color-rule)] py-4 md:grid-cols-[16rem_1fr]">
 						<span class="text-[0.9375rem] font-semibold">{fn.name}</span>
 						<span class="text-[0.875rem] text-[var(--color-muted)]">
-							{fn.note || 'Not yet allocated — no Council seats are filled.'}
+							{fn.note || 'Not yet allocated — allocated by the Permanent Council once elected.'}
 						</span>
 					</li>
 				))
@@ -126,7 +89,7 @@ const seatRows = Array.from({ length: council.seatMax }, (_, i) => ({
 		</ul>
 	</Band>
 
-	<Band tone="paper" ruled compact>
+	<Band compact>
 		<h2 class="text-[1.375rem]">Working Group Stewards</h2>
 		<ul class="mt-6 border-t border-[var(--color-rule)]">
 			{
