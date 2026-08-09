@@ -19,11 +19,17 @@ const status = await getEntry('status', 'status')
 const { Content: StatusBody } = status
   ? await render(status)
   : { Content: null }
+
+// The body copy is worth reading once and then worth getting out of the way —
+// it pushes the masthead and the hero down on every visit. So it collapses to
+// the one-line row after a short read, and the caret brings it back. Rendered
+// expanded and only collapsed by script, so it stays readable without JS.
+const collapsible = variant === 'full' && StatusBody !== null
 ---
 
 {
 	status && (
-		<div class="border-b border-[var(--color-rule)] bg-[var(--color-accent-soft)]">
+		<div class="border-b border-[var(--color-rule)] bg-[var(--color-accent-soft)]" data-status-strip>
 			<div class="mx-auto flex max-w-(--container-shell) flex-wrap items-center gap-x-5 gap-y-2 px-6 py-2.5 md:px-8">
 				<span class="data rounded-[3px] bg-[var(--color-accent)] px-2 py-[3px] text-[0.6875rem] font-medium tracking-[0.09em] text-[var(--color-on-accent)] uppercase">
 					{status.data.phase}
@@ -34,15 +40,127 @@ const { Content: StatusBody } = status
 				<a href={status.data.linkHref} class="onward ml-auto text-[0.84375rem] whitespace-nowrap">
 					{status.data.linkText} <span aria-hidden="true">&rsaquo;</span>
 				</a>
+
+				{collapsible && (
+					<button
+						type="button"
+						id="status-toggle"
+						aria-controls="status-detail"
+						aria-expanded="true"
+						class="grid size-6 place-items-center rounded-full text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+					>
+						<span class="sr-only">Hide the phase note</span>
+						<svg
+							aria-hidden="true"
+							class="size-4"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="m6 9 6 6 6-6"></path>
+						</svg>
+					</button>
+				)}
 			</div>
 
-			{variant === 'full' && StatusBody && (
-				<div class="mx-auto max-w-(--container-shell) px-6 pb-5 md:px-8">
-					<div class="copy max-w-[62ch] text-[0.90625rem]">
-						<StatusBody />
+			{collapsible && (
+				<div id="status-detail" class="status-detail">
+					<div>
+						<div class="mx-auto max-w-(--container-shell) px-6 pb-5 md:px-8">
+							<div class="copy max-w-[62ch] text-[0.90625rem]">
+								<StatusBody />
+							</div>
+						</div>
 					</div>
 				</div>
 			)}
 		</div>
 	)
 }
+
+<style>
+	/* 1fr → 0fr animates a collapse without hard-coding the copy's height, which
+	   changes with the wording in status.md and with the viewport. */
+	.status-detail {
+		display: grid;
+		grid-template-rows: 1fr;
+		transition: grid-template-rows 260ms ease;
+	}
+
+	.status-detail > div {
+		overflow: hidden;
+	}
+
+	.status-detail[data-collapsed] {
+		grid-template-rows: 0fr;
+	}
+
+	#status-toggle svg {
+		transition: transform 240ms ease;
+	}
+
+	/* Points up while open (click to close), down while closed (click to open). */
+	#status-toggle[aria-expanded="true"] svg {
+		transform: rotate(180deg);
+	}
+</style>
+
+<script>
+	const AUTO_COLLAPSE_MS = 10000
+
+	const toggle = document.getElementById("status-toggle")
+	const detail = document.getElementById("status-detail")
+	const strip = toggle?.closest("[data-status-strip]")
+
+	if (toggle && detail && strip) {
+		const label = toggle.querySelector("span")
+		let timer = 0
+
+		function isExpanded() {
+			return toggle?.getAttribute("aria-expanded") === "true"
+		}
+
+		function setExpanded(expanded: boolean) {
+			toggle?.setAttribute("aria-expanded", String(expanded))
+			detail?.toggleAttribute("data-collapsed", !expanded)
+			// Keeps the collapsed copy — and the link inside it — out of the tab
+			// order and off the accessibility tree, which visual hiding alone
+			// would not do.
+			detail?.toggleAttribute("inert", !expanded)
+			if (label) label.textContent = expanded ? "Hide the phase note" : "Show the phase note"
+		}
+
+		function cancelCollapse() {
+			window.clearTimeout(timer)
+			timer = 0
+		}
+
+		function scheduleCollapse() {
+			cancelCollapse()
+			timer = window.setTimeout(() => setExpanded(false), AUTO_COLLAPSE_MS)
+		}
+
+		toggle.addEventListener("click", () => {
+			const next = !isExpanded()
+			setExpanded(next)
+			if (next) {
+				scheduleCollapse()
+			} else {
+				cancelCollapse()
+			}
+		})
+
+		// Don't pull the copy out from under someone who is reading it or has
+		// tabbed into it; the countdown restarts when they leave.
+		strip.addEventListener("pointerenter", cancelCollapse)
+		strip.addEventListener("focusin", cancelCollapse)
+		strip.addEventListener("pointerleave", () => {
+			if (isExpanded()) scheduleCollapse()
+		})
+
+		scheduleCollapse()
+	}
+</script>
