@@ -32,11 +32,11 @@ const notices = (await getCollection('notices'))
 			<span class="label">What is this?</span>
 		</div>
 		<h1 class="mt-4 max-w-[15ch] text-[2.5rem] md:text-[3.25rem]">
-			The community governs Radix.
+			The community now governs Radix.
 		</h1>
 		<p class="mt-5 max-w-[50ch] text-[1.125rem] text-[var(--color-muted)]">
-			A non-profit DAO registered in the Marshall Islands, owned and directed by the people who
-			hold XRD. Anyone can propose. Anyone can vote.
+			A non-profit DAO, soon registered in the Marshall Islands, owned and directed by the people who
+			hold XRD. Anyone can propose and vote.
 		</p>
 		<div class="mt-8 flex flex-wrap gap-3.5">
 			<a
@@ -69,12 +69,13 @@ const notices = (await getCollection('notices'))
 			</Row>
 			<Row
 				key="Vote"
-				lead="Your voting power is your XRD plus your liquid staking units."
+				lead="Your voting power is your XRD, wherever in the network you have deployed it."
 				href="/participate/"
 				linkText="How voting works"
 			>
-				It is measured at a snapshot taken when each vote opens. Votes are cast at
-				vote.radixdao.org.
+				Liquid XRD, validator LSUs, LSULP and eligible DEX liquidity positions all count, for the
+				XRD underneath them. It is measured at a snapshot taken when each vote opens. Votes are
+				cast at vote.radixdao.org.
 			</Row>
 			<Row
 				key="Stand"
@@ -125,9 +126,14 @@ const notices = (await getCollection('notices'))
 			them.
 		</p>
 		<p class="data mt-4 text-[0.8125rem] text-[var(--color-muted)]">
-			Accountability Council · {roles.council.filled} of {roles.council.seatMax} seats filled{
-				roles.council.filled === 0 ? ' · not yet elected' : ''
-			}
+			Transition Council · {roles.transitionCouncil.filled} of {
+				roles.transitionCouncil.seatCount
+			} seats filled · elected for the transition, reachable on Telegram
+		</p>
+		<p class="data mt-1.5 text-[0.8125rem] text-[var(--color-muted)]">
+			Permanent Council · {roles.council.filled} of {roles.council.seatMin}&ndash;{
+				roles.council.seatMax
+			} seats filled{roles.council.filled === 0 ? ' · not yet elected' : ''}
 		</p>
 		<div class="mt-6 flex flex-wrap gap-3.5">
 			<a

@@ -1,0 +1,133 @@
+---
+import TelegramIcon from './TelegramIcon.astro'
+
+// The seat register, shared by both Councils. Extracted from people.astro when
+// the elected Transition Council arrived: two bodies, one shape, so a reader
+// can compare them without re-learning the table.
+export interface Seat {
+  name?: string
+  role?: string
+  /**
+   * Legal standing in Radix DAO LLC, where the holder has one — not an employer
+   * and not a Council role. Rendered as a badge beside the name.
+   */
+  standing?: string
+  /** Telegram username, with or without the leading @. */
+  telegram?: string
+  termStart?: string
+  termEnd?: string
+  contact?: string
+}
+
+interface Props {
+  seats: Seat[]
+  /** How many rows to draw — filled or not. Vacancy is a designed state here. */
+  rowCount: number
+  /** Rows beyond this index are marked optional. Omit where every seat is required. */
+  requiredCount?: number
+  /** Shown in the Term column when a seat carries no dates. */
+  termFallback?: string
+  /** Wording for a seat nobody holds. */
+  vacantLabel?: string
+}
+
+const {
+  seats,
+  rowCount,
+  requiredCount,
+  termFallback = '—',
+  vacantLabel = 'Not yet elected'
+} = Astro.props
+
+const rows = Array.from({ length: rowCount }, (_, i) => ({
+  index: i + 1,
+  seat: seats[i],
+  optional: requiredCount !== undefined && i >= requiredCount
+}))
+
+// Tolerate either "@name" or "name" in the data file.
+const telegramUrl = (handle: string) =>
+  `https://t.me/${handle.replace(/^@/, '')}`
+const telegramLabel = (handle: string) =>
+  handle.startsWith('@') ? handle : `@${handle}`
+---
+
+<div class="table-scroll mt-6">
+	<table class="w-full min-w-[36rem] border-collapse text-left">
+		<thead>
+			<tr>
+				<th class="label w-[4rem] border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
+					Seat
+				</th>
+				<th class="label border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">Holder</th>
+				<th class="label w-[14rem] border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
+					Term
+				</th>
+				<th class="label w-[12rem] border-b border-[var(--color-rule)] pb-2.5 font-medium">
+					Contact
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{
+				rows.map((row) => (
+					<tr class:list={[row.seat ? '' : 'opacity-70']}>
+						<td class="data border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.78125rem] text-[var(--color-muted)]">
+							{String(row.index).padStart(2, '0')}
+						</td>
+						<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-middle">
+							{row.seat ? (
+								<>
+									<span class="text-[0.90625rem] font-semibold">{row.seat.name}</span>
+									{row.seat.standing && (
+										<span class="label ml-2 rounded-[3px] border border-[var(--color-rule-strong)] px-1.5 py-[2px] align-[1px] text-[var(--color-muted)]">
+											{row.seat.standing}
+										</span>
+									)}
+									{row.seat.role && (
+										<span class="mt-1 block text-[0.8125rem] text-[var(--color-muted)]">
+											{row.seat.role}
+										</span>
+									)}
+								</>
+							) : (
+								<span class="data text-[0.78125rem] text-[var(--color-muted)]">
+									<span
+										class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
+										aria-hidden="true"
+									/>
+									{vacantLabel}
+									{row.optional && ' · optional seat'}
+								</span>
+							)}
+						</td>
+						<td class="data border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.78125rem] text-[var(--color-muted)]">
+							{row.seat?.termStart
+								? `${row.seat.termStart} → ${row.seat.termEnd}`
+								: row.seat
+									? termFallback
+									: '—'}
+						</td>
+						<td class="border-b border-[var(--color-rule)] py-4 align-middle text-[0.8125rem]">
+							{row.seat?.telegram ? (
+								<a
+									href={telegramUrl(row.seat.telegram)}
+									class="onward data inline-flex items-center gap-1.5"
+								>
+									<TelegramIcon />
+									{telegramLabel(row.seat.telegram)}
+								</a>
+							) : row.seat?.contact ? (
+								<a href={`mailto:${row.seat.contact}`} class="onward">
+									{row.seat.contact}
+								</a>
+							) : (
+								<span class="text-[var(--color-muted)]">&mdash;</span>
+							)}
+						</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>
