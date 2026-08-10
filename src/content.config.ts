@@ -21,7 +21,7 @@ const notices = defineCollection({
     noticeDate: z.coerce.date().optional(),
     // Slug of the item this one corrects/supersedes (§7.2).
     supersedes: z.string().optional(),
-    // Veto filings and other items that must render exactly as received (§7.3).
+    // Compliance challenges and other items that must render exactly as received (§7.3).
     verbatim: z.boolean().default(false)
   })
 })

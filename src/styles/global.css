@@ -208,7 +208,7 @@
 		text-underline-offset: 3px;
 	}
 
-	/* Verbatim-published notice content (veto filings, §7.3) must render exactly
+	/* Verbatim-published notice content (compliance challenges, §7.3) must render exactly
 	   as received — nothing reflowed, wrapped, reformatted or stripped. */
 	.verbatim {
 		white-space: pre-wrap;
