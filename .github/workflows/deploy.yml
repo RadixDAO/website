@@ -44,6 +44,7 @@ jobs:
     permissions:
       contents: write
       deployments: write
+      pull-requests: write
       statuses: write
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -62,6 +63,54 @@ jobs:
       - name: Find notices added by this push
         id: notices
         run: node scripts/list-changed-notices.mjs "${{ github.event.before }}" "${{ github.sha }}"
+      - name: Report publishing progress on the merged pull request
+        id: deployment-report
+        if: steps.notices.outputs.slugs != ''
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- publishing-deployment -->'
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            const pulls = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+            })
+            const pull = pulls.data.find((candidate) =>
+              candidate.merged_at && candidate.base.ref === context.payload.repository.default_branch
+            )
+
+            if (!pull) {
+              core.warning(`No merged pull request is associated with ${context.sha}.`)
+              return
+            }
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pull.number,
+              per_page: 100,
+            })
+            const existing = comments.find((comment) =>
+              comment.user?.type === 'Bot' && comment.body?.includes(marker)
+            )
+            const body = `${marker}\n⏳ Production publishing is in progress.\n\n[Follow the workflow](${runUrl})`
+            const comment = existing
+              ? await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body,
+                })
+              : await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pull.number,
+                  body,
+                })
+
+            core.setOutput('comment_id', String(comment.data.id))
       - name: Mark live verification as pending
         uses: actions/github-script@v7
         with:
@@ -96,9 +145,10 @@ jobs:
           script: |
             const success = process.env.DEPLOY_JOB_STATUS === 'success'
             const slugs = (process.env.NOTICE_SLUGS || '').split(',').filter(Boolean)
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
             const targetUrl = success && slugs.length === 1
               ? `https://radixdao.org/notices/${slugs[0]}/`
-              : `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+              : runUrl
 
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
@@ -123,6 +173,34 @@ jobs:
                 body: `Published and verified on the Official Venue:\n\n${links}`,
               })
             }
+
+      - name: Update the merged pull request with the publishing result
+        if: always() && steps.deployment-report.outputs.comment_id != ''
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          DEPLOY_JOB_STATUS: ${{ job.status }}
+          NOTICE_SLUGS: ${{ steps.notices.outputs.slugs }}
+          PR_COMMENT_ID: ${{ steps.deployment-report.outputs.comment_id }}
+        with:
+          script: |
+            const success = process.env.DEPLOY_JOB_STATUS === 'success'
+            const slugs = (process.env.NOTICE_SLUGS || '').split(',').filter(Boolean)
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            const marker = '<!-- publishing-deployment -->'
+            const links = slugs
+              .map((slug) => `- https://radixdao.org/notices/${slug}/`)
+              .join('\n')
+            const body = success
+              ? `${marker}\n✅ Published and verified on the Official Venue:\n\n${links}\n\n[View workflow](${runUrl})`
+              : `${marker}\n❌ Production publishing or public verification failed.\n\n[View workflow](${runUrl})`
+
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: Number(process.env.PR_COMMENT_ID),
+              body,
+            })
 
   deploy-preview:
     name: Deploy PR preview Worker

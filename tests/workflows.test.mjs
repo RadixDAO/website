@@ -46,3 +46,15 @@ test('governance freshness is absent from the deployment gate', async () => {
   )
   assert.doesNotMatch(deploy, /content:freshness/)
 })
+
+test('production publishing reports progress on the merged notice pull request', async () => {
+  const deploy = await readFile(
+    new URL('../.github/workflows/deploy.yml', import.meta.url),
+    'utf8'
+  )
+
+  assert.match(deploy, /listPullRequestsAssociatedWithCommit/)
+  assert.match(deploy, /Production publishing is in progress/)
+  assert.match(deploy, /Published and verified on the Official Venue/)
+  assert.match(deploy, /Production publishing or public verification failed/)
+})
