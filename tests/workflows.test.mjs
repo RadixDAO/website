@@ -20,6 +20,15 @@ test('GitHub workflow files contain valid YAML', async () => {
   }
 })
 
+test('notice form quotes timestamp-like example values', async () => {
+  const source = await readFile(
+    new URL('../.github/ISSUE_TEMPLATE/publish-notice.yml', import.meta.url),
+    'utf8'
+  )
+
+  assert.match(source, /placeholder: ["']2026-08-11T14:30:00Z["']/)
+})
+
 test('every Cloudflare credential workflow fails closed outside the canonical repo', async () => {
   for (const file of ['deploy.yml', 'publishing-canary.yml']) {
     const source = await readFile(

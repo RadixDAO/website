@@ -52,7 +52,7 @@ ${options}
     attributes:
       label: Notice date
       description: Optional UTC timestamp for a statutory notice period (YYYY-MM-DDTHH:MM:SSZ).
-      placeholder: 2026-08-11T14:30:00Z
+      placeholder: "2026-08-11T14:30:00Z"
   - type: dropdown
     id: verbatim
     attributes:
