@@ -58,3 +58,29 @@ test('production publishing reports progress on the merged notice pull request',
   assert.match(deploy, /Published and verified on the Official Venue/)
   assert.match(deploy, /Production publishing or public verification failed/)
 })
+
+test('PR checks run from the trusted base workflow but validate the PR commit', async () => {
+  const [deploy, freshness] = await Promise.all([
+    readFile(
+      new URL('../.github/workflows/deploy.yml', import.meta.url),
+      'utf8'
+    ),
+    readFile(
+      new URL('../.github/workflows/content-freshness.yml', import.meta.url),
+      'utf8'
+    )
+  ])
+
+  for (const workflow of [deploy, freshness]) {
+    assert.match(workflow, /pull_request_target/)
+    assert.match(
+      workflow,
+      /github\.event\.pull_request\.head\.sha \|\| github\.sha/
+    )
+  }
+
+  assert.match(
+    deploy,
+    /github\.event\.pull_request\.head\.repo\.full_name == github\.repository/
+  )
+})
