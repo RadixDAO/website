@@ -59,7 +59,7 @@ test('production publishing reports progress on the merged notice pull request',
   assert.match(deploy, /Production publishing or public verification failed/)
 })
 
-test('PR checks run from the trusted base workflow but validate the PR commit', async () => {
+test('notice-only PRs do not trigger the approval-gated PR workflows', async () => {
   const [deploy, freshness] = await Promise.all([
     readFile(
       new URL('../.github/workflows/deploy.yml', import.meta.url),
@@ -72,15 +72,24 @@ test('PR checks run from the trusted base workflow but validate the PR commit', 
   ])
 
   for (const workflow of [deploy, freshness]) {
-    assert.match(workflow, /pull_request_target/)
-    assert.match(
-      workflow,
-      /github\.event\.pull_request\.head\.sha \|\| github\.sha/
-    )
+    assert.match(workflow, /pull_request:\n {4}paths-ignore:/)
+    assert.match(workflow, /src\/content\/notices\/\*\*/)
+    assert.doesNotMatch(workflow, /pull_request_target/)
   }
 
-  assert.match(
-    deploy,
-    /github\.event\.pull_request\.head\.repo\.full_name == github\.repository/
+  assert.match(deploy, /github\.event_name == 'pull_request'/)
+})
+
+test('notice generation validates the site and attaches a preview to its pull request', async () => {
+  const workflow = await readFile(
+    new URL('../.github/workflows/publish-notice-form.yml', import.meta.url),
+    'utf8'
   )
+
+  assert.match(workflow, /pnpm verify/)
+  assert.match(workflow, /publishing\/verify/)
+  assert.match(workflow, /Create preview deployment/)
+  assert.match(workflow, /Cloudflare Worker preview is ready/)
+  assert.match(workflow, /Generated notice passed full validation/)
+  assert.match(workflow, /needs\.authorize\.outputs\.allowed == 'true'/)
 })
