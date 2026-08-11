@@ -9,6 +9,8 @@ import { promisify } from 'node:util'
 const execFileAsync = promisify(execFile)
 
 test('issue form generation preserves body content and stamps a valid server time', async () => {
+  const childEnvironment = { ...process.env }
+  delete childEnvironment.GITHUB_OUTPUT
   const directory = await mkdtemp(path.join(tmpdir(), 'radix-notice-test-'))
   const eventPath = path.join(directory, 'event.json')
   const body = [
@@ -45,7 +47,7 @@ test('issue form generation preserves body content and stamps a valid server tim
     ['scripts/create-notice-from-issue.mjs', eventPath],
     {
       cwd: new URL('..', import.meta.url),
-      env: { ...process.env, NOTICE_OUTPUT_DIRECTORY: directory }
+      env: { ...childEnvironment, NOTICE_OUTPUT_DIRECTORY: directory }
     }
   )
   const result = JSON.parse(stdout)
