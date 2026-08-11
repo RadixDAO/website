@@ -6,7 +6,7 @@ import { noticeTypeLabel } from '../data/notice-types'
 // counterpart to the RSS feed, so third parties can archive the record
 // without scraping HTML (§7.6).
 export async function GET(context: APIContext) {
-  const site = (context.site ?? new URL('https://www.radixdao.org'))
+  const site = (context.site ?? new URL('https://radixdao.org'))
     .toString()
     .replace(/\/$/, '')
   const notices = (await getCollection('notices')).sort(

@@ -13,9 +13,13 @@
 		"preview": "astro preview",
 		"astro": "astro",
 		"check": "astro check",
+		"content:lint": "node scripts/lint-notices.mjs",
 		"format": "biome format --write",
 		"lint": "biome check .",
-		"verify": "biome check . && astro check && astro build && node scripts/check-content-freshness.mjs",
+		"notice-form:generate": "node scripts/generate-notice-form.mjs",
+		"notice-form:check": "node scripts/generate-notice-form.mjs --check",
+		"test": "node --test",
+		"verify": "biome check . && pnpm content:lint && pnpm notice-form:check && astro check && astro build && pnpm test",
 		"setup:git-hooks": "./scripts/setup-git-hooks.sh",
 		"content:freshness": "node scripts/check-content-freshness.mjs",
 		"content:freshness:accept": "node scripts/check-content-freshness.mjs --accept",
@@ -34,6 +38,7 @@
 		"@astrojs/check": "^0.9.10",
 		"@biomejs/biome": "2.3.8",
 		"typescript": "^5.9.3",
-		"wrangler": "^4.120.0"
+		"wrangler": "^4.120.0",
+		"yaml": "^2.9.0"
 	}
 }

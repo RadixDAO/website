@@ -12,7 +12,7 @@ export async function GET(context: APIContext) {
     title: 'Radix DAO — Notices & Records',
     description:
       "The DAO's official record of notices, resolutions, and filings.",
-    site: context.site ?? 'https://www.radixdao.org',
+    site: context.site ?? 'https://radixdao.org',
     items: notices.map((notice) => ({
       title: notice.data.title,
       pubDate: notice.data.pubDate,

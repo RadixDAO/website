@@ -1,0 +1,39 @@
+name: Publishing canary
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canary:
+    name: Verify build, credentials, and live origin
+    if: github.repository == 'RadixDAO/website'
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      PUBLIC_BUILD_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Exercise the complete publication build
+        run: pnpm verify
+      - name: Verify Cloudflare credentials
+        run: pnpm exec wrangler whoami
+      - name: Compile the production upload without deploying
+        run: pnpm exec wrangler deploy --dry-run --outdir=tmp/wrangler-canary
+      - name: Verify the live origin serves the current main commit
+        run: node scripts/check-live-deployment.mjs https://radixdao.org "${{ github.sha }}"

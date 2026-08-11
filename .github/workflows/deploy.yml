@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  deployments: write
 
 jobs:
   verify:
@@ -25,21 +24,33 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - run: pnpm content:lint
+      - run: pnpm notice-form:check
       - run: pnpm check
       - run: pnpm build
-      - run: pnpm content:freshness
+        env:
+          PUBLIC_BUILD_SHA: ${{ github.sha }}
+      - run: pnpm test
 
   deploy-production:
     name: Deploy production Worker
     needs: verify
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >-
+      github.repository == 'RadixDAO/website' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production
+    permissions:
+      contents: write
+      deployments: write
+      statuses: write
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
         with:
           version: 10.25.0
@@ -48,19 +59,84 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Find notices added by this push
+        id: notices
+        run: node scripts/list-changed-notices.mjs "${{ github.event.before }}" "${{ github.sha }}"
+      - name: Mark live verification as pending
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: 'pending',
+              context: 'publishing/live',
+              description: 'Deploying and checking the public origin',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            })
       - run: pnpm build
-      - run: pnpm exec wrangler deploy
+        env:
+          PUBLIC_BUILD_SHA: ${{ github.sha }}
+      - name: Deploy canonical production Worker
+        run: pnpm exec wrangler deploy
+      - name: Verify public origin and new notice permalinks
+        run: >-
+          node scripts/check-live-deployment.mjs
+          https://radixdao.org
+          "${{ github.sha }}"
+          "${{ steps.notices.outputs.slugs }}"
+      - name: Report live result on the commit
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          DEPLOY_JOB_STATUS: ${{ job.status }}
+          NOTICE_SLUGS: ${{ steps.notices.outputs.slugs }}
+        with:
+          script: |
+            const success = process.env.DEPLOY_JOB_STATUS === 'success'
+            const slugs = (process.env.NOTICE_SLUGS || '').split(',').filter(Boolean)
+            const targetUrl = success && slugs.length === 1
+              ? `https://radixdao.org/notices/${slugs[0]}/`
+              : `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: success ? 'success' : 'failure',
+              context: 'publishing/live',
+              description: success
+                ? 'Public origin verified'
+                : 'Deploy or public-origin verification failed',
+              target_url: targetUrl,
+            })
+
+            if (success && slugs.length > 0) {
+              const links = slugs
+                .map((slug) => `- https://radixdao.org/notices/${slug}/`)
+                .join('\n')
+              await github.rest.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: context.sha,
+                body: `Published and verified on the Official Venue:\n\n${links}`,
+              })
+            }
 
   deploy-preview:
     name: Deploy PR preview Worker
     needs: verify
     if: >-
+      github.repository == 'RadixDAO/website' &&
       github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_PREVIEW_ALIAS: pr-${{ github.event.pull_request.number }}
     steps:
       - uses: actions/checkout@v4
@@ -73,6 +149,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+        env:
+          PUBLIC_BUILD_SHA: ${{ github.sha }}
       - name: Create preview deployment
         id: deployment
         uses: actions/github-script@v7
