@@ -60,10 +60,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      deployments: write
       issues: write
       pull-requests: write
-      statuses: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -79,10 +77,9 @@ jobs:
       - name: Generate the notice from the issue form
         id: notice
         run: node scripts/create-notice-from-issue.mjs "$GITHUB_EVENT_PATH"
-      - name: Validate the full site with the generated notice
-        run: pnpm verify
+      - name: Validate generated content
+        run: pnpm content:lint
       - name: Commit the generated notice on a repository branch
-        id: commit
         env:
           BRANCH: ${{ steps.notice.outputs.branch }}
           NOTICE_PATH: ${{ steps.notice.outputs.path }}
@@ -93,9 +90,7 @@ jobs:
           git add -- "$NOTICE_PATH"
           git commit -m "content(notices): draft notice from issue #${{ github.event.issue.number }}"
           git push origin "$BRANCH"
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Open the pull request and close the form issue
-        id: pull
         uses: actions/github-script@v7
         env:
           BRANCH: ${{ steps.notice.outputs.branch }}
@@ -109,9 +104,8 @@ jobs:
               head: process.env.BRANCH,
               base: context.payload.repository.default_branch,
               title: `Publish notice: ${process.env.NOTICE_TITLE}`,
-              body: `Generated from #${context.issue.number}.\n\nFile: \`${process.env.NOTICE_PATH}\`\n\nThe notice passed full site validation. This workflow will add a preview link shortly.`,
+              body: `Generated from #${context.issue.number}.\n\nFile: \`${process.env.NOTICE_PATH}\`\n\nA write-access user must review the content and approve the pull request workflow before merging.`,
             })
-            core.setOutput('number', String(pull.data.number))
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
@@ -125,94 +119,4 @@ jobs:
               issue_number: context.issue.number,
               state: 'closed',
               state_reason: 'completed',
-            })
-      - name: Mark the generated notice as verified
-        uses: actions/github-script@v7
-        env:
-          COMMIT_SHA: ${{ steps.commit.outputs.sha }}
-        with:
-          script: |
-            await github.rest.repos.createCommitStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: process.env.COMMIT_SHA,
-              state: 'success',
-              context: 'publishing/verify',
-              description: 'Generated notice passed full site validation',
-              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-            })
-      - name: Build the notice preview
-        run: pnpm build
-        env:
-          PUBLIC_BUILD_SHA: ${{ steps.commit.outputs.sha }}
-      - name: Create preview deployment
-        id: deployment
-        uses: actions/github-script@v7
-        env:
-          COMMIT_SHA: ${{ steps.commit.outputs.sha }}
-          PR_NUMBER: ${{ steps.pull.outputs.number }}
-        with:
-          script: |
-            const deployment = await github.rest.repos.createDeployment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: process.env.COMMIT_SHA,
-              environment: `preview/pr-${process.env.PR_NUMBER}`,
-              description: `Deploying Cloudflare Worker preview for PR #${process.env.PR_NUMBER}`,
-              auto_merge: false,
-              required_contexts: [],
-              transient_environment: true,
-              production_environment: false,
-            })
-            core.setOutput('id', deployment.data.id)
-      - name: Upload preview version
-        id: upload
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_PREVIEW_ALIAS: pr-${{ steps.pull.outputs.number }}
-        run: |
-          output=$(pnpm exec wrangler versions upload --preview-alias "$CLOUDFLARE_PREVIEW_ALIAS" 2>&1) || {
-            printf '%s\n' "$output"
-            exit 1
-          }
-          printf '%s\n' "$output"
-          preview_url=$(printf '%s\n' "$output" | grep -oE "https://${CLOUDFLARE_PREVIEW_ALIAS}-[^[:space:]]*\.workers\.dev" | head -n1)
-          : "${preview_url:?Wrangler did not return the named preview URL}"
-          echo "preview-url=$preview_url" >> "$GITHUB_OUTPUT"
-      - name: Publish the preview link on the pull request
-        uses: actions/github-script@v7
-        env:
-          DEPLOYMENT_ID: ${{ steps.deployment.outputs.id }}
-          PREVIEW_URL: ${{ steps.upload.outputs.preview-url }}
-          PR_NUMBER: ${{ steps.pull.outputs.number }}
-        with:
-          script: |
-            await github.rest.repos.createDeploymentStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              deployment_id: Number(process.env.DEPLOYMENT_ID),
-              state: 'success',
-              environment_url: process.env.PREVIEW_URL,
-              description: 'Cloudflare Worker preview is ready',
-              auto_inactive: true,
-            })
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: Number(process.env.PR_NUMBER),
-              body: `✅ Generated notice passed full validation.\n\nPreview: ${process.env.PREVIEW_URL}\n\n[View workflow](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
-            })
-      - name: Mark preview deployment as failed
-        if: failure() && steps.deployment.outputs.id
-        uses: actions/github-script@v7
-        env:
-          DEPLOYMENT_ID: ${{ steps.deployment.outputs.id }}
-        with:
-          script: |
-            await github.rest.repos.createDeploymentStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              deployment_id: Number(process.env.DEPLOYMENT_ID),
-              state: 'failure',
-              description: 'Cloudflare Worker preview deployment failed',
             })

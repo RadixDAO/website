@@ -1,9 +1,8 @@
 name: Verify and deploy
 
 on:
-  pull_request:
-    paths-ignore:
-      - "src/content/notices/**"
+  pull_request_target:
+    types: [opened, reopened, synchronize]
   merge_group:
   push:
     branches: ["main"]
@@ -17,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: pnpm/action-setup@v4
         with:
           version: 10.25.0
@@ -31,7 +32,7 @@ jobs:
       - run: pnpm check
       - run: pnpm build
         env:
-          PUBLIC_BUILD_SHA: ${{ github.sha }}
+          PUBLIC_BUILD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       - run: pnpm test
 
   deploy-production:
@@ -209,7 +210,7 @@ jobs:
     needs: verify
     if: >-
       github.repository == 'RadixDAO/website' &&
-      github.event_name == 'pull_request' &&
+      github.event_name == 'pull_request_target' &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
@@ -220,6 +221,8 @@ jobs:
       CLOUDFLARE_PREVIEW_ALIAS: pr-${{ github.event.pull_request.number }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: pnpm/action-setup@v4
         with:
           version: 10.25.0
@@ -230,7 +233,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
         env:
-          PUBLIC_BUILD_SHA: ${{ github.sha }}
+          PUBLIC_BUILD_SHA: ${{ github.event.pull_request.head.sha }}
       - name: Create preview deployment
         id: deployment
         uses: actions/github-script@v7
