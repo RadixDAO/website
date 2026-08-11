@@ -33,6 +33,7 @@ throw new Error(
 )
 
 async function verifyLiveDeployment() {
+  await verifyCanonicalRedirect()
   const build = await fetchJson('/build.json')
   if (build.commit !== expectedCommit) {
     throw new Error(
@@ -51,6 +52,30 @@ async function verifyLiveDeployment() {
       throw new Error(`/notices.json does not contain ${permalink}`)
     }
     await fetchOk(`/notices/${slug}/`)
+  }
+}
+
+async function verifyCanonicalRedirect() {
+  // Local integration tests use HTTP and have no sibling www hostname.
+  if (origin.protocol !== 'https:' || origin.hostname.startsWith('www.')) return
+
+  const source = new URL(origin)
+  source.hostname = `www.${origin.hostname}`
+  source.searchParams.set('publishing_check', Date.now().toString())
+  const response = await fetch(source, {
+    headers: { 'Cache-Control': 'no-cache' },
+    redirect: 'manual',
+    signal: AbortSignal.timeout(15000)
+  })
+  const expected = new URL(source.pathname + source.search, origin).toString()
+
+  if (
+    response.status !== 301 ||
+    response.headers.get('location') !== expected
+  ) {
+    throw new Error(
+      `${source.hostname} did not permanently redirect to ${expected}`
+    )
   }
 }
 
