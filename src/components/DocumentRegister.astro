@@ -1,0 +1,76 @@
+---
+import { inForce, markdownUrl, pdfUrl } from '../data/governance'
+import CopyableDigest from './CopyableDigest.astro'
+
+// The full digest of every activated document, printed in full. This is the
+// value a reader actually compares against, so it is never truncated here —
+// the abbreviated form on /govern/ is for recognition only.
+//
+// Same shape as the on-chain identifier table above it: one row per thing, the
+// verifiable value in monospace, and a way to check it independently.
+---
+
+{
+	inForce.length > 0 && (
+		<div class="table-scroll mt-6">
+			<table class="w-full min-w-[38rem] border-collapse text-left">
+				<thead>
+					<tr>
+						<th class="label w-[15rem] border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
+							Document
+						</th>
+						<th class="label border-b border-[var(--color-rule)] pr-5 pb-2.5 font-medium">
+							SHA-256 of the PDF
+						</th>
+						<th class="label w-[7rem] border-b border-[var(--color-rule)] pb-2.5 font-medium">
+							Files
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{inForce.map((doc) => (
+						<tr>
+							<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-top text-[0.90625rem] font-semibold">
+								{doc.title}
+								<span class="data mt-1 block text-[0.75rem] font-normal whitespace-nowrap text-[var(--color-muted)]">
+									<span
+										class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-live)] align-[1px]"
+										aria-hidden="true"
+									/>
+									In force{doc.version && <> &middot; v{doc.version}</>}
+								</span>
+							</td>
+							<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-top">
+								{doc.pdf && (
+									<CopyableDigest
+										value={doc.pdf.sha256}
+										class="text-[0.75rem] break-all text-[var(--color-muted)]"
+									/>
+								)}
+								{doc.effective && (
+									<span class="data mt-1 block text-[0.6875rem] text-[var(--color-muted)]">
+										effective {doc.effective}
+									</span>
+								)}
+							</td>
+							<td class="border-b border-[var(--color-rule)] py-4 align-top">
+								<a
+									href={pdfUrl(doc)}
+									class="onward block text-[0.8125rem] whitespace-nowrap"
+								>
+									PDF <span aria-hidden="true">&rsaquo;</span>
+								</a>
+								<a
+									href={markdownUrl(doc)}
+									class="onward mt-1 block text-[0.8125rem] whitespace-nowrap"
+								>
+									Source <span aria-hidden="true">&rsaquo;</span>
+								</a>
+							</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	)
+}

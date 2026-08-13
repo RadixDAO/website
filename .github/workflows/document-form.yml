@@ -1,0 +1,153 @@
+name: Create governance document pull request
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  authorize:
+    name: Confirm publisher has write access
+    if: >-
+      startsWith(github.event.issue.title, '[Register document]') ||
+      startsWith(github.event.issue.title, '[Activate document]') ||
+      startsWith(github.event.issue.title, '[New document version]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    outputs:
+      allowed: ${{ steps.permission.outputs.allowed }}
+      operation: ${{ steps.permission.outputs.operation }}
+    steps:
+      - name: Check the submitter's effective repository permission
+        id: permission
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.issue.title
+            const operation = title.startsWith('[Register document]')
+              ? 'register'
+              : title.startsWith('[Activate document]')
+                ? 'activate'
+                : 'version'
+            core.setOutput('operation', operation)
+
+            let permission = 'none'
+            try {
+              const response = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: context.payload.issue.user.login,
+              })
+              permission = response.data.permission
+            } catch (error) {
+              if (error.status !== 404) throw error
+            }
+
+            const allowed = ['write', 'maintain', 'admin'].includes(permission)
+            core.setOutput('allowed', String(allowed))
+
+            if (!allowed) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: 'Governance document automation requires write, maintain, or admin access to this repository. No branch or pull request was created.',
+              })
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                state: 'closed',
+                state_reason: 'not_planned',
+              })
+            }
+
+  create:
+    name: Generate validated document pull request
+    needs: authorize
+    if: needs.authorize.outputs.allowed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # Downloads the published PDF, hashes it, and cross-checks the digest
+      # against registry.json at the given commit. Fails the run if they
+      # disagree, so a mismatched or unpublished document never reaches a PR.
+      - name: Apply the change from the issue form
+        id: document
+        run: node scripts/update-document-from-issue.mjs "${{ needs.authorize.outputs.operation }}" "$GITHUB_EVENT_PATH"
+
+      - name: Regenerate issue forms and validate
+        run: |
+          pnpm document-forms:generate
+          pnpm format
+          pnpm verify
+
+      - name: Commit on a repository branch
+        env:
+          BRANCH: ${{ steps.document.outputs.branch }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add -- src/data/govern.json .github/ISSUE_TEMPLATE
+          git commit -m "content(govern): ${{ steps.document.outputs.operation }} ${{ steps.document.outputs.id }} from issue #${{ github.event.issue.number }}"
+          git push origin "$BRANCH"
+
+      - name: Open the pull request and close the form issue
+        uses: actions/github-script@v7
+        env:
+          BRANCH: ${{ steps.document.outputs.branch }}
+          TITLE: ${{ steps.document.outputs.title }}
+          SUMMARY: ${{ steps.document.outputs.summaryLine }}
+        with:
+          script: |
+            const pull = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: process.env.BRANCH,
+              base: context.payload.repository.default_branch,
+              title: `Govern: ${process.env.TITLE}`,
+              body: `Generated from #${context.issue.number}.\n\n${process.env.SUMMARY}\n\nThe digest above was recomputed from the published PDF and matched \`registry.json\`. A write-access user must review and approve this pull request before merging.`,
+            })
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `Created #${pull.data.number}. Review and merge that pull request to publish.`,
+            })
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed',
+              state_reason: 'completed',
+            })
+
+      - name: Report failure on the issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `The change could not be applied. See the [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) for the reason — a digest mismatch, an unknown version, or an operation that does not match the document's current state. Nothing was published.`,
+            })

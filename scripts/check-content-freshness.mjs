@@ -44,6 +44,69 @@ async function fetchHash(repository, ref, path) {
   return createHash('sha256').update(text).digest('hex')
 }
 
+// Separate from fetchHash because a PDF must be hashed as bytes. Reading it
+// through res.text() would decode it as UTF-8 and produce a digest for
+// something that is not the file.
+async function fetchBinaryHash(repository, ref, path) {
+  const url = `${rawOrigin}/${repository}/${ref}/${path}`
+  let res
+  try {
+    res = await fetch(url)
+  } catch (cause) {
+    const error = new Error(
+      `Could not verify ${path}: request to ${url} failed (${cause.message})`
+    )
+    error.name = 'UpstreamFetchError'
+    throw error
+  }
+  if (!res.ok) {
+    const error = new Error(
+      `Could not verify ${path}: ${res.status} ${res.statusText} from ${url}`
+    )
+    error.name = 'UpstreamFetchError'
+    throw error
+  }
+  return createHash('sha256')
+    .update(Buffer.from(await res.arrayBuffer()))
+    .digest('hex')
+}
+
+// Every in-force document publishes a digest that readers check their own copy
+// against, so a stale or hand-edited value here is worse than a missing one.
+// Each is re-derived from the published PDF at the commit it was rendered from.
+async function verifyInForceDigests(repository) {
+  const govern = JSON.parse(
+    await readFile(
+      fileURLToPath(new URL('../src/data/govern.json', import.meta.url)),
+      'utf8'
+    )
+  )
+  const inForce = (govern.documents ?? []).filter(
+    (doc) => doc.status === 'in-force' && doc.pdf?.sha256 && doc.commit
+  )
+
+  const mismatched = []
+  const unavailable = []
+
+  for (const doc of inForce) {
+    try {
+      const actual = await fetchBinaryHash(repository, doc.commit, doc.pdf.path)
+      if (actual !== doc.pdf.sha256) {
+        mismatched.push(
+          `${doc.id} v${doc.version}\n` +
+            `      govern.json says: ${doc.pdf.sha256}\n` +
+            `      the PDF hashes to: ${actual}`
+        )
+      }
+    } catch (error) {
+      if (error.name !== 'UpstreamFetchError') throw error
+      unavailable.push(error.message)
+    }
+  }
+
+  return { checked: inForce.length, mismatched, unavailable }
+}
+
 async function readLock() {
   try {
     return JSON.parse(await readFile(LOCK_PATH, 'utf8'))
@@ -113,6 +176,36 @@ async function main() {
     )
     process.exitCode = 1
     return
+  }
+
+  const documents = await verifyInForceDigests(repository)
+
+  if (documents.unavailable.length > 0) {
+    console.error('Published document digests could not be verified:\n')
+    for (const message of documents.unavailable) console.error(`  - ${message}`)
+    console.error(
+      '\nThis is a network or upstream-access failure, not evidence that a digest is wrong.'
+    )
+    process.exitCode = 2
+    return
+  }
+
+  if (documents.mismatched.length > 0) {
+    console.error(
+      'A published document digest does not match its PDF in the governance repository:\n'
+    )
+    for (const entry of documents.mismatched) console.error(`  - ${entry}`)
+    console.error(
+      '\nReaders check their copies against these values, so this must be corrected before deploy.\nNever edit a digest by hand — re-run the activation workflow for the affected document.'
+    )
+    process.exitCode = 1
+    return
+  }
+
+  if (documents.checked > 0) {
+    console.log(
+      `Verified ${documents.checked} published document digest(s) against their PDFs.`
+    )
   }
 
   console.log(

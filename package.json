@@ -19,11 +19,13 @@
 		"notice-form:generate": "node scripts/generate-notice-form.mjs",
 		"notice-form:check": "node scripts/generate-notice-form.mjs --check",
 		"test": "node --test",
-		"verify": "biome check . && pnpm content:lint && pnpm notice-form:check && astro check && astro build && pnpm test",
+		"verify": "biome check . && pnpm content:lint && pnpm notice-form:check && pnpm document-forms:check && astro check && astro build && pnpm test",
 		"setup:git-hooks": "./scripts/setup-git-hooks.sh",
 		"content:freshness": "node scripts/check-content-freshness.mjs",
 		"content:freshness:accept": "node scripts/check-content-freshness.mjs --accept",
-		"prepare": "./scripts/setup-git-hooks.sh"
+		"prepare": "./scripts/setup-git-hooks.sh",
+		"document-forms:generate": "node scripts/generate-document-forms.mjs",
+		"document-forms:check": "node scripts/generate-document-forms.mjs --check"
 	},
 	"dependencies": {
 		"@astrojs/rss": "^4.0.19",
