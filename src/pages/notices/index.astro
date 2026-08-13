@@ -51,7 +51,7 @@ for (const n of notices) {
 
 		<nav aria-label="Filter by type" class="mt-8 flex flex-wrap gap-2">
 			<span
-				class="label rounded-[2px] border border-[var(--color-accent)] px-2.5 py-1 text-[0.65625rem] text-[var(--color-accent)]"
+				class="label rounded-[2px] border border-[var(--color-accent)] px-2.5 py-1 text-[0.71875rem] text-[var(--color-accent)]"
 			>
 				All · {notices.length}
 			</span>
@@ -59,7 +59,7 @@ for (const n of notices) {
 				NOTICE_TYPES.map((t) => (
 					<a
 						href={`/notices/type/${t.value}/`}
-						class="label rounded-[2px] border border-[var(--color-rule-strong)] px-2.5 py-1 text-[0.65625rem] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+						class="label rounded-[2px] border border-[var(--color-rule-strong)] px-2.5 py-1 text-[0.71875rem] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
 					>
 						{t.label} · {countsByType.get(t.value) ?? 0}
 					</a>

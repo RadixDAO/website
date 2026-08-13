@@ -45,6 +45,11 @@
 	--color-accent-soft: #fbeaf4;
 	--color-on-accent: #ffffff;
 
+	/* The accent as it appears on a deep navy band. The band is dark in *both*
+	   themes, so this deliberately does not follow the ground — it is one value,
+	   set once, tuned against #00204A rather than against the page. */
+	--color-accent-deep: #ffa8dd;
+
 	/* Full-bleed deep sections, the way radixdlt.com uses its deep blue. */
 	--color-band: #00204a;
 	--color-band-ink: #ffffff;
@@ -63,9 +68,18 @@
 	--container-shell: 75rem;
 }
 
-/* Dark theme. Given the same attention as light rather than an inversion:
-   the accent is lifted to #F272C6 (6.1:1 on the band, 7.1:1 on the ground)
-   and the ground is a navy-biased near-black, not a neutral charcoal. */
+/* Dark theme. Given the same attention as light rather than an inversion: the
+   accent is lifted well past the AA line and the ground is a navy-biased
+   near-black, not a neutral charcoal.
+
+   The accent used to be #F272C6 (7.09:1 on the ground). That clears AA, but it
+   sits on the AAA line for the small mono .label — and simulated for protanopia
+   it falls to 5.69:1 on the ground and 4.82:1 on the deep band, i.e. under AA on
+   the band for a red-weak reader. #FFA8DD is the same hue (~323°) lifted:
+   10.55:1 on the ground, 9.11:1 on the band, and 9.35:1 / 7.93:1 respectively
+   once protanopia is simulated. Magenta loses more to protanopia than its
+   measured ratio implies, so the accent is given headroom rather than tuned to
+   the line. */
 @media (prefers-color-scheme: dark) {
 	:root {
 		--color-ground: #0a1226;
@@ -74,7 +88,7 @@
 		--color-rule-strong: #33476e;
 		--color-ink: #e6edf7;
 		--color-muted: #a9bad1;
-		--color-accent: #f272c6;
+		--color-accent: #ffa8dd;
 		--color-accent-soft: #2a0c22;
 		--color-on-accent: #0a1226;
 		--color-live: #3ddc9a;
@@ -90,7 +104,7 @@
 	--color-rule-strong: #33476e;
 	--color-ink: #e6edf7;
 	--color-muted: #a9bad1;
-	--color-accent: #f272c6;
+	--color-accent: #ffa8dd;
 	--color-accent-soft: #2a0c22;
 	--color-on-accent: #0a1226;
 	--color-live: #3ddc9a;
@@ -165,10 +179,14 @@
 		font-variant-numeric: tabular-nums;
 	}
 
-	/* Small uppercase mono label. Used for eyebrows, table headers and tags. */
+	/* Small uppercase mono label. Used for eyebrows, table headers and tags.
+	   12.5px, not the 11.5px this started at: uppercase mono at 0.1em tracking
+	   is the least legible setting on the site, and it is what carries the
+	   accent. Do not take it back below 12px — the colour work only holds if
+	   the glyphs are big enough to show the colour. */
 	.label {
 		font-family: var(--font-mono);
-		font-size: 0.71875rem;
+		font-size: 0.78125rem;
 		font-weight: 500;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
