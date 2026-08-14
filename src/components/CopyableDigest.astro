@@ -1,0 +1,61 @@
+---
+// A SHA-256 digest that copies its full value on click, wherever it appears.
+// Markup and behaviour live together so that using the digest anywhere brings
+// the handler with it — an earlier version kept the script in a sibling
+// component and the copy silently did nothing on pages that didn't import it.
+interface Props {
+  /** The full 64-character digest. Always what gets copied. */
+  value: string
+  /** What to show. Defaults to the full value; /govern/ passes a short form. */
+  display?: string
+  class?: string
+}
+
+const { value, display, class: className = '' } = Astro.props
+---
+
+<button
+	type="button"
+	class:list={[
+		'data cursor-pointer text-left hover:text-[var(--color-accent)]',
+		className
+	]}
+	data-copy={value}
+	title={`Copy full SHA-256: ${value}`}
+>
+	<span class="copy-label">{display ?? value}</span>
+</button>
+
+<script>
+	document.addEventListener('click', async (event) => {
+		const target = event.target as HTMLElement | null
+		const button = target?.closest<HTMLElement>('[data-copy]')
+		if (!button) return
+
+		const value = button.dataset.copy
+		if (!value) return
+
+		const label = button.querySelector('.copy-label') ?? button
+		const original = label.textContent
+
+		try {
+			await navigator.clipboard.writeText(value)
+			label.textContent = 'copied'
+		} catch {
+			// The Clipboard API needs a secure context and user permission. Where it
+			// is unavailable, show and select the full value so it can still be
+			// copied by hand rather than leaving the reader with nothing.
+			label.textContent = value
+			const range = document.createRange()
+			range.selectNodeContents(label)
+			const selection = window.getSelection()
+			selection?.removeAllRanges()
+			selection?.addRange(range)
+			return
+		}
+
+		window.setTimeout(() => {
+			label.textContent = original
+		}, 1400)
+	})
+</script>

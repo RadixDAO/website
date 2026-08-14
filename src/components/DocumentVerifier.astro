@@ -1,0 +1,135 @@
+---
+import { inForce, superseded } from '../data/governance'
+
+// Computes a dropped file's SHA-256 entirely in the browser via WebCrypto and
+// matches it against the digests of activated documents. Nothing is uploaded —
+// the file never leaves the machine, which is what makes this usable on a fully
+// static site with no server and no third-party service.
+//
+// The register below is empty until the first activation vote passes. It is
+// still shown, because the mechanism is the point: a reader can confirm now
+// that verification requires nothing from us but a published digest.
+const known = inForce.map((d) => ({
+  id: d.id,
+  title: d.title,
+  version: d.version,
+  sha256: d.pdf?.sha256
+}))
+
+// Superseded versions are matched but never listed. Someone holding an old PDF
+// deserves "this is genuine, and here is what replaced it" rather than a bare
+// no-match, which would read as "your copy is a forgery".
+const replaced = superseded.map((d) => ({
+  title: d.title,
+  version: d.version,
+  sha256: d.sha256,
+  supersededOn: d.supersededOn,
+  supersededBy: d.supersededBy
+}))
+---
+
+<div class="mt-6">
+	<div
+		id="verify-drop"
+		class="rounded-[3px] border border-dashed border-[var(--color-rule)] px-6 py-8 text-center transition-colors"
+	>
+		<p class="text-[0.9375rem] font-semibold">Check a document</p>
+		<p class="mx-auto mt-2 max-w-[46ch] text-[0.875rem] text-[var(--color-muted)]">
+			Drop a governance PDF here, or{' '}
+			<label
+				class="cursor-pointer underline decoration-[var(--color-rule)] underline-offset-2 hover:text-[var(--color-accent)]"
+				>choose a file<input id="verify-input" type="file" class="sr-only" /></label
+			>. Its SHA-256 is computed in your browser; the file is never uploaded.
+		</p>
+
+		<div id="verify-result" class="mt-5 hidden">
+			<p class="label" id="verify-filename"></p>
+			<code
+				id="verify-digest"
+				class="data mt-2 block text-[0.8125rem] break-all text-[var(--color-ink)]"></code>
+			<p id="verify-verdict" class="mt-3 text-[0.875rem]"></p>
+		</div>
+	</div>
+
+	<noscript>
+		<p class="mt-3 text-[0.875rem] text-[var(--color-muted)]">
+			This check needs JavaScript. You can do the same thing with
+			<code class="data">sha256sum</code>, <code class="data">shasum -a 256</code>, or
+			<code class="data">Get-FileHash -Algorithm SHA256</code>.
+		</p>
+	</noscript>
+</div>
+
+<script is:inline define:vars={{ known, replaced }}>
+	const drop = document.getElementById('verify-drop')
+	const input = document.getElementById('verify-input')
+	const result = document.getElementById('verify-result')
+	const nameEl = document.getElementById('verify-filename')
+	const digestEl = document.getElementById('verify-digest')
+	const verdictEl = document.getElementById('verify-verdict')
+
+	const hex = (buf) =>
+		Array.from(new Uint8Array(buf))
+			.map((b) => b.toString(16).padStart(2, '0'))
+			.join('')
+
+	async function check(file) {
+		if (!file) return
+		nameEl.textContent = file.name
+		digestEl.textContent = 'computing…'
+		verdictEl.textContent = ''
+		result.classList.remove('hidden')
+
+		let digest
+		try {
+			digest = hex(await crypto.subtle.digest('SHA-256', await file.arrayBuffer()))
+		} catch {
+			digestEl.textContent = ''
+			verdictEl.textContent = 'Could not read that file.'
+			verdictEl.style.color = 'var(--color-muted)'
+			return
+		}
+
+		digestEl.textContent = digest
+		const match = known.find((d) => d.sha256 === digest)
+		const old = replaced.find((d) => d.sha256 === digest)
+
+		if (match) {
+			verdictEl.textContent =
+				`Matches ${match.title}${match.version ? ' v' + match.version : ''}. ` +
+				'This file is byte-for-byte the activated document.'
+			verdictEl.style.color = 'var(--color-live)'
+		} else if (old) {
+			verdictEl.textContent =
+				`This is a genuine copy of ${old.title} v${old.version}, superseded on ` +
+				`${old.supersededOn}. The version in force is v${old.supersededBy}.`
+			verdictEl.style.color = 'var(--color-pending)'
+		} else if (known.length === 0) {
+			verdictEl.textContent =
+				'No documents are activated yet, so there is nothing to match against. ' +
+				'The digest above is this file’s true SHA-256.'
+			verdictEl.style.color = 'var(--color-muted)'
+		} else {
+			verdictEl.textContent =
+				'No activated document has this digest. Either this is not a governance ' +
+				'document, or it is not the version that was activated.'
+			verdictEl.style.color = 'var(--color-pending)'
+		}
+	}
+
+	input.addEventListener('change', (e) => check(e.target.files[0]))
+
+	for (const type of ['dragenter', 'dragover']) {
+		drop.addEventListener(type, (e) => {
+			e.preventDefault()
+			drop.style.borderColor = 'var(--color-accent)'
+		})
+	}
+	for (const type of ['dragleave', 'drop']) {
+		drop.addEventListener(type, (e) => {
+			e.preventDefault()
+			drop.style.borderColor = ''
+		})
+	}
+	drop.addEventListener('drop', (e) => check(e.dataTransfer?.files[0]))
+</script>

@@ -1,16 +1,25 @@
 ---
 import Band from '../../components/Band.astro'
+import DocumentStatus from '../../components/DocumentStatus.astro'
 import PageHeader from '../../components/PageHeader.astro'
-import govern from '../../data/govern.json'
+import {
+  companionGuides,
+  groups,
+  inForce,
+  markdownUrl,
+  repoHref,
+  shortlist
+} from '../../data/governance'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
 // Rule 5.4: no normative text is reproduced here. Every line is a plain-language
 // pointer to the operative document in the governance repository.
-interface Doc {
-  title: string
-  summary: string
-  href: string
-}
+//
+// Status is data, never a hardcoded label. Nothing is activated yet, so every
+// row below renders as pending — the same way §6.7 has the Verify table show
+// undeployed treasury accounts rather than hide them. When the first activation
+// vote passes, setting a document's status and digest in govern.json is enough
+// to give it the in-force treatment; no code changes.
 ---
 
 <BaseLayout
@@ -23,6 +32,24 @@ interface Doc {
 				This site never reproduces a rule. Every line below is a plain-language pointer to the
 				operative document in the DAO's governance repository, the single source of truth.
 			</p>
+			<p class="mt-4 max-w-[56ch] text-[0.9375rem] text-[var(--color-muted)]">
+				{
+					inForce.length === 0 ? (
+						<>
+							Nothing here is in force yet. Every document is a draft awaiting the ratification
+							vote, marked <em>pending</em> below. Once a document is activated it is published as
+							a PDF whose SHA-256 digest is recorded on-chain, and that digest is shown here so
+							anyone can check their copy is the one that was voted on.
+						</>
+					) : (
+						<>
+							Documents marked <em>in force</em> are published as a PDF whose SHA-256 digest is
+							recorded on-chain by the proposal that activated it. Check any copy against the
+							digest shown — a match proves it is byte-for-byte the document that was voted on.
+						</>
+					)
+				}
+			</p>
 		</PageHeader>
 	</Band>
 
@@ -31,15 +58,20 @@ interface Doc {
 		<h2 class="mt-3.5 text-[1.5rem]">If you only want to read a few</h2>
 		<ol class="mt-6 border-t border-[var(--color-rule)]">
 			{
-				govern.shortlist.map((doc: Doc, i: number) => (
+				shortlist.map((doc, i) => (
 					<li class="grid items-baseline gap-x-8 gap-y-1 border-b border-[var(--color-rule)] py-4 md:grid-cols-[3rem_20rem_1fr]">
 						<span class="data text-[0.78125rem] text-[var(--color-accent)]">
 							{String(i + 1).padStart(2, '0')}
 						</span>
-						<a href={doc.href} class="text-[0.9375rem] font-semibold hover:text-[var(--color-accent)]">
+						<a
+							href={markdownUrl(doc)}
+							class="text-[0.9375rem] font-semibold hover:text-[var(--color-accent)]"
+						>
 							{doc.title}
 						</a>
-						<span class="text-[0.875rem] text-[var(--color-muted)]">{doc.summary}</span>
+						<span class="text-[0.875rem] text-[var(--color-muted)]">
+							{doc.shortSummary ?? doc.summary}
+						</span>
 					</li>
 				))
 			}
@@ -47,8 +79,8 @@ interface Doc {
 
 		<div class="mt-7 flex flex-wrap gap-x-7 gap-y-2">
 			{
-				govern.companionGuides.map((guide: { title: string; href: string }) => (
-					<a href={guide.href} class="onward text-[0.875rem]">
+				companionGuides.map((guide) => (
+					<a href={markdownUrl(guide)} class="onward text-[0.875rem]">
 						{guide.title} <span aria-hidden="true">&rsaquo;</span>
 					</a>
 				))
@@ -60,19 +92,22 @@ interface Doc {
 		<h2 class="text-[1.6875rem]">Every document</h2>
 		<div class="mt-8 grid gap-y-10">
 			{
-				govern.groups.map((group: { name: string; documents: Doc[] }) => (
+				groups.map((group) => (
 					<div>
 						<h3 class="label">{group.name}</h3>
 						<ul class="mt-3 border-t border-[var(--color-rule)]">
 							{group.documents.map((doc) => (
 								<li class="grid items-baseline gap-x-8 gap-y-1 border-b border-[var(--color-rule)] py-3.5 md:grid-cols-[22rem_1fr]">
 									<a
-										href={doc.href}
+										href={markdownUrl(doc)}
 										class="text-[0.9375rem] font-semibold hover:text-[var(--color-accent)]"
 									>
 										{doc.title}
 									</a>
-									<span class="text-[0.875rem] text-[var(--color-muted)]">{doc.summary}</span>
+									<div>
+										<span class="text-[0.875rem] text-[var(--color-muted)]">{doc.summary}</span>
+										<DocumentStatus doc={doc} />
+									</div>
 								</li>
 							))}
 						</ul>
@@ -81,7 +116,7 @@ interface Doc {
 			}
 		</div>
 
-		<a href={govern.repoHref} class="onward mt-9 inline-block">
+		<a href={repoHref} class="onward mt-9 inline-block">
 			Browse the full repository <span aria-hidden="true">&rsaquo;</span>
 		</a>
 	</Band>

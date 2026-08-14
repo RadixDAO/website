@@ -1,7 +1,10 @@
 ---
 import Band from '../components/Band.astro'
+import DocumentRegister from '../components/DocumentRegister.astro'
+import DocumentVerifier from '../components/DocumentVerifier.astro'
 import PageHeader from '../components/PageHeader.astro'
 import identifiers from '../data/identifiers.json'
+import { inForce } from '../data/governance'
 import BaseLayout from '../layouts/BaseLayout.astro'
 
 // §6.7: the treasury rows show even though nothing is deployed, marked pending.
@@ -125,6 +128,45 @@ interface TreasuryRow {
 		</p>
 		<a href={identifiers.sourceHref} class="onward mt-3 inline-block text-[0.875rem]">
 			Source policy <span aria-hidden="true">&rsaquo;</span>
+		</a>
+	</Band>
+
+	<Band ruled compact>
+		<h2 class="label" id="documents">Documents</h2>
+		<p class="mt-3 max-w-[64ch] text-[0.875rem] text-[var(--color-muted)]">
+			{
+				inForce.length === 0 ? (
+					<>
+						When a governance document is activated it is published as a PDF, and the SHA-256
+						digest of that exact file is recorded on-chain by the proposal that activated it.
+						Anyone can then check a copy against that digest &mdash; a match proves the file is
+						byte-for-byte the document that was voted on, no matter where the copy came from.
+						No document has been activated yet, so there is nothing to check against so far.
+					</>
+				) : (
+					<>
+						Each activated document below is published as a PDF whose SHA-256 digest is recorded
+						on-chain by the proposal that activated it. A match proves the file is byte-for-byte
+						the document that was voted on, no matter where the copy came from.
+					</>
+				)
+			}
+		</p>
+
+		<DocumentRegister />
+
+		<DocumentVerifier />
+
+		<p class="mt-5 max-w-[64ch] text-[0.875rem] text-[var(--color-muted)]">
+			You do not have to trust this page. The same check from a terminal:
+		</p>
+		<pre
+			class="data mt-3 overflow-x-auto border-l-2 border-[var(--color-rule)] bg-[var(--color-paper)] py-3 pr-4 pl-4 text-[0.75rem] leading-relaxed">Windows    Get-FileHash -Algorithm SHA256 document.pdf
+macOS      shasum -a 256 document.pdf
+Linux      sha256sum document.pdf</pre>
+
+		<a href="/govern/" class="onward mt-5 inline-block text-[0.875rem]">
+			Every governance document <span aria-hidden="true">&rsaquo;</span>
 		</a>
 	</Band>
 </BaseLayout>

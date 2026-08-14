@@ -1,0 +1,54 @@
+---
+import type { GovernanceDocument } from '../data/governance'
+import { pdfUrl, shortDigest } from '../data/governance'
+import CopyableDigest from './CopyableDigest.astro'
+
+// The status line under a governance document. Pending is the honest state for
+// everything today and is shown rather than hidden, matching how §6.7 has the
+// Verify table display undeployed treasury accounts.
+//
+// Rule 5.5 keeps repository-shaped detail out of front-of-house, so the full
+// 64-character digest is not printed here — it lives in the register on
+// /verify/. What this row owes a reader is a way to get to it: the truncated
+// digest copies the full value on click, and "Check" goes to the register.
+interface Props {
+  doc: GovernanceDocument
+}
+
+const { doc } = Astro.props
+const href = pdfUrl(doc)
+---
+
+{
+	doc.status === 'in-force' && doc.pdf && href ? (
+		<span class="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+			<span class="data text-[0.75rem] whitespace-nowrap text-[var(--color-muted)]">
+				<span
+					class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-live)] align-[1px]"
+					aria-hidden="true"
+				/>
+				In force{doc.version && <> &middot; v{doc.version}</>}
+			</span>
+			<a href={href} class="onward text-[0.75rem] whitespace-nowrap">
+				PDF <span aria-hidden="true">&rsaquo;</span>
+			</a>
+			<a href="/verify/#documents" class="onward text-[0.75rem] whitespace-nowrap">
+				Check <span aria-hidden="true">&rsaquo;</span>
+			</a>
+			<CopyableDigest
+				value={doc.pdf.sha256}
+				display={`${shortDigest(doc.pdf.sha256)}…`}
+				class="text-[0.75rem] whitespace-nowrap text-[var(--color-muted)] underline decoration-[var(--color-rule)] decoration-dotted underline-offset-[3px]"
+			/>
+		</span>
+	) : (
+		<span class="data mt-1.5 block text-[0.75rem] whitespace-nowrap text-[var(--color-muted)]">
+			<span
+				class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
+				aria-hidden="true"
+			/>
+			Pending
+		</span>
+	)
+}
+
