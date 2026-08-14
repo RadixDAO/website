@@ -64,18 +64,30 @@ itself — an argument that holds up to the "never be confused for one another" 
 that a taste preference would not.
 
 `#CE0D98` is darkened to `#A80C7C` for light mode so it clears WCAG AA both as text on white
-(6.98:1) and as a fill under white text (6.98:1). Dark mode lifts it to `#F272C6` (6.13:1 on the
-deep band, 7.09:1 on the ground) — tuned, not inverted.
+(6.98:1) and as a fill under white text (6.98:1). Dark mode lifts it to `#FFA8DD` (10.55:1 on the
+ground, 9.11:1 on the deep band) — tuned, not inverted.
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
 | `--color-ink` | `#012B4E` | `#E6EDF7` | All text. Radix's navy, one notch deeper. |
 | `--color-muted` | `#51637A` | `#A9BAD1` | Secondary copy, dates. Blue-biased, never neutral grey. |
-| `--color-accent` | `#A80C7C` | `#F272C6` | Links, the status token, the mark. |
+| `--color-accent` | `#A80C7C` | `#FFA8DD` | Links, the status token, the mark. |
+| `--color-accent-deep` | `#FFA8DD` | `#FFA8DD` | The accent on a deep band. The band is dark in both themes, so this is one value tuned against `#00204A`, not against the page ground. |
 | `--color-band` | `#00204A` | `#00204A` | Full-bleed deep sections. At most twice per page. |
 | `--color-live` / `--color-pending` | `#00734F` / `#8A5A00` | `#3DDC9A` / `#E8B54A` | State. Deliberately **not** the accent — status must never read as brand. |
 
 The lowest contrast ratio anywhere in the system is 5.7:1. Nothing needs a large-text exemption.
+
+**Contrast is not enough on its own — check the accent under simulated colour vision deficiency
+too.** The accent carries the `.label` eyebrows, the smallest type on the site, which is where a
+marginal ratio is felt first. Dark mode's accent was `#F272C6` (7.09:1 on the ground, nominally
+fine); simulated for protanopia that falls to 5.69:1 on the ground and **4.82:1 on the deep band**,
+under AA for a red-weak reader, and readers reported struggling with it. `#FFA8DD` is the same hue
+lifted, and holds 9.35:1 / 7.93:1 under the same simulation. Magenta loses more luminance under
+protanopia than its measured ratio suggests, so give it headroom rather than tuning it to the line.
+
+The deep band took the same lift in **both** themes. It is a dark surface regardless of the ground,
+so it is the one place where a light-mode page can carry a dark-mode contrast problem.
 
 **If you change the accent, re-run the contrast maths for all four combinations** (as text on both
 grounds, and as a fill under both text colours). The previous build's amber scored 2.17:1 on white,
@@ -100,6 +112,11 @@ breach the privacy requirement — no third-party requests, cookieless.
 
 Use `.data` for verifiable values and `.label` for small uppercase mono labels. Do not set
 monospace by hand.
+
+`.label` is **12.5px**, up from the 11.5px it launched at, and the chip variants are 11.5px, up
+from 10.5px. Uppercase mono at 0.1em tracking is the hardest setting on the site to read, and it is
+what carries the accent colour — a reader who struggles with the accent is usually struggling with
+the size at the same time. Do not take `.label` back below 12px.
 
 ---
 

@@ -5,7 +5,7 @@
     <style>
         @media (prefers-color-scheme: dark) {
             path:not([stroke="#A80C7C"]) { stroke: #E6EDF7; }
-            path[stroke="#A80C7C"] { stroke: #F272C6; }
+            path[stroke="#A80C7C"] { stroke: #FFA8DD; }
         }
     </style>
 </svg>

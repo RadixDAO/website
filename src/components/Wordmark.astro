@@ -12,7 +12,7 @@ interface Props {
 const { reversed = false, class: className = '' } = Astro.props
 
 const bracket = reversed ? '#ffffff' : 'var(--color-ink)'
-const tick = reversed ? '#f272c6' : 'var(--color-accent)'
+const tick = reversed ? 'var(--color-accent-deep)' : 'var(--color-accent)'
 ---
 
 <span
