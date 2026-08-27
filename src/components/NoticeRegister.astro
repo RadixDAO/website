@@ -11,6 +11,12 @@ export interface RegisterItem {
   title: string
   pubDate: Date
   noticeDate?: Date
+  /**
+   * Published exactly as received (§7.3) — a compliance challenge filing or
+   * anything else that may not be edited. The categories are broad enough that
+   * the type tag no longer identifies these, so the row marks them itself.
+   */
+  verbatim?: boolean
   /** Set when a later item corrects this one. */
   supersededByHref?: string
 }
@@ -56,7 +62,7 @@ const { items, emptyNote } = Astro.props
 										'label inline-block rounded-[2px] border px-1.5 py-[3px] text-[0.71875rem] leading-[1.35]',
 										item.supersededByHref
 											? 'border-dashed border-[var(--color-rule-strong)]'
-											: item.type === 'compliance-challenge'
+											: item.verbatim
 												? 'border-[var(--color-accent)] text-[var(--color-accent)]'
 												: item.noticeDate
 													? 'border-[var(--color-pending)] text-[var(--color-pending)]'

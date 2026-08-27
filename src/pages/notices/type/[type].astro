@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content'
 import Band from '../../../components/Band.astro'
 import NoticeRegister from '../../../components/NoticeRegister.astro'
 import PageHeader from '../../../components/PageHeader.astro'
-import { NOTICE_TYPES, noticeTypeLabel } from '../../../data/notice-types'
+import { NOTICE_TYPES } from '../../../data/notice-types'
 import BaseLayout from '../../../layouts/BaseLayout.astro'
 
 export async function getStaticPaths() {
@@ -11,6 +11,8 @@ export async function getStaticPaths() {
   return NOTICE_TYPES.map((t) => ({
     params: { type: t.value },
     props: {
+      label: t.label,
+      description: t.description,
       items: notices
         .filter((n) => n.data.type === t.value)
         .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -19,28 +21,28 @@ export async function getStaticPaths() {
           type: n.data.type,
           title: n.data.title,
           pubDate: n.data.pubDate,
-          noticeDate: n.data.noticeDate
+          noticeDate: n.data.noticeDate,
+          verbatim: n.data.verbatim
         }))
     }
   }))
 }
 
-const { type } = Astro.params
-const { items } = Astro.props
-const label = noticeTypeLabel(type as string)
+const { label, description, items } = Astro.props
 ---
 
-<BaseLayout
-	title={`${label} — Notices`}
-	description={`All ${label.toLowerCase()} items in the DAO's official record.`}
->
+<BaseLayout title={`${label} — Notices`} description={description}>
 	<Band compact>
 		<PageHeader
 			question="What has officially happened?"
 			heading={label}
 			backHref="/notices/"
 			backText="All notices"
-		/>
+		>
+			<p class="mt-5 max-w-[56ch] text-[1.0625rem] text-[var(--color-muted)]">
+				{description}
+			</p>
+		</PageHeader>
 	</Band>
 
 	<Band tone="paper" ruled>

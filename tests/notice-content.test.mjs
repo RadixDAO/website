@@ -19,7 +19,7 @@ test('plain-language validation lists every allowed notice type', async () => {
     allowedTypes
   })
 
-  assert.equal(allowedTypes.length, 12)
+  assert.equal(allowedTypes.length, 6)
   assert.match(errors[0], /field "type"/)
   for (const { value } of allowedTypes)
     assert.match(errors[0], new RegExp(value))
@@ -27,7 +27,11 @@ test('plain-language validation lists every allowed notice type', async () => {
 
 test('timestamp validation shows the required UTC format and example', async () => {
   const errors = validateNoticeData({
-    data: { type: 'status-report', title: 'Example', pubDate: 'tomorrow' },
+    data: {
+      type: 'reports-and-records',
+      title: 'Example',
+      pubDate: 'tomorrow'
+    },
     file: 'example.md',
     allowedTypes: await loadNoticeTypes()
   })
@@ -57,7 +61,7 @@ test('publication time warns outside the agreed 15-minute window', () => {
 })
 
 test('frontmatter parser preserves notice body whitespace', () => {
-  const source = `---\ntype: status-report\ntitle: "Example"\npubDate: 2026-08-11T14:30:00Z\n---\n\n  exact body  \nsecond line`
+  const source = `---\ntype: reports-and-records\ntitle: "Example"\npubDate: 2026-08-11T14:30:00Z\n---\n\n  exact body  \nsecond line`
   const parsed = parseNoticeFile(source, 'example.md')
 
   assert.equal(parsed.error, null)

@@ -13,18 +13,12 @@ body:
     attributes:
       label: Notice type
       options:
-        - "Activation statement (activation-statement)"
-        - "Council resolution (council-resolution)"
-        - "Advisory acknowledgement (advisory-acknowledgement)"
-        - "Vacancy notice (vacancy-notice)"
-        - "Reduced-quorum activation notice (reduced-quorum-notice)"
-        - "Identifier register change (identifier-register-change)"
-        - "Compliance challenge (compliance-challenge)"
-        - "Regulatory or legal demand notice (regulatory-demand-notice)"
-        - "Status report (status-report)"
-        - "Prior-disclosure notice (prior-disclosure-notice)"
-        - "Delegate statement (delegate-statement)"
-        - "Working Group / repository registry update (registry-update)"
+        - "Resolutions & decisions (resolutions-and-decisions)"
+        - "Reports & records (reports-and-records)"
+        - "Process notices (process-notices)"
+        - "Roles & seats (roles-and-seats)"
+        - "Registry updates (registry-updates)"
+        - "Legal & compliance (legal-and-compliance)"
     validations:
       required: true
   - type: input
