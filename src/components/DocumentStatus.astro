@@ -1,6 +1,6 @@
 ---
 import type { GovernanceDocument } from '../data/governance'
-import { pdfUrl, shortDigest } from '../data/governance'
+import { pdfUrl, shortDigest, signedPdfUrl } from '../data/governance'
 import CopyableDigest from './CopyableDigest.astro'
 
 // The status line under a governance document. Pending is the honest state for
@@ -17,6 +17,7 @@ interface Props {
 
 const { doc } = Astro.props
 const href = pdfUrl(doc)
+const signedHref = signedPdfUrl(doc)
 ---
 
 {
@@ -38,6 +39,27 @@ const href = pdfUrl(doc)
 			<CopyableDigest
 				value={doc.pdf.sha256}
 				display={`${shortDigest(doc.pdf.sha256)}…`}
+				class="text-[0.75rem] whitespace-nowrap text-[var(--color-muted)] underline decoration-[var(--color-rule)] decoration-dotted underline-offset-[3px]"
+			/>
+		</span>
+	) : doc.signedPdf && signedHref ? (
+		<span class="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+			<span class="data text-[0.75rem] whitespace-nowrap text-[var(--color-muted)]">
+				<span
+					class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
+					aria-hidden="true"
+				/>
+				Signed &middot; awaiting ratification
+			</span>
+			<a href={signedHref} class="onward text-[0.75rem] whitespace-nowrap">
+				Signed PDF <span aria-hidden="true">&rsaquo;</span>
+			</a>
+			<a href="/verify/#documents" class="onward text-[0.75rem] whitespace-nowrap">
+				Check <span aria-hidden="true">&rsaquo;</span>
+			</a>
+			<CopyableDigest
+				value={doc.signedPdf.sha256}
+				display={`${shortDigest(doc.signedPdf.sha256)}…`}
 				class="text-[0.75rem] whitespace-nowrap text-[var(--color-muted)] underline decoration-[var(--color-rule)] decoration-dotted underline-offset-[3px]"
 			/>
 		</span>

@@ -10,9 +10,8 @@ client framework, no wallet connection anywhere on the site.
 - **Publishing a notice or updating the status band?** See [PUBLISHING.md](PUBLISHING.md) — no
   local setup required, everything's doable from GitHub's website.
 - **Governance documents** (the source of truth this site links out to, never loads at runtime):
-  [github.com/Shadaffy/radix-dao-governance](https://github.com/Shadaffy/radix-dao-governance).
-  The site-copy verification is pinned reproducibly in `content-sources.lock`; moving the source to
-  a DAO-owned organization remains an operational decision.
+  [github.com/RadixDAO/governance-framework](https://github.com/RadixDAO/governance-framework).
+  The site-copy verification is pinned reproducibly in `content-sources.lock`.
 - **Voting platform:** [vote.radixdao.org](https://vote.radixdao.org)
 
 ## Development

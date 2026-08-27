@@ -16,15 +16,14 @@ them.
 
 | Repository | Role |
 |---|---|
-| `Shadaffy/radix-dao-governance` | **Development.** Drafting and iteration, with whatever churn that needs. Nothing here is operative. |
-| `RadixDAO/governance` | **Of record.** `pending/` holds Markdown of the next governance changes; the **repository root** holds the master PDF of every activated document plus `registry.json`. |
+| `RadixDAO/governance-framework` | **Of record.** `pending/` holds Markdown of the next governance changes (with signed PDFs under `pending/signed/`); the **repository root** holds the master PDF of every activated document, with historic versions under `archive/`. Supersedes the earlier `Shadaffy/radix-dao-governance` development repository. |
 
 A file at the root *is* the document. A file under `pending/` is a proposal *about* a document.
 Markdown stays the editing surface because it is easy to adjust and review; the root PDF is the
 immutable, hash-anchored artifact.
 
 ```
-drafting (Shadaffy) ──PR──▶ pending/**/*.md ──proposal passes──▶ <doc>.pdf  (root)
+drafting ──PR──▶ pending/**/*.md ──proposal passes──▶ <doc>.pdf  (root)
                                                                   registry.json
                                                                        │
                                                                        ▼

@@ -1,20 +1,32 @@
 ---
-import { inForce, superseded } from '../data/governance'
+import {
+  inForce,
+  ratification,
+  signedForRatification,
+  superseded
+} from '../data/governance'
 
 // Computes a dropped file's SHA-256 entirely in the browser via WebCrypto and
-// matches it against the digests of activated documents. Nothing is uploaded —
+// matches it against every digest the DAO has published. Nothing is uploaded —
 // the file never leaves the machine, which is what makes this usable on a fully
 // static site with no server and no third-party service.
-//
-// The register below is empty until the first activation vote passes. It is
-// still shown, because the mechanism is the point: a reader can confirm now
-// that verification requires nothing from us but a published digest.
 const known = inForce.map((d) => ({
   id: d.id,
   title: d.title,
   version: d.version,
   sha256: d.pdf?.sha256
 }))
+
+// Documents signed for the ratification vote. A match is a genuine positive —
+// the file is byte-for-byte what the proposal asks the community to ratify —
+// but the verdict must not read as "in force", because nothing is yet.
+const proposed = signedForRatification.map((d) => ({
+  title: d.title,
+  version: d.signedPdf?.version,
+  sha256: d.signedPdf?.sha256
+}))
+
+const proposalId = ratification?.proposal
 
 // Superseded versions are matched but never listed. Someone holding an old PDF
 // deserves "this is genuine, and here is what replaced it" rather than a bare
@@ -60,7 +72,7 @@ const replaced = superseded.map((d) => ({
 	</noscript>
 </div>
 
-<script is:inline define:vars={{ known, replaced }}>
+<script is:inline define:vars={{ known, proposed, proposalId, replaced }}>
 	const drop = document.getElementById('verify-drop')
 	const input = document.getElementById('verify-input')
 	const result = document.getElementById('verify-result')
@@ -92,6 +104,7 @@ const replaced = superseded.map((d) => ({
 
 		digestEl.textContent = digest
 		const match = known.find((d) => d.sha256 === digest)
+		const signed = proposed.find((d) => d.sha256 === digest)
 		const old = replaced.find((d) => d.sha256 === digest)
 
 		if (match) {
@@ -99,20 +112,29 @@ const replaced = superseded.map((d) => ({
 				`Matches ${match.title}${match.version ? ' v' + match.version : ''}. ` +
 				'This file is byte-for-byte the activated document.'
 			verdictEl.style.color = 'var(--color-live)'
+		} else if (signed) {
+			verdictEl.textContent =
+				`Matches ${signed.title}${signed.version ? ' v' + signed.version : ''}. ` +
+				'This file is byte-for-byte the signed PDF published for ' +
+				`ratification${proposalId ? ' in proposal ' + proposalId : ''}. ` +
+				'Its signature should chain to the certificate shown above. ' +
+				'The ratification vote has not passed, so it is not yet in force.'
+			verdictEl.style.color = 'var(--color-live)'
 		} else if (old) {
 			verdictEl.textContent =
 				`This is a genuine copy of ${old.title} v${old.version}, superseded on ` +
 				`${old.supersededOn}. The version in force is v${old.supersededBy}.`
 			verdictEl.style.color = 'var(--color-pending)'
-		} else if (known.length === 0) {
+		} else if (known.length === 0 && proposed.length === 0) {
 			verdictEl.textContent =
 				'No documents are activated yet, so there is nothing to match against. ' +
 				'The digest above is this file’s true SHA-256.'
 			verdictEl.style.color = 'var(--color-muted)'
 		} else {
 			verdictEl.textContent =
-				'No activated document has this digest. Either this is not a governance ' +
-				'document, or it is not the version that was activated.'
+				'No listed document has this digest. Either this is not a governance ' +
+				'document, or it is not a version that was published for ratification ' +
+				'or activated.'
 			verdictEl.style.color = 'var(--color-pending)'
 		}
 	}

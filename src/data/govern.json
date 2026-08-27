@@ -5,7 +5,13 @@
 			"title": "Charter",
 			"summary": "Sets the DAO's principles and structure of authority — what the DAO stands for and who holds power.",
 			"path": "pending/constitutional/charter.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/charter_signed.pdf",
+				"sha256": "c40610bea43fee1881bbe17e7f886e6bcf91aa5123e5dbdac41561588ef2a9ef",
+				"bytes": 522350,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "dao-parameters-registry",
@@ -13,7 +19,13 @@
 			"summary": "The single place that holds every adjustable number — voting thresholds, quorums, time limits, budget caps — so they can be updated by vote without touching the core documents.",
 			"shortSummary": "All the actual numbers.",
 			"path": "pending/parameters/dao-parameters-registry.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/dao-parameters-registry_signed.pdf",
+				"sha256": "cb577d901d559e8c49992efc461b5e3239a1ccf1eac36971d951ea838656eac0",
+				"bytes": 597054,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "proposal-and-voting-framework",
@@ -21,56 +33,104 @@
 			"summary": "How a proposal is created, discussed, voted on, and approved — the DAO's core decision-making pipeline.",
 			"shortSummary": "How decisions are made.",
 			"path": "pending/governance/proposal-and-voting-framework.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/proposal-and-voting-framework_signed.pdf",
+				"sha256": "294ba3c9ed577c24a6b0c98277bd31e462b15d54eab0d2ac5be4e1e6442d76cb",
+				"bytes": 564690,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "execution-and-treasury-actions-policy",
 			"title": "Execution & Treasury Actions Policy",
 			"summary": "How an approved decision is actually carried out, and who is authorised to execute it.",
 			"path": "pending/governance/execution-and-treasury-actions-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/execution-and-treasury-actions-policy_signed.pdf",
+				"sha256": "2f872ae705ebd7219373aea64dc0326b8a46e723c79b4c3ddf9d66e0f711384f",
+				"bytes": 515034,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "treasury-signers-rules",
 			"title": "Treasury Signers Operational Rules",
 			"summary": "The rules for the people who move treasury funds — execution agents with strictly limited authority, not decision-makers.",
 			"path": "pending/governance/treasury-signers-rules.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/treasury-signers-rules_signed.pdf",
+				"sha256": "80e77df67cca699f20de21ba1a8a2beaa33a115768f06807cde3497347c1277b",
+				"bytes": 530566,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "on-chain-identifiers-and-verification-policy",
 			"title": "On-Chain Identifiers & Verification Policy",
 			"summary": "The public register of the DAO's governance and treasury on-chain addresses — what each one is, how it's used, and a link to verify it on the Radix explorer.",
 			"path": "pending/governance/on-chain-identifiers-and-verification-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/on-chain-identifiers-and-verification-policy_signed.pdf",
+				"sha256": "edc6ecc11716dd4b65118bfb53f98523bfb460ebf8df052d0f4081cc83e21aa8",
+				"bytes": 544165,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "rac-mandate",
 			"title": "RAC Mandate",
 			"summary": "Defines the Accountability Council — the guardian that makes sure governance processes are followed correctly, without itself becoming a ruler.",
 			"path": "pending/governance/rac-mandate.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/rac-mandate_signed.pdf",
+				"sha256": "3fc0aa988682fab534ee86fe6157c67676dbea7117ea19de5e394988d45fd8a8",
+				"bytes": 512219,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "delegate-mandate",
 			"title": "Delegate Mandate",
 			"summary": "Defines the Delegates who perform the DAO's operational jobs (treasury signing, compliance, legal signing, etc.) — again, agents who execute, never govern.",
 			"path": "pending/governance/delegate-mandate.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/delegate-mandate_signed.pdf",
+				"sha256": "92934c4dda991ccd4a13fcb08e2cdac47e8e9c7c58993910b7323090919abc39",
+				"bytes": 518510,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "elections-and-role-governance-policy",
 			"title": "Elections & Role Governance Policy",
 			"summary": "How every key role is elected, evaluated, and replaced, keeping all authority time-bound and accountable to voters.",
 			"path": "pending/governance/elections-and-role-governance-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/elections-and-role-governance-policy_signed.pdf",
+				"sha256": "6d6ca1816ed5802420d737d9f471068644afd500818532a7a4ff2a70d9e5da5a",
+				"bytes": 579742,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "working-group-framework",
 			"title": "Working Group Framework",
 			"summary": "How the DAO's execution teams (Working Groups) are created, funded, bounded, and held to their mandates.",
 			"path": "pending/governance/working-group-framework.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/working-group-framework_signed.pdf",
+				"sha256": "dcc4ac5a111c6b83e97e28e120f7040075f31c13f2b9794e0fe10a066d27236f",
+				"bytes": 509137,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "roles-registry",
@@ -85,77 +145,143 @@
 			"title": "Code of Conduct",
 			"summary": "The minimum standards of behaviour expected of everyone who participates in the DAO.",
 			"path": "pending/governance/code-of-conduct.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/code-of-conduct_signed.pdf",
+				"sha256": "fd10c8cbfce5e814a7c7dd16bbb5def11c59bf22eb0708ddaf28a3d34fe6ae74",
+				"bytes": 512096,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "conflict-of-interest-policy",
 			"title": "Conflict of Interest Policy",
 			"summary": "When people in positions of authority must disclose personal interests and step back from a decision.",
 			"path": "pending/governance/conflict-of-interest-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/conflict-of-interest-policy_signed.pdf",
+				"sha256": "32e95a401b721494451a0fe73ecd981c904c4acec1468b4bc3405ffd216341cb",
+				"bytes": 515920,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "dispute-resolution-and-arbitration-policy",
 			"title": "Dispute Resolution & Arbitration Policy",
 			"summary": "How disagreements are resolved fairly — settled at the lowest level where possible, escalating to a vote, and ultimately to legal arbitration.",
 			"path": "pending/governance/dispute-resolution-and-arbitration-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/dispute-resolution-and-arbitration-policy_signed.pdf",
+				"sha256": "c6efdac24b497d0bce096b0d868575d9c8750f705872774f2adbca6838d70a4e",
+				"bytes": 517664,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "emergency-and-safeguards-policy",
 			"title": "Emergency & Safeguards Policy",
 			"summary": "What counts as an emergency, who may act, and the limits that keep emergency powers exceptional, minimal, temporary, and accountable.",
 			"path": "pending/governance/emergency-and-safeguards-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/emergency-and-safeguards-policy_signed.pdf",
+				"sha256": "c5beb480f80f1841064965184c7d21cb0da85c92876559578cc150a88aef98b5",
+				"bytes": 512038,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "governance-continuity-framework",
 			"title": "Governance Continuity Framework",
 			"summary": "How the DAO keeps governing — or recovers — if a body fails, execution is blocked, or normal processes stop working.",
 			"path": "pending/governance/governance-continuity-framework.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/governance-continuity-framework_signed.pdf",
+				"sha256": "effd0d67a924a8b0c74356f56f4afedf2d7ba724c9f570998685a214a2a0d632",
+				"bytes": 530522,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "contributor-compensation-policy",
 			"title": "Contributor Compensation Policy",
 			"summary": "How people who do paid work for the DAO are compensated, and how that pay is set, approved, and disclosed.",
 			"path": "pending/governance/contributor-compensation-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/contributor-compensation-policy_signed.pdf",
+				"sha256": "ca7098f854ac47765426210f228b0f4e49cdc2ad5c4a3c953ee6eceee121c7d4",
+				"bytes": 545997,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "contributor-onboarding-and-offboarding",
 			"title": "Contributor Onboarding and Offboarding",
 			"summary": "How contributors join and leave cleanly, protecting continuity of work and access control.",
 			"path": "pending/governance/contributor-onboarding-and-offboarding.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/contributor-onboarding-and-offboarding_signed.pdf",
+				"sha256": "416ab7d14487f22152d1fef215a2d5532eecbce053b5a40c6405b46d2512086d",
+				"bytes": 510019,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "source-code-stewardship-policy",
 			"title": "Source Code Stewardship Policy",
 			"summary": "How the DAO preserves, maintains, and keeps community control over the software it holds.",
 			"path": "pending/governance/source-code-stewardship-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/source-code-stewardship-policy_signed.pdf",
+				"sha256": "b71cc4a141cb7af3a80216a2c0e5362214ae31459c444a12c5a4d8837a2806cb",
+				"bytes": 521324,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "open-source-and-ip-policy",
 			"title": "Open Source & IP Policy",
 			"summary": "Ensures everything the DAO funds or produces stays an open, reusable public good and can't be privatised.",
 			"path": "pending/governance/open-source-and-ip-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/open-source-and-ip-policy_signed.pdf",
+				"sha256": "8f4f0afb454b203d36b5db90cf3a7165bb6b0cdeec0ecb64ec0aada0125dd7f4",
+				"bytes": 503486,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "governance-maintenance-and-upgrade-framework",
 			"title": "Governance Maintenance & Upgrade Framework",
 			"summary": "The rules for changing the rules — how governance documents are maintained, amended, and versioned over time.",
 			"path": "pending/governance/governance-maintenance-and-upgrade-framework.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/governance-maintenance-and-upgrade-framework_signed.pdf",
+				"sha256": "769a104255fd55f01046ce3369084f9b0116edfd4ba3ce4517172fdce2b57f8a",
+				"bytes": 500643,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "compliance-operations-policy",
 			"title": "Compliance Operations Policy",
 			"summary": "The day-to-day procedures for meeting the Company's legal obligations (identity checks, credential security, handling regulatory demands).",
 			"path": "pending/governance/compliance-operations-policy.md",
-			"status": "pending"
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/compliance-operations-policy_signed.pdf",
+				"sha256": "0354a79d42d273c61236d857af4c2bdf6077cca54bd5ad3172a395a2f16e1b9f",
+				"bytes": 499357,
+				"version": "1.0.0"
+			}
 		},
 		{
 			"id": "charter-reading-guide",
@@ -174,6 +300,30 @@
 			"title": "Election Methods Guide",
 			"path": "pending/governance/election-methods-guide.md",
 			"status": "pending"
+		},
+		{
+			"id": "operating-agreement",
+			"title": "Operating Agreement",
+			"summary": "The legal contract of Radix DAO LLC — the instrument every governance document operates under and remains subordinate to.",
+			"path": "pending/legal/operating-agreement.md",
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/OA. RadixDAO LLC. final _signed.pdf",
+				"sha256": "82816b21458c6833ae207e478d3478c9f7359382f6e4a595c626994e6b45f12f",
+				"bytes": 757344
+			}
+		},
+		{
+			"id": "certificate-of-formation",
+			"title": "Certificate of Formation",
+			"summary": "The company's formation instrument under the Marshall Islands DAO Act, listing its on-chain smart contracts in Exhibit A.",
+			"path": "pending/legal/Non-Profit_DAO_LLC_Certificate_of_Formation_RadixDAO_130826_v1_01.md",
+			"status": "pending",
+			"signedPdf": {
+				"path": "pending/signed/Non_Profit_DAO_LLC_Certificate_of_Formation_RadixDAO_130826_v1_02_signed.pdf",
+				"sha256": "0c162418f2dc424b2f9d626418ea611c59d250f9c21ff2df691f08a92e20ec78",
+				"bytes": 580816
+			}
 		}
 	],
 	"shortlist": [
@@ -249,6 +399,20 @@
 				"governance-maintenance-and-upgrade-framework",
 				"compliance-operations-policy"
 			]
+		},
+		{
+			"name": "The legal foundation",
+			"documents": ["operating-agreement", "certificate-of-formation"]
 		}
-	]
+	],
+	"ratification": {
+		"proposal": "GP-PRE-1",
+		"title": "Constitutional Ratification of the Governance Framework",
+		"path": "pending/GP-PRE-1-Framework-Ratification.md",
+		"certificate": {
+			"serialNumber": "497dc3092ebc024f6350b92a77fa14790de75b03",
+			"thumbprintSha1": "95642b00a5338c81c28b76c4af6b99bc28de61ed",
+			"fingerprintSha256": "73B1D38C5F4137307ADDEE4F8AF8BB922F887739C9FD9E499CFEAE10DACDE92D"
+		}
+	}
 }
