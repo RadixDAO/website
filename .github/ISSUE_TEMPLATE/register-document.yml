@@ -45,6 +45,7 @@ body:
         - "Contributors and their work"
         - "Protecting the DAO's code and IP"
         - "How the rulebook maintains itself"
+        - "The legal foundation"
     validations:
       required: true
   - type: input

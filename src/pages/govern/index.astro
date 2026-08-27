@@ -3,12 +3,16 @@ import Band from '../../components/Band.astro'
 import DocumentStatus from '../../components/DocumentStatus.astro'
 import PageHeader from '../../components/PageHeader.astro'
 import {
+  archiveHref,
   companionGuides,
   groups,
   inForce,
   markdownUrl,
+  ratification,
+  ratificationHref,
   repoHref,
-  shortlist
+  shortlist,
+  signedForRatification
 } from '../../data/governance'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
@@ -34,18 +38,35 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 			</p>
 			<p class="mt-4 max-w-[56ch] text-[0.9375rem] text-[var(--color-muted)]">
 				{
-					inForce.length === 0 ? (
+					inForce.length > 0 ? (
+						<>
+							Documents marked <em>in force</em> are published as a PDF whose SHA-256 digest is
+							recorded on-chain by the proposal that activated it. Check any copy against the
+							digest shown — a match proves it is byte-for-byte the document that was voted on.
+						</>
+					) : signedForRatification.length > 0 ? (
+						<>
+							Nothing here is in force yet. Every rule-bearing document below is published as a
+							signed PDF whose SHA-256 digest is recorded in{' '}
+							{ratificationHref ? (
+								<a
+									href={ratificationHref}
+									class="underline decoration-[var(--color-rule)] underline-offset-2 hover:text-[var(--color-accent)]"
+								>
+									ratification proposal{ratification ? ` ${ratification.proposal}` : ''}
+								</a>
+							) : (
+								'the ratification proposal'
+							)}
+							, awaiting the ratification vote — so anyone can already check that a copy is
+							byte-for-byte the file the vote is about.
+						</>
+					) : (
 						<>
 							Nothing here is in force yet. Every document is a draft awaiting the ratification
 							vote, marked <em>pending</em> below. Once a document is activated it is published as
 							a PDF whose SHA-256 digest is recorded on-chain, and that digest is shown here so
 							anyone can check their copy is the one that was voted on.
-						</>
-					) : (
-						<>
-							Documents marked <em>in force</em> are published as a PDF whose SHA-256 digest is
-							recorded on-chain by the proposal that activated it. Check any copy against the
-							digest shown — a match proves it is byte-for-byte the document that was voted on.
 						</>
 					)
 				}
@@ -116,8 +137,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 			}
 		</div>
 
-		<a href={repoHref} class="onward mt-9 inline-block">
-			Browse the full repository <span aria-hidden="true">&rsaquo;</span>
-		</a>
+		<div class="mt-9 flex flex-wrap gap-x-7 gap-y-2">
+			<a href={repoHref} class="onward">
+				Browse the full repository <span aria-hidden="true">&rsaquo;</span>
+			</a>
+			<a href={archiveHref} class="onward">
+				Historic versions (archive) <span aria-hidden="true">&rsaquo;</span>
+			</a>
+		</div>
 	</Band>
 </BaseLayout>

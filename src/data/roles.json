@@ -34,7 +34,7 @@
 	"delegatedFunctions": [
 		{
 			"name": "Treasury Signers",
-			"note": "Up to 5, one per seated Council member holding the function."
+			"note": "Exactly 5. Ordinarily allocated among seated Council members; a seat may instead be filled by election."
 		},
 		{ "name": "Governance Operator", "note": "" },
 		{ "name": "Legal Signatory", "note": "" },

@@ -1,10 +1,16 @@
 ---
 import Band from '../components/Band.astro'
+import CopyableDigest from '../components/CopyableDigest.astro'
 import DocumentRegister from '../components/DocumentRegister.astro'
 import DocumentVerifier from '../components/DocumentVerifier.astro'
 import PageHeader from '../components/PageHeader.astro'
 import identifiers from '../data/identifiers.json'
-import { inForce } from '../data/governance'
+import {
+  inForce,
+  ratification,
+  ratificationHref,
+  signedForRatification
+} from '../data/governance'
 import BaseLayout from '../layouts/BaseLayout.astro'
 
 // §6.7: the treasury rows show even though nothing is deployed, marked pending.
@@ -16,9 +22,14 @@ interface GovernanceRow {
   verifyHref: string
 }
 
+// A treasury row is live once it carries an identifier; until then it renders
+// as pending. Both shapes live in the same list so the table's order matches
+// the register in the source policy.
 interface TreasuryRow {
   function: string
-  status: string
+  identifier?: string
+  verifyHref?: string
+  status?: string
   note?: string
 }
 ---
@@ -39,8 +50,8 @@ interface TreasuryRow {
 	<Band tone="paper" ruled compact>
 		<h2 class="label">The register</h2>
 		<p class="mt-3 max-w-[64ch] text-[0.875rem] text-[var(--color-muted)]">
-			Treasury accounts are shown even though they are not yet deployed, marked pending — so this
-			table always reflects the DAO's real state rather than hiding what doesn't exist yet.
+			Accounts that are not yet deployed are still shown, marked pending — so this table always
+			reflects the DAO's real state rather than hiding what doesn't exist yet.
 		</p>
 		<div class="table-scroll mt-6">
 			<table class="w-full min-w-[38rem] border-collapse text-left">
@@ -88,33 +99,58 @@ interface TreasuryRow {
 						))
 					}
 					{
-						identifiers.treasury.map((row: TreasuryRow) => (
-							<tr class="opacity-70">
-								<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.90625rem] font-semibold">
-									{row.function}
-									{row.note && (
-										<span class="mt-0.5 block text-[0.78125rem] font-normal text-[var(--color-muted)]">
-											{row.note}
+						identifiers.treasury.map((row: TreasuryRow) =>
+							row.identifier && row.verifyHref ? (
+								<tr>
+									<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.90625rem] font-semibold">
+										{row.function}
+									</td>
+									<td class="data border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.75rem] break-all text-[var(--color-muted)]">
+										{row.identifier}
+									</td>
+									<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-middle">
+										<span class="data text-[0.75rem] whitespace-nowrap text-[var(--color-muted)]">
+											<span
+												class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-live)] align-[1px]"
+												aria-hidden="true"
+											/>
+											Live
 										</span>
-									)}
-								</td>
-								<td class="data border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.75rem] text-[var(--color-muted)]">
-									not yet deployed
-								</td>
-								<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-middle">
-									<span class="data text-[0.75rem] whitespace-nowrap text-[var(--color-muted)]">
-										<span
-											class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
-											aria-hidden="true"
-										/>
-										Pending
-									</span>
-								</td>
-								<td class="border-b border-[var(--color-rule)] py-4 align-middle text-[0.8125rem] text-[var(--color-muted)]">
-									&mdash;
-								</td>
-							</tr>
-						))
+									</td>
+									<td class="border-b border-[var(--color-rule)] py-4 align-middle">
+										<a href={row.verifyHref} class="onward text-[0.8125rem] whitespace-nowrap">
+											Check <span aria-hidden="true">&rsaquo;</span>
+										</a>
+									</td>
+								</tr>
+							) : (
+								<tr class="opacity-70">
+									<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.90625rem] font-semibold">
+										{row.function}
+										{row.note && (
+											<span class="mt-0.5 block text-[0.78125rem] font-normal text-[var(--color-muted)]">
+												{row.note}
+											</span>
+										)}
+									</td>
+									<td class="data border-b border-[var(--color-rule)] py-4 pr-5 align-middle text-[0.75rem] text-[var(--color-muted)]">
+										not yet deployed
+									</td>
+									<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-middle">
+										<span class="data text-[0.75rem] whitespace-nowrap text-[var(--color-muted)]">
+											<span
+												class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
+												aria-hidden="true"
+											/>
+											Pending
+										</span>
+									</td>
+									<td class="border-b border-[var(--color-rule)] py-4 align-middle text-[0.8125rem] text-[var(--color-muted)]">
+										&mdash;
+									</td>
+								</tr>
+							)
+						)
 					}
 				</tbody>
 			</table>
@@ -135,7 +171,21 @@ interface TreasuryRow {
 		<h2 class="label" id="documents">Documents</h2>
 		<p class="mt-3 max-w-[64ch] text-[0.875rem] text-[var(--color-muted)]">
 			{
-				inForce.length === 0 ? (
+				inForce.length > 0 ? (
+					<>
+						Each activated document below is published as a PDF whose SHA-256 digest is recorded
+						on-chain by the proposal that activated it. A match proves the file is byte-for-byte
+						the document that was voted on, no matter where the copy came from.
+					</>
+				) : signedForRatification.length > 0 ? (
+					<>
+						Nothing is in force yet, but every document put to the ratification vote is already
+						published as a signed PDF, and the SHA-256 digest of each exact file is recorded in
+						ratification proposal {ratification?.proposal}. Check a copy against the digests below
+						&mdash; a match proves it is byte-for-byte the file the vote is about, no matter where
+						the copy came from.
+					</>
+				) : (
 					<>
 						When a governance document is activated it is published as a PDF, and the SHA-256
 						digest of that exact file is recorded on-chain by the proposal that activated it.
@@ -143,17 +193,47 @@ interface TreasuryRow {
 						byte-for-byte the document that was voted on, no matter where the copy came from.
 						No document has been activated yet, so there is nothing to check against so far.
 					</>
-				) : (
-					<>
-						Each activated document below is published as a PDF whose SHA-256 digest is recorded
-						on-chain by the proposal that activated it. A match proves the file is byte-for-byte
-						the document that was voted on, no matter where the copy came from.
-					</>
 				)
 			}
 		</p>
 
 		<DocumentRegister />
+
+		{
+			ratification && signedForRatification.length > 0 && (
+				<div class="mt-9">
+					<h3 class="label">Signing certificate</h3>
+					<p class="mt-3 max-w-[64ch] text-[0.875rem] text-[var(--color-muted)]">
+						Every signed PDF above carries a signature from a single certificate, ratified together
+						with the documents by proposal {ratification.proposal} and unchanged for later document
+						changes until it is renewed. A file whose signature is absent, invalid, or chains to
+						any other certificate is not a ratified version, whatever its SHA-256.
+					</p>
+					<dl class="mt-4 grid gap-x-8 gap-y-2 text-[0.8125rem] md:grid-cols-[13rem_1fr]">
+						<dt class="label">Serial number</dt>
+						<dd class="data break-all text-[var(--color-muted)]">
+							{ratification.certificate.serialNumber}
+						</dd>
+						<dt class="label">Thumbprint (SHA-1)</dt>
+						<dd class="data break-all text-[var(--color-muted)]">
+							{ratification.certificate.thumbprintSha1}
+						</dd>
+						<dt class="label">Fingerprint (SHA-256)</dt>
+						<dd>
+							<CopyableDigest
+								value={ratification.certificate.fingerprintSha256}
+								class="text-[0.8125rem] break-all text-[var(--color-muted)]"
+							/>
+						</dd>
+					</dl>
+					{ratificationHref && (
+						<a href={ratificationHref} class="onward mt-4 inline-block text-[0.875rem]">
+							The ratification proposal <span aria-hidden="true">&rsaquo;</span>
+						</a>
+					)}
+				</div>
+			)
+		}
 
 		<DocumentVerifier />
 

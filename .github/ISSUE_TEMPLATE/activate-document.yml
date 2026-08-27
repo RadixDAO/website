@@ -38,6 +38,8 @@ body:
         - "Charter Reading Guide (charter-reading-guide)"
         - "Policy Library Reading Guide (policy-library-reading-guide)"
         - "Election Methods Guide (election-methods-guide)"
+        - "Operating Agreement (operating-agreement)"
+        - "Certificate of Formation (certificate-of-formation)"
     validations:
       required: true
   - type: input
