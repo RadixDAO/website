@@ -27,6 +27,7 @@ const items = notices.map((n) => {
     title: n.data.title,
     pubDate: n.data.pubDate,
     noticeDate: n.data.noticeDate,
+    verbatim: n.data.verbatim,
     supersededByHref: correctionId ? `/notices/${correctionId}/` : undefined
   }
 })
@@ -59,6 +60,7 @@ for (const n of notices) {
 				NOTICE_TYPES.map((t) => (
 					<a
 						href={`/notices/type/${t.value}/`}
+						title={t.description}
 						class="label rounded-[2px] border border-[var(--color-rule-strong)] px-2.5 py-1 text-[0.71875rem] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
 					>
 						{t.label} · {countsByType.get(t.value) ?? 0}

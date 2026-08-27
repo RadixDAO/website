@@ -16,7 +16,7 @@ test('issue form generation preserves body content and stamps a valid server tim
   const body = [
     '### Notice type',
     '',
-    'Status report (status-report)',
+    'Reports & records (reports-and-records)',
     '',
     '### Notice title',
     '',

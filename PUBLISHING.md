@@ -42,7 +42,7 @@ or its workflow is unavailable.
 
    ```markdown
    ---
-   type: council-resolution
+   type: resolutions-and-decisions
    title: "Exact title of the notice"
    pubDate: 2026-08-07T14:30:00Z
    ---
@@ -50,11 +50,20 @@ or its workflow is unavailable.
    The body of the notice goes here. Plain Markdown — paragraphs, links, lists all work.
    ```
 
-4. Set `type` to whichever of these fits (must match exactly, lowercase, with hyphens):
-   `activation-statement`, `council-resolution`, `advisory-acknowledgement`, `vacancy-notice`,
-   `reduced-quorum-notice`, `identifier-register-change`, `compliance-challenge`,
-   `regulatory-demand-notice`, `status-report`, `prior-disclosure-notice`, `delegate-statement`,
-   `registry-update`.
+4. Set `type` to whichever of these six fits (must match exactly, lowercase, with hyphens):
+
+   | `type` | What lands in it |
+   |---|---|
+   | `resolutions-and-decisions` | Council resolutions, routine decisions, function allocations, the Activation Statement |
+   | `reports-and-records` | Minutes of meetings, status reports, quarterly accountability reports, post-deployment reports |
+   | `process-notices` | Reduced-quorum activations, advisory acknowledgements, vote result determinations, pre-action and advance notices, compliance challenge publications |
+   | `roles-and-seats` | Vacancy notices, seatings, resignations, delegate statements |
+   | `registry-updates` | Identifier register, repository registry, Working Group registry |
+   | `legal-and-compliance` | Regulatory and legal demand notices, emergency action disclosures |
+
+   The categories are broad on purpose — pick the one whose row names your item. Nothing about the
+   notice's legal effect depends on which category it is filed under; the category only groups the
+   record so it can be read.
 5. Set `pubDate` to the current UTC time in the exact format shown (`YYYY-MM-DDTHH:MM:SSZ`).
    A difference of more than 15 minutes from the commit time creates a visible warning so a wrong
    year or timezone is hard to miss. The warning does not block a deliberate backdated notice.
@@ -79,7 +88,7 @@ fixing typos. You may not filter, withhold, delay, or edit a filing.
 
 Use the same steps above, but:
 
-- Set `type: compliance-challenge`.
+- Set `type: process-notices`.
 - Add `verbatim: true` to the frontmatter.
 - Paste the filing's content into the body **completely unchanged** — copy-paste from the email
   exactly as it arrived.

@@ -46,12 +46,30 @@ type it, so check it before submitting.
 
 | Field | What to put |
 |---|---|
-| **Notice type** | Pick the closest match from the dropdown: Activation statement, Council resolution, Advisory acknowledgement, Vacancy notice, Reduced-quorum activation notice, Identifier register change, Compliance challenge, Regulatory or legal demand notice, Status report, Prior-disclosure notice, Delegate statement, or Working Group / repository registry update. |
+| **Notice type** | One of six categories — see the table below the form fields for what lands in each. |
 | **Notice title** | The exact title of the notice, as it should appear on the site. |
 | **Body** | The full text of the notice, in Markdown. It is copied **without trimming or reflowing** — write it exactly as you want it published. |
 | **Notice date** *(optional)* | Only fill this in if the notice has a statutory notice period with a specific UTC timestamp, formatted like `2026-08-11T14:30:00Z`. Leave blank otherwise. |
 | **Verbatim publication** | Choose **Yes** only if the body must be rendered exactly as submitted, character for character. Otherwise choose **No**. |
 | **Supersedes** *(optional)* | If this notice corrects an earlier one, put that notice's filename here, without the `.md` extension (e.g. `2026-08-01-example-resolution`). Leave blank otherwise. |
+
+### Choosing the notice type
+
+The dropdown has six categories. They are broad on purpose, so you should never have to agonise
+between two similar-sounding labels — find the row that names your item and pick that one.
+
+| Category | What lands in it |
+|---|---|
+| **Resolutions & decisions** | Council resolutions, routine decisions, function allocations, the Activation Statement |
+| **Reports & records** | Minutes of meetings, status reports, quarterly accountability reports, post-deployment reports |
+| **Process notices** | Reduced-quorum activations, advisory acknowledgements, vote result determinations, pre-action and advance notices, compliance challenge publications |
+| **Roles & seats** | Vacancy notices, seatings, resignations, delegate statements |
+| **Registry updates** | Identifier register, repository registry, Working Group registry |
+| **Legal & compliance** | Regulatory and legal demand notices, emergency action disclosures |
+
+The category does not change what a notice means or does — it only groups the record so a reader
+can find things. If two categories seem to fit, pick either; it is not a decision that can go
+wrong in a way that matters.
 
 GitHub will remind you: **this form opens a pull request — it does not publish immediately.** That's
 expected; that's stage 2 below.
