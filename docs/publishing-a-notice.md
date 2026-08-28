@@ -48,7 +48,7 @@ type it, so check it before submitting.
 |---|---|
 | **Notice type** | One of six categories — see the table below the form fields for what lands in each. |
 | **Notice title** | The exact title of the notice, as it should appear on the site. |
-| **Body** | The full text of the notice, in Markdown. It is copied **without trimming or reflowing** — write it exactly as you want it published. |
+| **Body** | The full text of the notice, in Markdown. It is copied **without trimming or reflowing** — write it exactly as you want it published. You can drag and drop files (PDFs, images, etc.) directly into this box — GitHub uploads them and inserts a link automatically, which becomes part of the notice body. |
 | **Notice date** *(optional)* | Only fill this in if the notice has a statutory notice period with a specific UTC timestamp, formatted like `2026-08-11T14:30:00Z`. Leave blank otherwise. |
 | **Verbatim publication** | Choose **Yes** only if the body must be rendered exactly as submitted, character for character. Otherwise choose **No**. |
 | **Supersedes** *(optional)* | If this notice corrects an earlier one, put that notice's filename here, without the `.md` extension (e.g. `2026-08-01-example-resolution`). Leave blank otherwise. |
@@ -70,6 +70,11 @@ between two similar-sounding labels — find the row that names your item and pi
 The category does not change what a notice means or does — it only groups the record so a reader
 can find things. If two categories seem to fit, pick either; it is not a decision that can go
 wrong in a way that matters.
+
+> **Adding attachments:** click anywhere in the Body box and drag a file (a PDF, a photo, a signed
+> document, etc.) onto it — GitHub uploads it and drops in a link or image at your cursor. Since the
+> body is copied through verbatim, that link becomes part of the published notice, so place it where
+> you want it to appear before submitting.
 
 GitHub will remind you: **this form opens a pull request — it does not publish immediately.** That's
 expected; that's stage 2 below.
@@ -166,6 +171,33 @@ That's it — the notice is now part of the permanent public record.
 
 ---
 
+## Reverting or correcting a published notice
+
+There is no delete or edit button for a published notice, by design — "nothing is edited after
+publication and nothing ages out." If a notice needs to be withdrawn or corrected, **you don't revert
+it, you publish a new notice that supersedes it**, using the exact same eight steps above.
+
+1. Find the exact filename of the notice you're correcting. It's the last part of its URL:
+   `https://radixdao.org/notices/2026-08-27-test-notice/` → the filename is `2026-08-27-test-notice`.
+2. Go through **Step 1 – Step 8** again as normal, opening a fresh **Publish a notice** form.
+3. Write the new notice's **Body** so it clearly says what it's correcting or withdrawing and why —
+   the site doesn't generate that wording for you.
+4. In the **Supersedes** field, paste the exact filename from step 1 (no `.md`, no leading slash,
+   case-sensitive). Get this wrong and there's no error — the two notices just silently fail to link
+   to each other, so double-check it against the URL before submitting.
+5. Publish it through the normal approve → wait → merge → wait flow.
+
+Once it's live, both pages update automatically:
+
+- The **old notice** gets a "Superseded" banner linking to your new one.
+- The **new notice** gets a "Correction" banner linking back to the old one.
+
+The old notice's content itself never changes — it stays exactly as originally published, permanently
+— only a banner is added pointing forward to the correction. This is what "reverting" means in this
+system: the record grows forward, it never gets erased.
+
+---
+
 ## Quick troubleshooting
 
 - **"Notice automation requires write, maintain, or admin access"** — the person who submitted the
@@ -176,6 +208,12 @@ That's it — the notice is now part of the permanent public record.
   **Actions** tab for a failed run, or ask a maintainer to look.
 - **Content is wrong after you already submitted the form** — don't merge the PR. Either edit the
   file directly on the PR before merging, or close the PR/issue and start over from Step 1.
+- **A notice was published but is now wrong or needs withdrawing** — see [Reverting or correcting a
+  published notice](#reverting-or-correcting-a-published-notice) above; don't try to edit the old
+  file.
+- **The "Superseded"/"Correction" banners aren't showing up after merging a correction** — the
+  **Supersedes** field almost certainly doesn't exactly match the old notice's filename (this fails
+  silently, with no error). Compare it character-for-character against the old notice's URL.
 - **Time-critical situation (e.g. a compliance challenge that can't wait for the form)** — this
   guide's form flow is not for that. Use the documented manual publishing path instead (ask a
   maintainer).
