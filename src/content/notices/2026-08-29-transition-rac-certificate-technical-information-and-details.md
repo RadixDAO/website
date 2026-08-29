@@ -2,7 +2,7 @@
 type: reports-and-records
 title: "Transition RAC Certificate technical information and details"
 pubDate: 2026-08-29T15:07:15Z
-verbatim: true
+verbatim: false
 ---
 
 The document in attachment/linked gathers all the technical information regrading the digital signature certificate that the Transition RAC created and is using for the Transition period.
