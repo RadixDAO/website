@@ -2,6 +2,7 @@
 # Run pnpm notice-form:generate after changing notice types.
 name: Publish a notice
 description: Create a validated notice pull request (write access required)
+labels: ["publish notice"]
 title: "[Publish notice] "
 body:
   - type: markdown

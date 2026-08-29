@@ -8,7 +8,7 @@ jobs:
   authorize:
     name: Confirm publisher has write access
     if: >-
-      startsWith(github.event.issue.title, '[Publish notice]') &&
+      contains(github.event.issue.labels.*.name, 'publish notice') &&
       contains(github.event.issue.body, '### Notice type')
     runs-on: ubuntu-latest
     permissions:
