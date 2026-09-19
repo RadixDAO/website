@@ -8,8 +8,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/charter_signed.pdf",
-				"sha256": "c40610bea43fee1881bbe17e7f886e6bcf91aa5123e5dbdac41561588ef2a9ef",
-				"bytes": 522350,
+				"sha256": "33a668f69af6b57d34cdd02a4c93d3dd04e42742132c5ec0b14b656640426cd0",
+				"bytes": 522410,
 				"version": "1.0.0"
 			}
 		},
@@ -22,8 +22,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/dao-parameters-registry_signed.pdf",
-				"sha256": "cb577d901d559e8c49992efc461b5e3239a1ccf1eac36971d951ea838656eac0",
-				"bytes": 597054,
+				"sha256": "0c9ad6fdb34665c93ac957688a86f7b3ea06cf15d9c83f9403c4b9bcbd37399d",
+				"bytes": 597111,
 				"version": "1.0.0"
 			}
 		},
@@ -36,8 +36,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/proposal-and-voting-framework_signed.pdf",
-				"sha256": "294ba3c9ed577c24a6b0c98277bd31e462b15d54eab0d2ac5be4e1e6442d76cb",
-				"bytes": 564690,
+				"sha256": "d29e0aff8f1ace3e5dc91bed5efc0476fa677ed09deec4a208cdd8839975e602",
+				"bytes": 564604,
 				"version": "1.0.0"
 			}
 		},
@@ -49,8 +49,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/execution-and-treasury-actions-policy_signed.pdf",
-				"sha256": "2f872ae705ebd7219373aea64dc0326b8a46e723c79b4c3ddf9d66e0f711384f",
-				"bytes": 515034,
+				"sha256": "9ebd63b6d34115e03d0de36f7f729b6309107af0008dc28852caa34b0d419528",
+				"bytes": 515033,
 				"version": "1.0.0"
 			}
 		},
@@ -62,7 +62,7 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/treasury-signers-rules_signed.pdf",
-				"sha256": "80e77df67cca699f20de21ba1a8a2beaa33a115768f06807cde3497347c1277b",
+				"sha256": "749c500719ef7eb04827274d8f675b7e39755492582104c4b8e6d261f3bb2226",
 				"bytes": 530566,
 				"version": "1.0.0"
 			}
@@ -75,8 +75,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/on-chain-identifiers-and-verification-policy_signed.pdf",
-				"sha256": "edc6ecc11716dd4b65118bfb53f98523bfb460ebf8df052d0f4081cc83e21aa8",
-				"bytes": 544165,
+				"sha256": "b4c8229c9ef3935b40b29f1874f9726f302b59cee19e84f45e58d9d22764904a",
+				"bytes": 544152,
 				"version": "1.0.0"
 			}
 		},
@@ -127,8 +127,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/working-group-framework_signed.pdf",
-				"sha256": "dcc4ac5a111c6b83e97e28e120f7040075f31c13f2b9794e0fe10a066d27236f",
-				"bytes": 509137,
+				"sha256": "a3f41765d6656e2d8cea96e203755f5a607834de8c4db02a9cd7a701b654706e",
+				"bytes": 509141,
 				"version": "1.0.0"
 			}
 		},
@@ -174,8 +174,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/dispute-resolution-and-arbitration-policy_signed.pdf",
-				"sha256": "c6efdac24b497d0bce096b0d868575d9c8750f705872774f2adbca6838d70a4e",
-				"bytes": 517664,
+				"sha256": "ecefdfda2dfb05b052ff7e5503223dde0636a83ce50a04f9d52b383038b24240",
+				"bytes": 517690,
 				"version": "1.0.0"
 			}
 		},
@@ -200,8 +200,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/governance-continuity-framework_signed.pdf",
-				"sha256": "effd0d67a924a8b0c74356f56f4afedf2d7ba724c9f570998685a214a2a0d632",
-				"bytes": 530522,
+				"sha256": "711a43e1250dd91c0486022ba3aaf7ec8b28197ddd5f24a3cd6a15380f37087b",
+				"bytes": 530525,
 				"version": "1.0.0"
 			}
 		},
@@ -213,8 +213,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/contributor-compensation-policy_signed.pdf",
-				"sha256": "ca7098f854ac47765426210f228b0f4e49cdc2ad5c4a3c953ee6eceee121c7d4",
-				"bytes": 545997,
+				"sha256": "e26c707eb951dff8ea9d4e28a10a90bdf19fe4cab936f6c3ff015942817fd45e",
+				"bytes": 545999,
 				"version": "1.0.0"
 			}
 		},
@@ -239,8 +239,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/source-code-stewardship-policy_signed.pdf",
-				"sha256": "b71cc4a141cb7af3a80216a2c0e5362214ae31459c444a12c5a4d8837a2806cb",
-				"bytes": 521324,
+				"sha256": "1f0fb04a3c68792169b1184ca77abe38020264de64d00fabd8a95ca7c9629982",
+				"bytes": 521317,
 				"version": "1.0.0"
 			}
 		},
@@ -278,8 +278,8 @@
 			"status": "pending",
 			"signedPdf": {
 				"path": "pending/signed/compliance-operations-policy_signed.pdf",
-				"sha256": "0354a79d42d273c61236d857af4c2bdf6077cca54bd5ad3172a395a2f16e1b9f",
-				"bytes": 499357,
+				"sha256": "227df0c6ef86fce6c8bcf4d22062bcf12e948deba3df2eec239f10902d73d163",
+				"bytes": 499436,
 				"version": "1.0.0"
 			}
 		},
