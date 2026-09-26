@@ -1,11 +1,12 @@
 ---
-phase: "Phase 1 · Pre-formation"
-headline: "Ratification vote pending. Community decisions are advisory until activation."
-linkHref: "/govern/"
-linkText: "The sequence"
+phase: "Vote open"
+headline: "The DAO formation vote is live. Community members can now cast their vote."
+linkHref: "https://vote.radixdao.org/proposal/0"
+linkText: "Cast your vote"
 ---
 
-Nothing in the framework is operative yet. The first vote, constitutional ratification, has not
-been called. Until the Company forms, community governance is not yet in effect — see the
+The vote to form the Radix DAO is now open at
+[vote.radixdao.org](https://vote.radixdao.org/proposal/0). Until the Company forms, community
+governance is not yet in effect — see the
 [activation sequence](https://github.com/RadixDAO/governance-framework/blob/main/pending/README.md)
-for what happens next.
+for what happens after the vote.
