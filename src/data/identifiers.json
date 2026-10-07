@@ -1,6 +1,6 @@
 {
 	"lsuNote": "Liquid staking units have no single address by design — each validator mints its own. They're converted to their XRD-equivalent at the snapshot taken when each vote opens.",
-	"lsuMethodHref": "https://github.com/RadixDAO/governance-framework/blob/main/pending/parameters/dao-parameters-registry.md",
+	"lsuMethodHref": "https://github.com/RadixDAO/governance-framework/blob/main/parameters/dao-parameters-registry.md",
 	"governance": [
 		{
 			"function": "Governance smart-contract component",
@@ -51,5 +51,5 @@
 		},
 		{ "function": "Emergency Safe Address", "status": "pending" }
 	],
-	"sourceHref": "https://github.com/RadixDAO/governance-framework/blob/main/pending/governance/on-chain-identifiers-and-verification-policy.md"
+	"sourceHref": "https://github.com/RadixDAO/governance-framework/blob/main/governance/on-chain-identifiers-and-verification-policy.md"
 }

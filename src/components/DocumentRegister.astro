@@ -3,7 +3,7 @@ import {
   inForce,
   markdownUrl,
   pdfUrl,
-  signedForRatification,
+  signedNotInForce,
   signedPdfUrl
 } from '../data/governance'
 import CopyableDigest from './CopyableDigest.astro'
@@ -13,16 +13,16 @@ import CopyableDigest from './CopyableDigest.astro'
 // the abbreviated form on /govern/ is for recognition only.
 //
 // Two kinds of row share the table: documents in force (digest recorded
-// on-chain by the activating proposal) and documents signed for the
-// ratification vote (digest recorded in the ratification proposal's manifest).
-// The status column keeps them honest about which is which.
+// on-chain by the activating proposal) and signed documents not yet in force —
+// chiefly the ratified framework, whose digests are recorded in the ratified
+// manifest. The status column keeps them honest about which is which.
 //
 // Same shape as the on-chain identifier table above it: one row per thing, the
 // verifiable value in monospace, and a way to check it independently.
 ---
 
 {
-	(inForce.length > 0 || signedForRatification.length > 0) && (
+	(inForce.length > 0 || signedNotInForce.length > 0) && (
 		<div class="table-scroll mt-6">
 			<table class="w-full min-w-[38rem] border-collapse text-left">
 				<thead>
@@ -80,7 +80,7 @@ import CopyableDigest from './CopyableDigest.astro'
 							</td>
 						</tr>
 					))}
-					{signedForRatification.map((doc) => (
+					{signedNotInForce.map((doc) => (
 						<tr>
 							<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-top text-[0.90625rem] font-semibold">
 								{doc.title}
@@ -89,8 +89,9 @@ import CopyableDigest from './CopyableDigest.astro'
 										class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
 										aria-hidden="true"
 									/>
-									Signed{doc.signedPdf?.version && <> &middot; v{doc.signedPdf.version}</>} &middot;
-									awaiting ratification
+									{doc.status === 'ratified' ? 'Ratified' : 'Signed'}
+									{doc.signedPdf?.version && <> &middot; v{doc.signedPdf.version}</>} &middot;{' '}
+									{doc.status === 'ratified' ? 'in force at activation' : 'not yet in force'}
 								</span>
 							</td>
 							<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-top">

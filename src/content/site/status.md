@@ -1,12 +1,13 @@
 ---
-phase: "Vote open"
-headline: "The DAO formation vote is live. Community members can now cast their vote."
+phase: "Ratified"
+headline: "The community has ratified the governance framework. The Permanent Council election is next."
 linkHref: "https://vote.radixdao.org/proposal/0"
-linkText: "Cast your vote"
+linkText: "See the result"
 ---
 
-The vote to form the Radix DAO is now open at
-[vote.radixdao.org](https://vote.radixdao.org/proposal/0). Until the Company forms, community
-governance is not yet in effect — see the
-[activation sequence](https://github.com/RadixDAO/governance-framework/blob/main/pending/README.md)
-for what happens after the vote.
+The community ratified the DAO's governance framework in
+[GP-PRE-1](https://vote.radixdao.org/proposal/0). The Company's formation has been filed and is in
+progress. Next comes the Permanent Council election (GP-ELECT-1), to be announced soon, and then
+the Activation Vote. Until that vote passes, community governance is advisory — see the
+[founding sequence](https://github.com/RadixDAO/governance-framework/blob/main/PROPOSALS.md) for
+each step.
