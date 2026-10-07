@@ -12,7 +12,7 @@ import {
   ratificationHref,
   repoHref,
   shortlist,
-  signedForRatification
+  signedNotInForce
 } from '../../data/governance'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
@@ -20,10 +20,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 // pointer to the operative document in the governance repository.
 //
 // Status is data, never a hardcoded label. Nothing is activated yet, so every
-// row below renders as pending — the same way §6.7 has the Verify table show
-// undeployed treasury accounts rather than hide them. When the first activation
-// vote passes, setting a document's status and digest in govern.json is enough
-// to give it the in-force treatment; no code changes.
+// row below renders as ratified or pending — the same way §6.7 has the Verify
+// table show undeployed treasury accounts rather than hide them. When the
+// Activation Vote passes, setting a document's status and digest in govern.json
+// is enough to give it the in-force treatment; no code changes.
 ---
 
 <BaseLayout
@@ -44,22 +44,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 							recorded on-chain by the proposal that activated it. Check any copy against the
 							digest shown — a match proves it is byte-for-byte the document that was voted on.
 						</>
-					) : signedForRatification.length > 0 ? (
+					) : signedNotInForce.length > 0 ? (
 						<>
-							Nothing here is in force yet. Every rule-bearing document below is published as a
-							signed PDF whose SHA-256 digest is recorded in{' '}
+							The community has ratified this framework in{' '}
 							{ratificationHref ? (
 								<a
 									href={ratificationHref}
 									class="underline decoration-[var(--color-rule)] underline-offset-2 hover:text-[var(--color-accent)]"
 								>
-									ratification proposal{ratification ? ` ${ratification.proposal}` : ''}
+									proposal{ratification ? ` ${ratification.proposal}` : ''}
 								</a>
 							) : (
 								'the ratification proposal'
 							)}
-							, awaiting the ratification vote — so anyone can already check that a copy is
-							byte-for-byte the file the vote is about.
+							. Every rule-bearing document below is published as a signed PDF whose SHA-256
+							digest is recorded in the ratified manifest, so anyone can check that a copy is
+							byte-for-byte the ratified version. Nothing here is in force until the Activation
+							Vote passes; until then community governance is advisory.
 						</>
 					) : (
 						<>

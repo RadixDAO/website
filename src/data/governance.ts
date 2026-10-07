@@ -23,10 +23,11 @@ export const sourceHref = (path: string, ref: string = SOURCE.ref) =>
 export const archiveHref = `${repoHref}/tree/${SOURCE.ref}/archive`
 
 // An activated document is published as a PDF whose SHA-256 is recorded on-chain
-// by the proposal that activated it. Until then it has no PDF and no digest —
-// `pending` is the honest state for everything in the framework today, and the
-// in-force treatment is driven entirely by data.
-export type DocumentStatusValue = 'pending' | 'in-force'
+// by the proposal that activated it. Before that, a document the community has
+// ratified is `ratified`: its signed PDF and digest are fixed by the ratified
+// manifest, but it does not bind anyone until the Activation Vote passes.
+// Everything else is `pending`. The treatment of each is driven entirely by data.
+export type DocumentStatusValue = 'pending' | 'ratified' | 'in-force'
 
 /**
  * A version that has been replaced. The site shows only what is currently
@@ -55,14 +56,14 @@ export interface DocumentPdf {
 }
 
 /**
- * The signed PDF a pending document was published as for the ratification
- * vote. Distinct from `pdf`: that field means "activated and in force", while
- * this one means "this exact file is what the proposal asks the community to
- * ratify". Its digest comes from the proposal's ratified manifest, and the
- * signature must chain to the certificate in `ratification.certificate`.
+ * The signed PDF a document was published as before it is in force. Distinct
+ * from `pdf`: that field means "activated and in force", while this one means
+ * "this exact file is the signed version". For a ratified document its digest
+ * comes from the ratified manifest, and the signature must chain to the
+ * certificate in `ratification.certificate`.
  */
 export interface SignedPdf {
-  /** Path within the governance repository (under pending/signed/). */
+  /** Path within the governance repository (under signed/, or pending/signed/ before ratification). */
   path: string
   /** Lowercase hex SHA-256 over the raw bytes of the signed PDF. */
   sha256: string
@@ -80,8 +81,11 @@ export interface SignedPdf {
 export interface Ratification {
   proposal: string
   title: string
-  /** Path of the proposal within the governance repository. */
-  path: string
+  /**
+   * The proposal's on-chain record. The governance repository removes a
+   * proposal document once it passes, so this is the lasting reference.
+   */
+  href: string
   certificate: {
     serialNumber: string
     thumbprintSha1: string
@@ -121,7 +125,7 @@ interface GovernData {
 }
 
 const SHA256 = /^[0-9a-f]{64}$/
-const STATUSES: DocumentStatusValue[] = ['pending', 'in-force']
+const STATUSES: DocumentStatusValue[] = ['pending', 'ratified', 'in-force']
 
 // Validated at build time so a malformed entry fails the build rather than
 // rendering a broken or — worse — a misleading row. An unverifiable digest on a
@@ -153,6 +157,11 @@ function validate(data: GovernData): GovernData {
     if (doc.status === 'in-force' && !(doc.pdf && doc.version)) {
       throw new Error(
         `govern.json: "${doc.id}" is in-force but is missing its version or its pdf digest. An in-force document must be verifiable.`
+      )
+    }
+    if (doc.status === 'ratified' && !doc.signedPdf?.version) {
+      throw new Error(
+        `govern.json: "${doc.id}" is ratified but is missing its signed PDF or its version. A ratified document must be verifiable against the manifest.`
       )
     }
   }
@@ -200,23 +209,23 @@ export const documents = data.documents
 export const inForce = data.documents.filter((d) => d.status === 'in-force')
 export const superseded = data.superseded ?? []
 
-// Pending documents that have been published as signed PDFs for the
-// ratification vote. Their digests are checkable now, before anything is in
-// force — the proposal's manifest is the reference, not this site.
-export const signedForRatification = data.documents.filter(
-  (d) => d.status === 'pending' && d.signedPdf
+// Documents published as signed PDFs but not yet in force: the ratified
+// framework, plus anything signed and still pending (the legal instruments
+// until formation). Their digests are checkable now — for ratified documents
+// the manifest is the reference, not this site.
+export const signedNotInForce = data.documents.filter(
+  (d) => d.status !== 'in-force' && d.signedPdf
 )
+export const ratified = data.documents.filter((d) => d.status === 'ratified')
 
 export const ratification = data.ratification ?? null
-export const ratificationHref = data.ratification
-  ? sourceHref(data.ratification.path)
-  : null
+export const ratificationHref = data.ratification?.href ?? null
 
 /** Public URL of an activated document's PDF, in the repository of record. */
 export const pdfUrl = (doc: GovernanceDocument) =>
   doc.pdf ? `${repoHref}/raw/${doc.commit ?? SOURCE.ref}/${doc.pdf.path}` : null
 
-/** Public URL of the signed PDF published for the ratification vote. */
+/** Public URL of a signed PDF that is not yet in force. */
 export const signedPdfUrl = (doc: GovernanceDocument) =>
   doc.signedPdf ? `${repoHref}/raw/${SOURCE.ref}/${doc.signedPdf.path}` : null
 

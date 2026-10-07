@@ -128,7 +128,7 @@ body:
     attributes:
       label: Document
       options:
-${options(documentOptions((doc) => doc.status === 'pending'))}
+${options(documentOptions((doc) => doc.status !== 'in-force'))}
     validations:
       required: true
 ${publishFields('activated')}`,

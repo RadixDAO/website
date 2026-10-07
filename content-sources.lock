@@ -1,11 +1,11 @@
 {
 	"source": {
 		"repository": "RadixDAO/governance-framework",
-		"ref": "14a0510ad3bf926b696d149f8bcbd7a46704c3a0"
+		"ref": "55c81d642cd0502d7209777dce36883b3ecb77dc"
 	},
 	"files": {
-		"pending/policy-library-reading-guide.md": "412d563a0b5ef00870fcc081d8d837b00487875a022b1193014e81f79986f01c",
-		"pending/governance/roles-registry.md": "2e9983b5e2e9953c0b28f997a41b52c706f123a51b6261d561f674ee10661469",
-		"pending/governance/on-chain-identifiers-and-verification-policy.md": "078affe1fce75c6fb01c77f840958f3d3daf06c54faf61e226d7ce678b677d83"
+		"guides/policy-library-reading-guide.md": "2279039e8c2da841d32a8330c2613e4de7c325f760b49d09fda01a90797c273b",
+		"guides/roles-registry.md": "2e9983b5e2e9953c0b28f997a41b52c706f123a51b6261d561f674ee10661469",
+		"governance/on-chain-identifiers-and-verification-policy.md": "078affe1fce75c6fb01c77f840958f3d3daf06c54faf61e226d7ce678b677d83"
 	}
 }

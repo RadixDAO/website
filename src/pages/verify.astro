@@ -9,7 +9,7 @@ import {
   inForce,
   ratification,
   ratificationHref,
-  signedForRatification
+  signedNotInForce
 } from '../data/governance'
 import BaseLayout from '../layouts/BaseLayout.astro'
 
@@ -177,13 +177,13 @@ interface TreasuryRow {
 						on-chain by the proposal that activated it. A match proves the file is byte-for-byte
 						the document that was voted on, no matter where the copy came from.
 					</>
-				) : signedForRatification.length > 0 ? (
+				) : signedNotInForce.length > 0 ? (
 					<>
-						Nothing is in force yet, but every document put to the ratification vote is already
-						published as a signed PDF, and the SHA-256 digest of each exact file is recorded in
-						ratification proposal {ratification?.proposal}. Check a copy against the digests below
-						&mdash; a match proves it is byte-for-byte the file the vote is about, no matter where
-						the copy came from.
+						The community ratified the governance framework in proposal {ratification?.proposal}.
+						Every ratified document is published as a signed PDF, and the SHA-256 digest of each
+						exact file is recorded in the ratified manifest. Check a copy against the digests below
+						&mdash; a match proves it is byte-for-byte the ratified version, no matter where the
+						copy came from. Nothing is in force until the Activation Vote passes.
 					</>
 				) : (
 					<>
@@ -200,11 +200,11 @@ interface TreasuryRow {
 		<DocumentRegister />
 
 		{
-			ratification && signedForRatification.length > 0 && (
+			ratification && signedNotInForce.length > 0 && (
 				<div class="mt-9">
 					<h3 class="label">Signing certificate</h3>
 					<p class="mt-3 max-w-[64ch] text-[0.875rem] text-[var(--color-muted)]">
-						Every signed PDF above carries a signature from a single certificate, ratified together
+						Every ratified PDF above carries a signature from a single certificate, ratified together
 						with the documents by proposal {ratification.proposal} and unchanged for later document
 						changes until it is renewed. A file whose signature is absent, invalid, or chains to
 						any other certificate is not a ratified version, whatever its SHA-256.
@@ -228,7 +228,7 @@ interface TreasuryRow {
 					</dl>
 					{ratificationHref && (
 						<a href={ratificationHref} class="onward mt-4 inline-block text-[0.875rem]">
-							The ratification proposal <span aria-hidden="true">&rsaquo;</span>
+							The ratification vote on-chain <span aria-hidden="true">&rsaquo;</span>
 						</a>
 					)}
 				</div>

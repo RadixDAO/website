@@ -2,7 +2,7 @@
 import {
   inForce,
   ratification,
-  signedForRatification,
+  signedNotInForce,
   superseded
 } from '../data/governance'
 
@@ -17,13 +17,14 @@ const known = inForce.map((d) => ({
   sha256: d.pdf?.sha256
 }))
 
-// Documents signed for the ratification vote. A match is a genuine positive —
-// the file is byte-for-byte what the proposal asks the community to ratify —
-// but the verdict must not read as "in force", because nothing is yet.
-const proposed = signedForRatification.map((d) => ({
+// Signed documents not yet in force. A match is a genuine positive — for a
+// ratified document the file is byte-for-byte the ratified version — but the
+// verdict must not read as "in force", because nothing is until activation.
+const proposed = signedNotInForce.map((d) => ({
   title: d.title,
   version: d.signedPdf?.version,
-  sha256: d.signedPdf?.sha256
+  sha256: d.signedPdf?.sha256,
+  ratified: d.status === 'ratified'
 }))
 
 const proposalId = ratification?.proposal
@@ -113,12 +114,15 @@ const replaced = superseded.map((d) => ({
 				'This file is byte-for-byte the activated document.'
 			verdictEl.style.color = 'var(--color-live)'
 		} else if (signed) {
-			verdictEl.textContent =
-				`Matches ${signed.title}${signed.version ? ' v' + signed.version : ''}. ` +
-				'This file is byte-for-byte the signed PDF published for ' +
-				`ratification${proposalId ? ' in proposal ' + proposalId : ''}. ` +
-				'Its signature should chain to the certificate shown above. ' +
-				'The ratification vote has not passed, so it is not yet in force.'
+			verdictEl.textContent = signed.ratified
+				? `Matches ${signed.title}${signed.version ? ' v' + signed.version : ''}. ` +
+					'This file is byte-for-byte the version ratified' +
+					`${proposalId ? ' by proposal ' + proposalId : ''}. ` +
+					'Its signature should chain to the certificate shown above. ' +
+					'It takes effect when the Activation Vote passes.'
+				: `Matches ${signed.title}. ` +
+					'This file is byte-for-byte the signed PDF published here. ' +
+					'It is not yet in force.'
 			verdictEl.style.color = 'var(--color-live)'
 		} else if (old) {
 			verdictEl.textContent =
@@ -133,8 +137,8 @@ const replaced = superseded.map((d) => ({
 		} else {
 			verdictEl.textContent =
 				'No listed document has this digest. Either this is not a governance ' +
-				'document, or it is not a version that was published for ratification ' +
-				'or activated.'
+				'document, or it is not a version that was ratified, signed, or ' +
+				'activated.'
 			verdictEl.style.color = 'var(--color-pending)'
 		}
 	}
