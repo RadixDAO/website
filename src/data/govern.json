@@ -304,25 +304,25 @@
 		{
 			"id": "operating-agreement",
 			"title": "Operating Agreement",
-			"summary": "The legal contract of Radix DAO LLC — the instrument every governance document operates under and remains subordinate to.",
-			"path": "pending/legal/operating-agreement.md",
-			"status": "pending",
+			"summary": "The legal contract of Radix DAO LLC — the instrument every governance document operates under and remains subordinate to. Published as filed, with personal details redacted.",
+			"path": "legal/operating-agreement.md",
+			"status": "filed",
 			"signedPdf": {
-				"path": "pending/signed/OA. RadixDAO LLC. final _signed.pdf",
-				"sha256": "82816b21458c6833ae207e478d3478c9f7359382f6e4a595c626994e6b45f12f",
-				"bytes": 757344
+				"path": "legal/formation/operating-agreement_signed.pdf",
+				"sha256": "cdd95415fd0d263c8ce9e4b39f9d330285c6feae6785643e9ad776046850b295",
+				"bytes": 64215244
 			}
 		},
 		{
 			"id": "certificate-of-formation",
 			"title": "Certificate of Formation",
-			"summary": "The company's formation instrument under the Marshall Islands DAO Act, listing its on-chain smart contracts in Exhibit A.",
-			"path": "pending/legal/Non-Profit_DAO_LLC_Certificate_of_Formation_RadixDAO_130826_v1_01.md",
-			"status": "pending",
+			"summary": "The company's formation instrument under the Marshall Islands DAO Act, listing its on-chain smart contracts in Exhibit A. Published as filed, with personal details redacted.",
+			"path": "legal/certificate-of-formation.md",
+			"status": "filed",
 			"signedPdf": {
-				"path": "pending/signed/Non_Profit_DAO_LLC_Certificate_of_Formation_RadixDAO_130826_v1_02_signed.pdf",
-				"sha256": "0c162418f2dc424b2f9d626418ea611c59d250f9c21ff2df691f08a92e20ec78",
-				"bytes": 580816
+				"path": "legal/formation/certificate-of-formation_signed.pdf",
+				"sha256": "3e307ebcef5b7bf76241fb5c7ddbd35058e16cf86e4375e41959cf8c75e95a6c",
+				"bytes": 6876034
 			}
 		}
 	],
@@ -405,6 +405,48 @@
 			"documents": ["operating-agreement", "certificate-of-formation"]
 		}
 	],
+	"formation": {
+		"filed": "2026-10-09",
+		"registrationNumber": "10280-26",
+		"license": {
+			"number": "RMI-2026-65",
+			"granted": "2026-10-08"
+		},
+		"recordPath": "legal/formation",
+		"issued": [
+			{
+				"id": "corporate-charter-certificate",
+				"title": "Corporate Charter Certificate",
+				"path": "legal/formation/corporate-charter-certificate_signed.pdf",
+				"sha256": "05a793cc8ca56109d5a50200bd4930d2606d10ab2f3bbe6d52a65e188316eac2",
+				"bytes": 1647900
+			},
+			{
+				"id": "foreign-investment-business-license",
+				"title": "Foreign Investment Business License",
+				"path": "legal/formation/foreign-investment-business-license_signed.pdf",
+				"sha256": "d2b81658bf338ba7e96e189e9c83d51c3651d8de532c0ea57ca28d8ad1c431c5",
+				"bytes": 1247443
+			},
+			{
+				"id": "midao-cover-letter",
+				"title": "MIDAO Cover Letter",
+				"path": "legal/formation/midao-cover-letter_signed.pdf",
+				"sha256": "3021b6b1acfc0a98101ed9bc9d7ef2d8b097c1d7480573ae7dccb96bd4d3fa1b",
+				"bytes": 1422014
+			}
+		],
+		"preFiling": [
+			{
+				"title": "Operating Agreement",
+				"sha256": "82816b21458c6833ae207e478d3478c9f7359382f6e4a595c626994e6b45f12f"
+			},
+			{
+				"title": "Certificate of Formation",
+				"sha256": "0c162418f2dc424b2f9d626418ea611c59d250f9c21ff2df691f08a92e20ec78"
+			}
+		]
+	},
 	"ratification": {
 		"proposal": "GP-PRE-1",
 		"title": "Constitutional Ratification of the Governance Framework",

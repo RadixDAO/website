@@ -6,6 +6,9 @@ import DocumentVerifier from '../components/DocumentVerifier.astro'
 import PageHeader from '../components/PageHeader.astro'
 import identifiers from '../data/identifiers.json'
 import {
+  formatDate,
+  formation,
+  formationHref,
   inForce,
   ratification,
   ratificationHref,
@@ -183,7 +186,13 @@ interface TreasuryRow {
 						Every ratified document is published as a signed PDF, and the SHA-256 digest of each
 						exact file is recorded in the ratified manifest. Check a copy against the digests below
 						&mdash; a match proves it is byte-for-byte the ratified version, no matter where the
-						copy came from. Nothing is in force until the Activation Vote passes.
+						copy came from. The ratified framework takes effect when the Activation Vote passes.
+						{formation && (
+							<>
+								{' '}The Operating Agreement and Certificate of Formation are published as filed on{' '}
+								{formatDate(formation.filed)}, with personal details redacted.
+							</>
+						)}
 					</>
 				) : (
 					<>
@@ -207,7 +216,8 @@ interface TreasuryRow {
 						Every ratified PDF above carries a signature from a single certificate, ratified together
 						with the documents by proposal {ratification.proposal} and unchanged for later document
 						changes until it is renewed. A file whose signature is absent, invalid, or chains to
-						any other certificate is not a ratified version, whatever its SHA-256.
+						any other certificate is not a ratified version, whatever its SHA-256. The five PDFs in
+						the formation record are signed with the same certificate.
 					</p>
 					<dl class="mt-4 grid gap-x-8 gap-y-2 text-[0.8125rem] md:grid-cols-[13rem_1fr]">
 						<dt class="label">Serial number</dt>
@@ -229,6 +239,33 @@ interface TreasuryRow {
 					{ratificationHref && (
 						<a href={ratificationHref} class="onward mt-4 inline-block text-[0.875rem]">
 							The ratification vote on-chain <span aria-hidden="true">&rsaquo;</span>
+						</a>
+					)}
+				</div>
+			)
+		}
+
+		{
+			formation && (
+				<div class="mt-9">
+					<h3 class="label">Formation record</h3>
+					<p class="mt-3 max-w-[64ch] text-[0.875rem] text-[var(--color-muted)]">
+						Radix DAO LLC was formed on {formatDate(formation.filed)}. Formation does not activate
+						the DAO: community governance stays advisory until the Activation Vote passes.
+					</p>
+					<dl class="mt-4 grid gap-x-8 gap-y-2 text-[0.8125rem] md:grid-cols-[13rem_1fr]">
+						<dt class="label">Filed</dt>
+						<dd class="data text-[var(--color-muted)]">{formatDate(formation.filed)}</dd>
+						<dt class="label">MIDAO registration number</dt>
+						<dd class="data text-[var(--color-muted)]">{formation.registrationNumber}</dd>
+						<dt class="label">Foreign Investment Business License</dt>
+						<dd class="data text-[var(--color-muted)]">
+							{formation.license.number}, granted {formatDate(formation.license.granted)}
+						</dd>
+					</dl>
+					{formationHref && (
+						<a href={formationHref} class="onward mt-4 inline-block text-[0.875rem]">
+							The formation record <span aria-hidden="true">&rsaquo;</span>
 						</a>
 					)}
 				</div>
