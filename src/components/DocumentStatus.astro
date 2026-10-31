@@ -1,6 +1,13 @@
 ---
 import type { GovernanceDocument } from '../data/governance'
-import { pdfUrl, shortDigest, signedPdfUrl } from '../data/governance'
+import {
+  formatDate,
+  formation,
+  formatSize,
+  pdfUrl,
+  shortDigest,
+  signedPdfUrl
+} from '../data/governance'
 import CopyableDigest from './CopyableDigest.astro'
 
 // The status line under a governance document. Pending is the honest state for
@@ -18,6 +25,7 @@ interface Props {
 const { doc } = Astro.props
 const href = pdfUrl(doc)
 const signedHref = signedPdfUrl(doc)
+const filed = doc.status === 'filed'
 ---
 
 {
@@ -46,7 +54,10 @@ const signedHref = signedPdfUrl(doc)
 		<span class="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
 			<span class="data text-[0.75rem] whitespace-nowrap text-[var(--color-muted)]">
 				<span
-					class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
+					class:list={[
+						'mr-1.5 inline-block size-[7px] rounded-full align-[1px]',
+						filed ? 'bg-[var(--color-muted)]' : 'bg-[var(--color-pending)]'
+					]}
 					aria-hidden="true"
 				/>
 				{
@@ -55,13 +66,16 @@ const signedHref = signedPdfUrl(doc)
 							Ratified{doc.signedPdf.version && <> &middot; v{doc.signedPdf.version}</>} &middot;
 							in force at activation
 						</>
+					) : filed && formation ? (
+						<>Filed &middot; {formatDate(formation.filed, 'short')}</>
 					) : (
 						<>Signed &middot; not yet in force</>
 					)
 				}
 			</span>
 			<a href={signedHref} class="onward text-[0.75rem] whitespace-nowrap">
-				Signed PDF <span aria-hidden="true">&rsaquo;</span>
+				Signed PDF{filed && doc.signedPdf.bytes && <> ({formatSize(doc.signedPdf.bytes)})</>}{' '}
+				<span aria-hidden="true">&rsaquo;</span>
 			</a>
 			<a href="/verify/#documents" class="onward text-[0.75rem] whitespace-nowrap">
 				Check <span aria-hidden="true">&rsaquo;</span>

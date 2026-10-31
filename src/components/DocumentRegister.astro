@@ -1,5 +1,9 @@
 ---
 import {
+  formatDate,
+  formation,
+  formationFileUrl,
+  formatSize,
   inForce,
   markdownUrl,
   pdfUrl,
@@ -12,10 +16,11 @@ import CopyableDigest from './CopyableDigest.astro'
 // value a reader actually compares against, so it is never truncated here —
 // the abbreviated form on /govern/ is for recognition only.
 //
-// Two kinds of row share the table: documents in force (digest recorded
-// on-chain by the activating proposal) and signed documents not yet in force —
+// Three kinds of row share the table: documents in force (digest recorded
+// on-chain by the activating proposal), signed documents not yet in force —
 // chiefly the ratified framework, whose digests are recorded in the ratified
-// manifest. The status column keeps them honest about which is which.
+// manifest, and the filed legal instruments — and the certificates issued on
+// formation. The status line keeps them honest about which is which.
 //
 // Same shape as the on-chain identifier table above it: one row per thing, the
 // verifiable value in monospace, and a way to check it independently.
@@ -86,12 +91,23 @@ import CopyableDigest from './CopyableDigest.astro'
 								{doc.title}
 								<span class="data mt-1 block text-[0.75rem] font-normal whitespace-nowrap text-[var(--color-muted)]">
 									<span
-										class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-pending)] align-[1px]"
+										class:list={[
+											'mr-1.5 inline-block size-[7px] rounded-full align-[1px]',
+											doc.status === 'filed'
+												? 'bg-[var(--color-muted)]'
+												: 'bg-[var(--color-pending)]'
+										]}
 										aria-hidden="true"
 									/>
-									{doc.status === 'ratified' ? 'Ratified' : 'Signed'}
-									{doc.signedPdf?.version && <> &middot; v{doc.signedPdf.version}</>} &middot;{' '}
-									{doc.status === 'ratified' ? 'in force at activation' : 'not yet in force'}
+									{doc.status === 'filed' && formation ? (
+										<>Filed &middot; {formatDate(formation.filed, 'short')}</>
+									) : (
+										<>
+											{doc.status === 'ratified' ? 'Ratified' : 'Signed'}
+											{doc.signedPdf?.version && <> &middot; v{doc.signedPdf.version}</>} &middot;{' '}
+											{doc.status === 'ratified' ? 'in force at activation' : 'not yet in force'}
+										</>
+									)}
 								</span>
 							</td>
 							<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-top">
@@ -100,6 +116,11 @@ import CopyableDigest from './CopyableDigest.astro'
 										value={doc.signedPdf.sha256}
 										class="text-[0.75rem] break-all text-[var(--color-muted)]"
 									/>
+								)}
+								{doc.status === 'filed' && doc.signedPdf?.bytes && (
+									<span class="data mt-1 block text-[0.6875rem] text-[var(--color-muted)]">
+										{formatSize(doc.signedPdf.bytes)}
+									</span>
 								)}
 							</td>
 							<td class="border-b border-[var(--color-rule)] py-4 align-top">
@@ -114,6 +135,37 @@ import CopyableDigest from './CopyableDigest.astro'
 									class="onward mt-1 block text-[0.8125rem] whitespace-nowrap"
 								>
 									Source <span aria-hidden="true">&rsaquo;</span>
+								</a>
+							</td>
+						</tr>
+					))}
+					{formation?.issued.map((file) => (
+						<tr>
+							<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-top text-[0.90625rem] font-semibold">
+								{file.title}
+								<span class="data mt-1 block text-[0.75rem] font-normal whitespace-nowrap text-[var(--color-muted)]">
+									<span
+										class="mr-1.5 inline-block size-[7px] rounded-full bg-[var(--color-muted)] align-[1px]"
+										aria-hidden="true"
+									/>
+									Issued on formation
+								</span>
+							</td>
+							<td class="border-b border-[var(--color-rule)] py-4 pr-5 align-top">
+								<CopyableDigest
+									value={file.sha256}
+									class="text-[0.75rem] break-all text-[var(--color-muted)]"
+								/>
+								<span class="data mt-1 block text-[0.6875rem] text-[var(--color-muted)]">
+									{formatSize(file.bytes)}
+								</span>
+							</td>
+							<td class="border-b border-[var(--color-rule)] py-4 align-top">
+								<a
+									href={formationFileUrl(file)}
+									class="onward block text-[0.8125rem] whitespace-nowrap"
+								>
+									PDF <span aria-hidden="true">&rsaquo;</span>
 								</a>
 							</td>
 						</tr>

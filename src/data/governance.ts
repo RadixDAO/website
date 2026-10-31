@@ -25,9 +25,11 @@ export const archiveHref = `${repoHref}/tree/${SOURCE.ref}/archive`
 // An activated document is published as a PDF whose SHA-256 is recorded on-chain
 // by the proposal that activated it. Before that, a document the community has
 // ratified is `ratified`: its signed PDF and digest are fixed by the ratified
-// manifest, but it does not bind anyone until the Activation Vote passes.
+// manifest, but it does not bind anyone until the Activation Vote passes. The
+// legal instruments the Company was formed under are `filed`, a statement of
+// fact about the filing that deliberately says nothing about being in force.
 // Everything else is `pending`. The treatment of each is driven entirely by data.
-export type DocumentStatusValue = 'pending' | 'ratified' | 'in-force'
+export type DocumentStatusValue = 'pending' | 'ratified' | 'filed' | 'in-force'
 
 /**
  * A version that has been replaced. The site shows only what is currently
@@ -63,7 +65,7 @@ export interface DocumentPdf {
  * certificate in `ratification.certificate`.
  */
 export interface SignedPdf {
-  /** Path within the governance repository (under signed/, or pending/signed/ before ratification). */
+  /** Path within the governance repository (under signed/, legal/formation/, or pending/signed/ before then). */
   path: string
   /** Lowercase hex SHA-256 over the raw bytes of the signed PDF. */
   sha256: string
@@ -91,6 +93,32 @@ export interface Ratification {
     thumbprintSha1: string
     fingerprintSha256: string
   }
+}
+
+/** A certificate issued on formation. It has no Markdown source, so it is not a document. */
+export interface FormationFile {
+  id: string
+  title: string
+  /** Path within the governance repository. */
+  path: string
+  /** Lowercase hex SHA-256 over the raw bytes of the PDF. */
+  sha256: string
+  bytes: number
+}
+
+/**
+ * The formation step of the founding sequence. `preFiling` holds digests only:
+ * those copies are not rendered, and exist so the verifier can tell someone
+ * holding one that it is genuine but is not the filed version.
+ */
+export interface Formation {
+  /** Date the Certificate of Formation and Operating Agreement were filed. */
+  filed: string
+  registrationNumber: string
+  license: { number: string; granted: string }
+  recordPath: string
+  issued: FormationFile[]
+  preFiling: { title: string; sha256: string }[]
 }
 
 export interface GovernanceDocument {
@@ -122,10 +150,16 @@ interface GovernData {
   companionGuides: string[]
   groups: { name: string; documents: string[] }[]
   ratification?: Ratification
+  formation?: Formation
 }
 
 const SHA256 = /^[0-9a-f]{64}$/
-const STATUSES: DocumentStatusValue[] = ['pending', 'ratified', 'in-force']
+const STATUSES: DocumentStatusValue[] = [
+  'pending',
+  'ratified',
+  'filed',
+  'in-force'
+]
 
 // Validated at build time so a malformed entry fails the build rather than
 // rendering a broken or — worse — a misleading row. An unverifiable digest on a
@@ -164,12 +198,28 @@ function validate(data: GovernData): GovernData {
         `govern.json: "${doc.id}" is ratified but is missing its signed PDF or its version. A ratified document must be verifiable against the manifest.`
       )
     }
+    if (doc.status === 'filed' && !(doc.signedPdf && data.formation)) {
+      throw new Error(
+        `govern.json: "${doc.id}" is filed but is missing its signed PDF or the formation record. A filed document must be verifiable and carry its filing date.`
+      )
+    }
   }
 
   for (const old of data.superseded ?? []) {
     if (!SHA256.test(old.sha256)) {
       throw new Error(
         `govern.json: superseded entry "${old.id}" v${old.version} has a malformed digest.`
+      )
+    }
+  }
+
+  for (const file of [
+    ...(data.formation?.issued ?? []),
+    ...(data.formation?.preFiling ?? [])
+  ]) {
+    if (!SHA256.test(file.sha256)) {
+      throw new Error(
+        `govern.json: formation entry "${file.title}" has a malformed digest.`
       )
     }
   }
@@ -210,9 +260,9 @@ export const inForce = data.documents.filter((d) => d.status === 'in-force')
 export const superseded = data.superseded ?? []
 
 // Documents published as signed PDFs but not yet in force: the ratified
-// framework, plus anything signed and still pending (the legal instruments
-// until formation). Their digests are checkable now — for ratified documents
-// the manifest is the reference, not this site.
+// framework, the filed legal instruments, and anything signed and still pending.
+// Their digests are checkable now — for ratified documents the manifest is the
+// reference, not this site.
 export const signedNotInForce = data.documents.filter(
   (d) => d.status !== 'in-force' && d.signedPdf
 )
@@ -220,6 +270,11 @@ export const ratified = data.documents.filter((d) => d.status === 'ratified')
 
 export const ratification = data.ratification ?? null
 export const ratificationHref = data.ratification?.href ?? null
+
+export const formation = data.formation ?? null
+export const formationHref = data.formation
+  ? `${repoHref}/tree/${SOURCE.ref}/${data.formation.recordPath}`
+  : null
 
 /** Public URL of an activated document's PDF, in the repository of record. */
 export const pdfUrl = (doc: GovernanceDocument) =>
@@ -229,9 +284,28 @@ export const pdfUrl = (doc: GovernanceDocument) =>
 export const signedPdfUrl = (doc: GovernanceDocument) =>
   doc.signedPdf ? `${repoHref}/raw/${SOURCE.ref}/${doc.signedPdf.path}` : null
 
+/** Public URL of a certificate issued on formation. */
+export const formationFileUrl = (file: FormationFile) =>
+  `${repoHref}/raw/${SOURCE.ref}/${file.path}`
+
 /** Markdown source link, pinned to the activating commit once one exists. */
 export const markdownUrl = (doc: GovernanceDocument) =>
   sourceHref(doc.path, doc.commit ?? SOURCE.ref)
 
 /** First 16 hex characters — enough to eyeball, never enough to verify with. */
 export const shortDigest = (sha256: string) => sha256.slice(0, 16)
+
+/** A `YYYY-MM-DD` date as "9 October 2026", or "9 Oct 2026" where space is tight. */
+export const formatDate = (date: string, month: 'long' | 'short' = 'long') =>
+  new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month,
+    year: 'numeric',
+    timeZone: 'UTC'
+  })
+
+/** A file size as "64 MB" or "6.9 MB": enough to warn before a large download. */
+export const formatSize = (bytes: number) => {
+  const megabytes = bytes / 1_000_000
+  return `${megabytes < 10 ? megabytes.toFixed(1) : Math.round(megabytes)} MB`
+}

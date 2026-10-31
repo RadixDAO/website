@@ -1,5 +1,6 @@
 ---
 import {
+  formation,
   inForce,
   ratification,
   signedNotInForce,
@@ -24,8 +25,19 @@ const proposed = signedNotInForce.map((d) => ({
   title: d.title,
   version: d.signedPdf?.version,
   sha256: d.signedPdf?.sha256,
-  ratified: d.status === 'ratified'
+  status: d.status
 }))
+
+// Certificates issued on formation, which share the filed documents' verdict
+// except for the redaction: only the filed documents are redacted.
+const issued = (formation?.issued ?? []).map((f) => ({
+  title: f.title,
+  sha256: f.sha256
+}))
+
+// The signed copies published before filing. Like a superseded version, these
+// deserve a recognised result — but "the version in force is…" would be false.
+const preFiling = formation?.preFiling ?? []
 
 const proposalId = ratification?.proposal
 
@@ -73,7 +85,7 @@ const replaced = superseded.map((d) => ({
 	</noscript>
 </div>
 
-<script is:inline define:vars={{ known, proposed, proposalId, replaced }}>
+<script is:inline define:vars={{ known, proposed, proposalId, replaced, issued, preFiling }}>
 	const drop = document.getElementById('verify-drop')
 	const input = document.getElementById('verify-input')
 	const result = document.getElementById('verify-result')
@@ -107,6 +119,8 @@ const replaced = superseded.map((d) => ({
 		const match = known.find((d) => d.sha256 === digest)
 		const signed = proposed.find((d) => d.sha256 === digest)
 		const old = replaced.find((d) => d.sha256 === digest)
+		const certificate = issued.find((d) => d.sha256 === digest)
+		const preFiled = preFiling.find((d) => d.sha256 === digest)
 
 		if (match) {
 			verdictEl.textContent =
@@ -114,20 +128,38 @@ const replaced = superseded.map((d) => ({
 				'This file is byte-for-byte the activated document.'
 			verdictEl.style.color = 'var(--color-live)'
 		} else if (signed) {
-			verdictEl.textContent = signed.ratified
-				? `Matches ${signed.title}${signed.version ? ' v' + signed.version : ''}. ` +
-					'This file is byte-for-byte the version ratified' +
-					`${proposalId ? ' by proposal ' + proposalId : ''}. ` +
-					'Its signature should chain to the certificate shown above. ' +
-					'It takes effect when the Activation Vote passes.'
-				: `Matches ${signed.title}. ` +
-					'This file is byte-for-byte the signed PDF published here. ' +
-					'It is not yet in force.'
+			verdictEl.textContent =
+				signed.status === 'ratified'
+					? `Matches ${signed.title}${signed.version ? ' v' + signed.version : ''}. ` +
+						'This file is byte-for-byte the version ratified' +
+						`${proposalId ? ' by proposal ' + proposalId : ''}. ` +
+						'Its signature should chain to the certificate shown above. ' +
+						'It takes effect when the Activation Vote passes.'
+					: signed.status === 'filed'
+						? `Matches ${signed.title}. ` +
+							'This file is byte-for-byte the copy of the filed document published ' +
+							'in the formation record, with personal details redacted. ' +
+							'Its signature should chain to the certificate shown above.'
+						: `Matches ${signed.title}. ` +
+							'This file is byte-for-byte the signed PDF published here. ' +
+							'It is not yet in force.'
+			verdictEl.style.color = 'var(--color-live)'
+		} else if (certificate) {
+			verdictEl.textContent =
+				`Matches ${certificate.title}. ` +
+				'This file is byte-for-byte the copy published in the formation record. ' +
+				'Its signature should chain to the certificate shown above.'
 			verdictEl.style.color = 'var(--color-live)'
 		} else if (old) {
 			verdictEl.textContent =
 				`This is a genuine copy of ${old.title} v${old.version}, superseded on ` +
 				`${old.supersededOn}. The version in force is v${old.supersededBy}.`
+			verdictEl.style.color = 'var(--color-pending)'
+		} else if (preFiled) {
+			verdictEl.textContent =
+				`This is a genuine pre-filing signed copy of the ${preFiled.title}, not the ` +
+				'filed version. The filed version is listed above and published in the ' +
+				'formation record.'
 			verdictEl.style.color = 'var(--color-pending)'
 		} else if (known.length === 0 && proposed.length === 0) {
 			verdictEl.textContent =
@@ -137,7 +169,7 @@ const replaced = superseded.map((d) => ({
 		} else {
 			verdictEl.textContent =
 				'No listed document has this digest. Either this is not a governance ' +
-				'document, or it is not a version that was ratified, signed, or ' +
+				'document, or it is not a version that was ratified, signed, filed, or ' +
 				'activated.'
 			verdictEl.style.color = 'var(--color-pending)'
 		}
